@@ -8,7 +8,7 @@ import { invoke } from "@tauri-apps/api/tauri";
   standalone: true,
   imports: [CommonModule, RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
   books: { title: string, genre: string, author_id: number, year: string }[] = [];
