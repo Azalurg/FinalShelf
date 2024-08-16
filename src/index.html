@@ -3,31 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MP3 Authors</title>
+    <title>Tauri App</title>
 </head>
 <body>
-    <h1>MP3 Authors</h1>
-    <button id="load-authors">Load Authors</button>
-    <ul id="authors-list"></ul>
+    <button id="scanBtn">Scan Metadata</button>
+    <button id="getBooksBtn">Get Books</button>
+    <ul id="bookList"></ul>
 
-    <script>
+    <!-- Include the main JavaScript file -->
+    <script type="module">
         const { invoke } = window.__TAURI__.tauri;
-
-        document.getElementById('load-authors').addEventListener('click', async () => {
-            const rootDir = "/home/azalurg/Muzyka"; // Replace this with the actual directory path
-
+        
+        document.getElementById('scanBtn').addEventListener('click', async () => {
             try {
-                const authors = await invoke('get_authors', { rootDir });
-                const authorsList = document.getElementById('authors-list');
-                authorsList.innerHTML = ''; // Clear existing list
+                const directory = prompt('Enter directory to scan:');
+                if (directory) {
+                    await invoke('tauri_scan', { directory });
+                    alert('Scan completed successfully!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to scan metadata: ' + error.message);
+            }
+        });
 
-                authors.forEach(author => {
+        document.getElementById('getBooksBtn').addEventListener('click', async () => {
+            try {
+                const books = await invoke('tauri_get_books');
+                const bookList = document.getElementById('bookList');
+                bookList.innerHTML = ''; // Clear previous list
+
+                books.forEach(book => {
                     const li = document.createElement('li');
-                    li.textContent = author;
-                    authorsList.appendChild(li);
+                    li.textContent = `Title: ${book.title}, Genre: ${book.genre}`;
+                    bookList.appendChild(li);
                 });
             } catch (error) {
-                console.error('Error fetching authors:', error);
+                console.error('Error:', error);
+                alert('Failed to retrieve books: ' + error.message);
             }
         });
     </script>
