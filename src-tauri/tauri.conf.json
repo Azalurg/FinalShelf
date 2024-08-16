@@ -3,10 +3,10 @@
     "beforeDevCommand": "npm run start",
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
-    "distDir": "../dist/tauri-app/browser"
+    "distDir": "../dist/libraalchemy2/browser" 
   },
   "package": {
-    "productName": "tauri-app",
+    "productName": "libraalchemy2",
     "version": "0.1.0"
   },
   "tauri": {
@@ -19,7 +19,7 @@
     },
     "windows": [
       {
-        "title": "tauri-app",
+        "title": "LibraAlchemy2.0",
         "width": 800,
         "height": 600
       }
@@ -30,7 +30,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri-app.app",
+      "identifier": "com.libraalchemy2.app",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

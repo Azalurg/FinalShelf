@@ -6,7 +6,7 @@
     "analytics": false
   },
   "projects": {
-    "tauri-app": {
+    "libraalchemy2": {
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -15,7 +15,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/tauri-app",
+            "outputPath": "dist/libraalchemy2",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
