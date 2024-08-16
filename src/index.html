@@ -1,48 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tauri App</title>
-</head>
-<body>
-    <button id="scanBtn">Scan Metadata</button>
-    <button id="getBooksBtn">Get Books</button>
-    <ul id="bookList"></ul>
-
-    <!-- Include the main JavaScript file -->
-    <script type="module">
-        const { invoke } = window.__TAURI__.tauri;
-        
-        document.getElementById('scanBtn').addEventListener('click', async () => {
-            try {
-                const directory = prompt('Enter directory to scan:');
-                if (directory) {
-                    await invoke('tauri_scan', { directory });
-                    alert('Scan completed successfully!');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to scan metadata: ' + error.message);
-            }
-        });
-
-        document.getElementById('getBooksBtn').addEventListener('click', async () => {
-            try {
-                const books = await invoke('tauri_get_books');
-                const bookList = document.getElementById('bookList');
-                bookList.innerHTML = ''; // Clear previous list
-
-                books.forEach(book => {
-                    const li = document.createElement('li');
-                    li.textContent = `Title: ${book.title}, Genre: ${book.genre}`;
-                    bookList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to retrieve books: ' + error.message);
-            }
-        });
-    </script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Tauri + Angular</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

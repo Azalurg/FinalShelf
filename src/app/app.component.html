@@ -1,0 +1,10 @@
+<div class="container">
+  <button (click)="scanDirectory()">Scan Directory</button>
+  <button (click)="getBooks()">Get Books</button>
+
+  <ul>
+    <li *ngFor="let book of books">
+      Title: {{ book.title }}, Genre: {{ book.genre }}
+    </li>
+  </ul>
+</div>

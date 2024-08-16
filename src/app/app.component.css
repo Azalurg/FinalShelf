@@ -1,5 +1,5 @@
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #ffe21c);
+.logo.angular:hover {
+  filter: drop-shadow(0 0 2em #e32727);
 }
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
