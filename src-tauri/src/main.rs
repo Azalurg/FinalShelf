@@ -1,10 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::{fs::File, io::Read};
+
 use rusqlite::Result;
 
 pub mod db;
 pub mod metadata;
+pub mod structs;
 
 #[tauri::command]
 fn tauri_scan(directory: String) -> Result<(), String> {
@@ -23,9 +26,9 @@ fn tauri_clear_db() -> Result<(), String> {
 }
 
 #[tauri::command]
-fn tauri_get_books() -> Result<Vec<db::Book>, String> {
+fn tauri_get_books() -> Result<Vec<structs::FrontendBook>, String> {
     let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_books(&conn) {
+    match db::get_all_books_list_frontend(&conn) {
         Ok(books) => Ok(books),
         Err(e) => Err(e.to_string()),
     }
@@ -37,6 +40,19 @@ fn tauri_kill() -> Result<(), String> {
     panic!()
 }
 
+#[tauri::command]
+fn read_image(path: String) -> Result<Vec<u8>, String> {
+    let mut file = match File::open(&path) {
+        Ok(f) => f,
+        Err(e) => return Err(format!("Failed to open file: {}", e)),
+    };
+    let mut buffer = Vec::new();
+    match file.read_to_end(&mut buffer) {
+        Ok(_) => Ok(buffer),
+        Err(e) => Err(format!("Failed to read file: {}", e)),
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|_app| {
@@ -44,7 +60,7 @@ fn main() {
             db::init_db(&conn).expect("error while initializing db");
             Ok(())
             })
-        .invoke_handler(tauri::generate_handler![tauri_scan, tauri_get_books, tauri_clear_db, tauri_kill])
+        .invoke_handler(tauri::generate_handler![tauri_scan, tauri_get_books, tauri_clear_db, tauri_kill, read_image])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
