@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import Book from '../../models/books';
 import { invoke } from '@tauri-apps/api/tauri';
 import { CommonModule } from '@angular/common';
+import { appDataDir, join } from '@tauri-apps/api/path';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 @Component({
   selector: 'app-books',
@@ -25,5 +27,6 @@ export class BooksComponent {
   
   ngOnInit(): void {
     this.fetchBooks();
+    console.log(convertFileSrc("/home/azalurg/Obrazy/pobrane (6)_out.png"));
   }
 }
