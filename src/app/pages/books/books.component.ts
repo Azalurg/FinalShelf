@@ -10,7 +10,7 @@ import { convertFileSrc } from '@tauri-apps/api/tauri';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './books.component.html',
-  styleUrl: './books.component.css'
+  styleUrl: './books.component.scss'
 })
 export class BooksComponent {
   books: Book[] = [];
@@ -24,9 +24,18 @@ export class BooksComponent {
       console.error(error);
     }
   }
-  
+
+  convertPath(path: string): string {
+    if (!path){
+      return 'assets/logo.svg';
+    }
+    return convertFileSrc(path);
+    
+  }
+
   ngOnInit(): void {
     this.fetchBooks();
-    console.log(convertFileSrc("/home/azalurg/Obrazy/pobrane (6)_out.png"));
   }
 }
+
+// https://github.com/sprout2000/tauview/blob/main/src/Grid.tsx

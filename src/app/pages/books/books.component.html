@@ -1,9 +1,13 @@
 <div class="app-page">
     <h1>Book list</h1>
-    <ul>
-        <li *ngFor="let book of books" id="{{book.id}}">
-            {{ book.title }}
-        </li>
-    </ul>
-    <img src='convertFileSrc("/home/azalurg/Obrazy/pobrane (6)_out.png")' alt="image">  //https://github.com/sprout2000/tauview/blob/main/src/Grid.tsx
+    <div style="padding: 0 0.89rem;">
+        <div class="gallery">
+            <a *ngFor="let book of books" class="gallery-item shadow" href="/books/{{book.id}}">
+                <img src={{convertPath(book.cover_path)}} alt="image">
+                <div class="gallery-text gallery-tex-first">{{book.title}}</div>
+                <div class="gallery-text gallery-text-second">{{book.author_name}}</div>
+            </a>
+        </div>
+    </div>
+    
 </div>

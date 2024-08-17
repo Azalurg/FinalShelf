@@ -1,9 +1,9 @@
 interface Book {
     id: number,
     title: string,
-    genre: string,
-    duration: number,
-    year: number
+    cover_path: string,
+    author_id: number,
+    author_name: string,
 }
 
 export default Book;
