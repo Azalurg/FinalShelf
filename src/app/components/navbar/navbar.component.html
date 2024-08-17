@@ -1,18 +1,34 @@
 <div class="navbar">
     <div class="navbar__logo">
-        <img src="assets/logo.png" alt="Logo" />
+        <img src="assets/logo.svg" alt="Logo" />
     </div>
     <div class="navbar__menu">
         <ul>
-        <li>
-            <a routerLink="/">Home</a>
-        </li>
-        <li>
-            <a routerLink="/about">About</a>
-        </li>
-        <li>
-            <a routerLink="/contact">Contact</a>
-        </li>
+            <li>
+                <a href="/"><img class="navbar__icon" src="assets/icons/monitor-svgrepo-com.svg" alt="Dashboard"></a>
+            </li>
+            <li>
+                <a href="/books"><img class="navbar__icon" src="assets/icons/notebook-svgrepo-com.svg" alt="Books"></a>
+            </li>
+            <li>
+                <a href="/authors"><img class="navbar__icon" src="assets/icons/user-02-svgrepo-com.svg" alt="Authors"></a>
+            </li>
+            <li>
+                <a href="/lectors"><img class="navbar__icon" src="assets/icons/user-voice-svgrepo-com.svg" alt="Lectors"></a>
+            </li>
         </ul>
     </div>
+    <div class="navbar__user">
+        <ul>
+            <li><a href="/read"><img class="navbar__icon" src="assets/icons/check-all-svgrepo-com.svg" alt="Read"></a></li>
+            <li><a href="/ranking"><img class="navbar__icon" src="assets/icons/list-ordered-svgrepo-com.svg" alt="Ranking"></a></li>
+        </ul>
+    </div>
+    <div class="navbar__settings">
+        <ul>
+            <li><a href="https://github.com/Azalurg" target="_blank"><img class="navbar__icon" src="assets/icons/globe-svgrepo-com.svg" alt="Profile"></a></li>
+            <li><a href="/settings"><img class="navbar__icon" src="assets/icons/settings-svgrepo-com.svg" alt="Settings"></a></li>
+            <li><a href="/close"><img class="navbar__icon" src="assets/icons/close-circle-svgrepo-com.svg" alt="Logout"></a></li>
+        </ul>
+
 </div>

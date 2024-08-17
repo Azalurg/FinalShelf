@@ -1,0 +1,24 @@
+.navbar{
+    width: 89px;
+    background-color: #22222234;
+    height: 100vh;
+    display:  flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.navbar__icon, .navbar__logo{
+    width: 55px;
+}
+
+ul{
+    list-style-type: none;
+    padding: 0;
+
+
+    li:hover{
+        background-color: #22222234;
+    }
+}

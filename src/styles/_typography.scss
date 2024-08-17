@@ -1,0 +1,13 @@
+@use 'abstracts' as *;
+
+body {
+    color: $foreground;
+    background: $background;
+    background: linear-gradient(190deg, $background 20%, $background-alt 90%);
+    // font-family: $ff-base;
+    min-height: 100vh;
+    line-height: 1.5;
+    font-size: 1rem;
+    text-align: left;
+    font-weight: 400;
+}

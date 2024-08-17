@@ -1,24 +1,18 @@
 import { Routes } from "@angular/router";
+import { DashboardComponent } from "./pages/dashboard/dashboard.component";
+import { BooksComponent } from "./pages/books/books.component";
 
-export const routes: Routes = [];
 
-
-
-// import { HomeComponent } from './home/home.component';
-// import { MarketComponent } from './market/market.component';
-// import { ProfileComponent } from './profile/profile.component';
-// import { TransactionsComponent } from './transactions/transactions.component';
-
-// const routes: Routes = [
-//   {
-//     path: '',
-//     component: HomeComponent,
-//     data: {}
-//   },
-//   {
-//     path: 'market',
-//     component: MarketComponent
-//   },
+export const routes: Routes = [
+  {
+    path: '',
+    component: DashboardComponent,
+    data: {}
+  },
+  {
+    path: 'books',
+    component: BooksComponent
+  },
 //   {
 //     path: 'profile',
 //     component: ProfileComponent
@@ -26,4 +20,4 @@ export const routes: Routes = [];
 //   {
 //     path: 'transactions',
 //     component: TransactionsComponent
-//   }
+]
