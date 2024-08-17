@@ -1,1 +1,8 @@
-<p>books works!</p>
+<div class="app-page">
+    <h1>Book list</h1>
+    <ul>
+        <li *ngFor="let book of books">
+            {{ book.title }}
+        </li>
+    </ul>
+</div>

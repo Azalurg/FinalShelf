@@ -118,7 +118,24 @@ pub fn get_or_create_lector(conn: &Connection, lector_name: &str) -> Result<i64>
     Ok(lector_id)
 }
 
-pub fn add_book(conn: &Connection, book: &Book) -> Result<(i64)> {
+pub fn add_book(conn: &Connection, book: &Book) -> Result<i64> {
+    conn.execute(
+        "INSERT INTO books (title, genre, duration, year, author_id, lector_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+        params![book.title, book.genre, book.duration, book.year, book.author_id, book.lector_id],
+    )?;
+    let book_id = conn.last_insert_rowid();
+    Ok(book_id)
+}
+
+pub fn get_or_create_book(conn: &Connection, book: &Book) -> Result<i64> {
+    let mut stmt = conn.prepare("SELECT id FROM books WHERE title = ?1")?;
+    let mut rows = stmt.query(params![book.title])?;
+
+    if let Some(row) = rows.next()? {
+        let book_id: i64 = row.get(0)?;
+        return Ok(book_id);
+    }
+
     conn.execute(
         "INSERT INTO books (title, genre, duration, year, author_id, lector_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
         params![book.title, book.genre, book.duration, book.year, book.author_id, book.lector_id],
