@@ -1,10 +1,8 @@
-<div class="container">
-  <button (click)="scanDirectory()">Scan Directory</button>
-  <button (click)="getBooks()">Get Books</button>
+<div class="app">
+  <app-navbar></app-navbar>
+  
+  <section>
+    <router-outlet></router-outlet>
+  </section>
 
-  <ul>
-    <li *ngFor="let book of books">
-      Title: {{ book.title }}, Genre: {{ book.genre }}, Author: {{ book.author_id }}, Year: {{ book.year }}
-    </li>
-  </ul>
 </div>
