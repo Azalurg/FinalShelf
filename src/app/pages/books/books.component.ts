@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { invoke } from '@tauri-apps/api/tauri';
 import { CommonModule } from '@angular/common';
 import { Book } from '../../models/books';
-import { convertImgPath } from '../../common/convertImgPath';
+import { convertImgPathBook } from '../../common/convertImgPath';
 
 @Component({
   selector: 'app-books',
@@ -13,7 +13,7 @@ import { convertImgPath } from '../../common/convertImgPath';
 })
 export class BooksComponent {
   books: Book[] = [];
-  getSrc = (path: string) => convertImgPath(path);
+  getSrc = (path: string) => convertImgPathBook(path);
   ngOnInit(): void {
     this.fetchBooks();
   }

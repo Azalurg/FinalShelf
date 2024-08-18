@@ -60,6 +60,6 @@
 }
 
 .shadow {
-    transition: 0.619s;
+    transition:$transition;
     box-shadow: 0 0.21rem 0.89rem $shadow-2;
 }

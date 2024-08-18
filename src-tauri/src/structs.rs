@@ -8,6 +8,14 @@ pub struct Author {
 }
 
 #[derive(Serialize)]
+pub struct AuthorDetails {
+    pub id: i64,
+    pub name: String,
+    pub picture_path: String,
+    pub books: Vec<FrontendBook>,
+}
+
+#[derive(Serialize)]
 pub struct Lector {
     id: i64,
     name: String,

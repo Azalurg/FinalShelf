@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { invoke } from '@tauri-apps/api/tauri';
 import { BookDetails } from '../../models/books';
 import { CommonModule } from '@angular/common';
-import { convertImgPath } from '../../common/convertImgPath';
+import { convertImgPathBook } from '../../common/convertImgPath';
 
 @Component({
   selector: 'app-book-details',
@@ -13,19 +13,18 @@ import { convertImgPath } from '../../common/convertImgPath';
   styleUrls: ['./book-details.component.scss']
 })
 export class BookDetailsComponent implements OnInit {
-  bookId: number | null = null;
   bookDetails: BookDetails | any;
 
-  getSrc = (path: string) => convertImgPath(path);
+  getSrc = (path: string) => convertImgPathBook(path);
 
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.bookId = Number(params.get('id'));
-      if (this.bookId) {
-        this.fetchBookDetails(this.bookId);
+      const bookId = Number(params.get('id'));
+      if (bookId) {
+        this.fetchBookDetails(bookId);
       }
     });
   }

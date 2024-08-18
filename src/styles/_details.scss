@@ -1,0 +1,60 @@
+@use 'abstracts' as *;
+
+.details-container {
+    padding: 2rem 1rem 2rem 2rem;
+    display: flex;
+}
+
+.details-img {
+    width: 21rem;
+    height: intrinsic;
+    border-radius: 1.44rem;
+}
+
+.details-info {
+    padding: 1rem 0 1rem 2rem;
+    flex-grow: 1;
+
+    h1 {
+        font-size: 3rem;
+        letter-spacing: 0.1rem;
+        font-family: monospace;
+    }
+}
+
+.details-info-table {
+    margin-top: 2rem;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: fit-content;
+
+    td {
+        padding: 1rem;
+        text-align: left;
+        font-size: 1.1rem;
+    }
+
+    .details-info-label {
+        font-weight: 700;
+    }
+
+    .details-info-value {
+        font-weight: 400;
+    }
+}
+
+.details-link {
+    position: relative;
+    left: -0.89rem;
+    padding: 0.55rem 0.89rem;
+    border-radius: 0.5rem;
+    background-color: $shadow-3;
+    color: $foreground;
+    text-decoration: none;
+    transition: background-color $transition;
+
+    &:hover {
+        background-color: $shadow-2;
+    }
+
+}

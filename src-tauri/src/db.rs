@@ -170,6 +170,52 @@ pub fn get_or_create_author(conn: &Connection, autor: &Author) -> Result<i64> {
     }
 }
 
+pub fn get_all_authors(conn: &Connection) -> Result<Vec<Author>> {
+    let mut stmt = conn.prepare("SELECT id, name, picture_path FROM authors")?;
+    let author_iter = stmt.query_map([], |row| {
+        Ok(Author {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            picture_path: row.get(2)?,
+        })
+    })?;
+
+    let mut authors = Vec::new();
+    for author in author_iter {
+        authors.push(author?);
+    }
+    Ok(authors)
+}
+
+pub fn get_author_by_id(conn: &Connection, author_id: i64) -> Result<AuthorDetails> {
+    let mut stmt = conn.prepare("SELECT authors.id, authors.name, authors.picture_path, books.id, books.title, books.cover_path FROM authors JOIN books ON authors.id = books.author_id WHERE authors.id = ?1")?;
+    let mut rows = stmt.query(params![author_id])?;
+
+    if let Some(row) = rows.next()? {
+        let mut author = AuthorDetails {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            picture_path: row.get(2)?,
+            books: Vec::new(),
+        };
+
+        let mut books = Vec::new();
+        books.push(FrontendBook {
+            id: row.get(3)?,
+            title: row.get(4)?,
+            cover_path: row.get(5)?,
+            author_id: author.id,
+            author_name: author.name.clone(),
+        });
+
+        author.books = books;
+        return Ok(author);
+    }
+
+    Err(rusqlite::Error::QueryReturnedNoRows)
+}
+
+
 // pub fn get_authors(conn: &Connection) -> Result<Vec<Author>> {
 //     let mut stmt = conn.prepare("SELECT id, name FROM authors")?;
 //     let author_iter = stmt.query_map([], |row| {
@@ -233,7 +279,7 @@ pub fn get_or_create_genre(conn: &Connection, genre_name: &str) -> Result<i64> {
 
 use std::fs;
 
-use crate::structs::{Author, DBBook, FrontendBook, FrontendBookDetails};
+use crate::structs::{Author, AuthorDetails, DBBook, FrontendBook, FrontendBookDetails};
 // TODO: Change this function in the future
 pub fn clear_db() -> Result<()> {
     fs::remove_file(DB_FILE).ok();

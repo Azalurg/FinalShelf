@@ -1,23 +1,25 @@
-<div class="book-details-container app-page" *ngIf="bookDetails">
+<div class="details-container app-page" *ngIf="bookDetails">
 
-  <img class="book-cover shadow" [src]="getSrc(bookDetails.cover_path)" [alt]="bookDetails.title" />
+  <img class="details-img shadow" [src]="getSrc(bookDetails.cover_path)" [alt]="bookDetails.title" />
 
-  <div class="book-info">
-    <h1 class="book-title">{{ bookDetails.title }}</h1>
+  <div class="details-info">
+    <h1 class="details-title">{{ bookDetails.title }}</h1>
     <br>
-    <table class="book-info-table">
+    <table class="details-info-table">
       <tbody>
         <tr>
-          <td class="book-info-label">Author</td>
-          <td class="book-info-value">{{ bookDetails.author_name }}</td>
+          <td class="details-info-label">Author</td>
+          <td class="details-info-value">
+            <a class="details-link" [href]="'/authors/' + bookDetails.author_id">{{ bookDetails.author_name }}</a>
+          </td>
         </tr>
         <tr>
-          <td class="book-info-label">Lector</td>
-          <td class="book-info-value">{{ bookDetails.lector_name }}</td>
+          <td class="details-info-label">Lector</td>
+          <td class="details-info-value">{{ bookDetails.lector_name }}</td>
         </tr>
         <tr>
-          <td class="book-info-label">Genre</td>
-          <td class="book-info-value">{{ bookDetails.genre_name }}</td>
+          <td class="details-info-label">Genre</td>
+          <td class="details-info-value">{{ bookDetails.genre_name }}</td>
         </tr>
       </tbody>
     </table>
