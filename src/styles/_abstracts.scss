@@ -1,12 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Anonymous+Pro&family=Roboto&display=swap');
+// #183a53 #0a2538
+$background-1: #0a2538;
+$background-2: #004f64 ;
+$background-3: #007d80;
 
-$background: hsl(205, 55%, 38%);
-$background-alt: hsl(206, 70%, 20%);
+;
 
-$shadow: #22222234;
+$foreground: #eee;
+$foreground-alt: #ccc;
 
-$foreground: hsl(0, 0%, 86%);
-$foreground-alt: hsl(207, 33%, 59%);
+$shadow-1: hsla(0, 0%, 13%, 0.89);
+$shadow-2: hsla(0, 0%, 13%, 0.55);
+$shadow-3: hsla(0, 0%, 13%, 0.21);
+
 
 $element-background: hsl(200, 20%, 15%);
 $element-background-alt: hsl(200, 20%, 20%);
@@ -19,26 +24,3 @@ $accent-3: hsl(145, 100%, 65%);
 
 $accent-alt-1: hsl(335, 100%, 35%);
 $accent-alt-2: hsl(335, 95%, 60%);
-
-$gray-1: hsl(199, 15%, 15%);
-$gray-2: hsl(199, 15%, 20%);
-$gray-3: hsl(199, 15%, 30%);
-
-// ---
-
-// $ff-base: 
-// $ff-roboto: 'Roboto', sans-serif;
-// // $ff-headers: 'Times New Roman', Times, serif;
-// $ff-headers: 'Roboto', sans-serif;
-// $ff-mono: 'Anonymice', monospace;
-// // $ff-anonymous: 'Anonymous Pro', monospace;
-// $ff-anonymice: 'Anonymice', monospace;
-
-$fs-h1: 2.5rem;
-$fs-h2: 2rem;
-$fs-h3: 1.65rem;
-$fs-h4: 1.4rem;
-$fs-h5: 1.1rem;
-$fs-h6: 0.9rem;
-
-$time: 0.1618s;

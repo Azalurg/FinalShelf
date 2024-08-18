@@ -2,8 +2,8 @@
 
 body {
     color: $foreground;
-    background: $background;
-    background: linear-gradient(190deg, $background 20%, $background-alt 90%);
+    background: $background-1;
+    background: linear-gradient(10deg, $background-1 21%, $background-2 89%);
     // font-family: $ff-base;
     min-height: 100vh;
     line-height: 1.5;
@@ -17,8 +17,13 @@ body {
     position: relative;
 }
 
-.app-page {
+.app-page-wrapper {
     margin-left: 89px;
+    flex-grow: 1;
+}
+
+.app-page {
+    
     padding: 1rem;
-    flex-grow: 1
+    width: 100%;
 }

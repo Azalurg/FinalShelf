@@ -15,7 +15,7 @@
     height: calc(8.9rem * 1.32471);
     margin: 1rem;
     border-radius: 0.55rem;
-    background-color: $shadow;
+    background-color: $background-3;
     text-decoration: none;
     img{
         width: 100%;
@@ -34,7 +34,7 @@
     white-space: nowrap;
     text-align: center;
     display: block;
-    color: white;
+    color: $foreground;
 }
 
 .gallery-tex-first {
@@ -45,13 +45,13 @@
 .gallery-text-second {
     padding-top: 0.15rem;
     font-size: 0.8rem;
-    color:$foreground-alt
+    color:$foreground-alt;
 }
 
 .gallery>a:hover {
     text-decoration: none;
     cursor: pointer;
-    box-shadow: 0 0.25rem 0.75rem #121212e3 !important;
+    box-shadow: 0 0.55rem 1.22rem $shadow-1 !important;
     transform: scale(1.05) translateY(-5%);
     img{
         filter: brightness(1);
@@ -61,5 +61,5 @@
 
 .shadow {
     transition: 0.619s;
-    box-shadow: 0 0.25rem 0.75rem #1212128c;
+    box-shadow: 0 0.21rem 0.89rem $shadow-2;
 }
