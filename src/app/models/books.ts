@@ -6,4 +6,16 @@ interface Book {
     author_name: string,
 }
 
-export default Book;
+interface BookDetails extends Book {
+    duration: number,
+    year: number,
+    genre_id: number,
+    genre_name: string,
+    author_picture_path: string,
+    lector_id: number,
+    lector_name: string,
+}
+
+
+export { Book, BookDetails };
+

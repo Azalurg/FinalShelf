@@ -35,22 +35,18 @@ fn tauri_get_books() -> Result<Vec<structs::FrontendBook>, String> {
 }
 
 #[tauri::command]
+fn tauri_get_book_details(book_id: i64) -> Result<structs::FrontendBookDetails, String> {
+    println!("Getting book details for book_id: {}", book_id);
+    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
+    match db::get_book_by_id(&conn, book_id) {
+        Ok(book) => Ok(book),
+        Err(e) => Err(e.to_string()),
+    }
+}
+#[tauri::command]
 fn tauri_kill() -> Result<(), String> {
     println!("App will be closed");
     panic!()
-}
-
-#[tauri::command]
-fn read_image(path: String) -> Result<Vec<u8>, String> {
-    let mut file = match File::open(&path) {
-        Ok(f) => f,
-        Err(e) => return Err(format!("Failed to open file: {}", e)),
-    };
-    let mut buffer = Vec::new();
-    match file.read_to_end(&mut buffer) {
-        Ok(_) => Ok(buffer),
-        Err(e) => Err(format!("Failed to read file: {}", e)),
-    }
 }
 
 fn main() {
@@ -59,8 +55,14 @@ fn main() {
             let conn = db::get_db_connection().expect("error while getting db connection");
             db::init_db(&conn).expect("error while initializing db");
             Ok(())
-            })
-        .invoke_handler(tauri::generate_handler![tauri_scan, tauri_get_books, tauri_clear_db, tauri_kill, read_image])
+        })
+        .invoke_handler(tauri::generate_handler![
+            tauri_scan,
+            tauri_get_books,
+            tauri_clear_db,
+            tauri_kill,
+            tauri_get_book_details
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

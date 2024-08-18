@@ -2,9 +2,9 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct Author {
-    id: i64,
-    name: String,
-    picture_path: String,
+    pub id: i64,
+    pub name: String,
+    pub picture_path: String,
 }
 
 #[derive(Serialize)]
@@ -14,7 +14,7 @@ pub struct Lector {
 }
 
 #[derive(Serialize)]
-pub struct Genre{
+pub struct Genre {
     id: i64,
     name: String,
 }
@@ -38,4 +38,20 @@ pub struct FrontendBook {
     pub cover_path: String,
     pub author_id: i64,
     pub author_name: String,
+}
+
+#[derive(Serialize, Debug)]
+pub struct FrontendBookDetails {
+    pub id: i64,
+    pub title: String,
+    pub cover_path: String,
+    pub duration: u64,
+    pub year: i32,
+    pub genre_id: i64,
+    pub genre_name: String,
+    pub author_id: i64,
+    pub author_name: String,
+    pub author_picture_path: String,
+    pub lector_id: i64,
+    pub lector_name: String,
 }

@@ -10,15 +10,15 @@ body {
     font-size: 1rem;
     text-align: left;
     font-weight: 400;
-    transition-duration: 10000;
 }
 
 .app{
-    display: flex; 
+    display: flex;
+    position: relative;
 }
 
 .app-page {
     margin-left: 89px;
-    width: calc(100% - 89px);
     padding: 1rem;
+    flex-grow: 1
 }

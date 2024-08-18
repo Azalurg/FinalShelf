@@ -2,7 +2,6 @@ use rusqlite::{params, Connection, Result};
 
 const DB_FILE: &str = "/tmp/libraalchemy2.db"; // Development database
 
-
 pub fn get_db_connection() -> Result<Connection> {
     Connection::open(DB_FILE)
 }
@@ -12,7 +11,6 @@ pub fn get_db_connection() -> Result<Connection> {
 // -------------------------
 
 pub fn init_db(conn: &Connection) -> Result<()> {
-    
     conn.execute(
         "CREATE TABLE IF NOT EXISTS authors (
             id INTEGER PRIMARY KEY,
@@ -58,7 +56,6 @@ pub fn init_db(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-
 // -------------------------
 // Book database functions
 // -------------------------
@@ -84,7 +81,7 @@ pub fn get_book_id_by_title(conn: &Connection, title: &str) -> Result<i64> {
 }
 
 pub fn get_or_create_book(conn: &Connection, book: &DBBook) -> Result<i64> {
-   match get_book_id_by_title(conn, &book.title) {
+    match get_book_id_by_title(conn, &book.title) {
         Ok(book_id) => Ok(book_id),
         Err(_) => add_book(conn, book),
     }
@@ -117,29 +114,60 @@ pub fn get_all_books_list_frontend(conn: &Connection) -> Result<Vec<FrontendBook
     Ok(books)
 }
 
+pub fn get_book_by_id(conn: &Connection, book_id: i64) -> Result<FrontendBookDetails> {
+    let mut stmt = conn.prepare("SELECT books.id, books.title, books.cover_path, books.duration, books.year, genres.id, genres.name, authors.id, authors.name, authors.picture_path, lectors.id, lectors.name FROM books JOIN genres ON books.genre_id = genres.id JOIN authors ON books.author_id = authors.id JOIN lectors ON books.lector_id = lectors.id WHERE books.id = ?1")?;
+    let mut rows = stmt.query(params![book_id])?;
+
+    if let Some(row) = rows.next()? {
+        Ok(FrontendBookDetails {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            cover_path: row.get(2)?,
+            duration: row.get(3)?,
+            year: row.get(4)?,
+            genre_id: row.get(5)?,
+            genre_name: row.get(6)?,
+            author_id: row.get(7)?,
+            author_name: row.get(8)?,
+            author_picture_path: row.get(9)?,
+            lector_id: row.get(10)?,
+            lector_name: row.get(11)?,
+        })
+    } else {
+        Err(rusqlite::Error::QueryReturnedNoRows)
+    }
+}
+
 // -------------------------
 // Author database functions
 // -------------------------
 
-
-pub fn add_author(conn: &Connection, author: &str) -> Result<()> {
-    conn.execute("INSERT INTO authors (name) VALUES (?)", params![author])?;
-    Ok(())
+pub fn add_author(conn: &Connection, autor: &Author) -> Result<i64> {
+    conn.execute(
+        "INSERT INTO authors (name, picture_path) VALUES (?1, ?2)",
+        params![autor.name, autor.picture_path],
+    )?;
+    let author_id = conn.last_insert_rowid();
+    Ok(author_id)
 }
 
-pub fn get_or_create_author(conn: &Connection, author_name: &str) -> Result<i64> {
+pub fn get_author_id_by_name(conn: &Connection, name: &str) -> Result<i64> {
     let mut stmt = conn.prepare("SELECT id FROM authors WHERE name = ?1")?;
-    let mut rows = stmt.query(params![author_name])?;
+    let mut rows = stmt.query(params![name])?;
 
     if let Some(row) = rows.next()? {
         let author_id: i64 = row.get(0)?;
         return Ok(author_id);
     }
 
-    conn.execute("INSERT INTO authors (name) VALUES (?1)", params![author_name])?;
+    Err(rusqlite::Error::QueryReturnedNoRows)
+}
 
-    let author_id = conn.last_insert_rowid();
-    Ok(author_id)
+pub fn get_or_create_author(conn: &Connection, autor: &Author) -> Result<i64> {
+    match get_author_id_by_name(conn, &autor.name) {
+        Ok(author_id) => Ok(author_id),
+        Err(_) => add_author(conn, autor),
+    }
 }
 
 // pub fn get_authors(conn: &Connection) -> Result<Vec<Author>> {
@@ -171,7 +199,10 @@ pub fn get_or_create_lector(conn: &Connection, lector_name: &str) -> Result<i64>
         return Ok(lector_id);
     }
 
-    conn.execute("INSERT INTO lectors (name) VALUES (?1)", params![lector_name])?;
+    conn.execute(
+        "INSERT INTO lectors (name) VALUES (?1)",
+        params![lector_name],
+    )?;
 
     let lector_id = conn.last_insert_rowid();
     Ok(lector_id)
@@ -202,7 +233,7 @@ pub fn get_or_create_genre(conn: &Connection, genre_name: &str) -> Result<i64> {
 
 use std::fs;
 
-use crate::structs::{DBBook, FrontendBook};
+use crate::structs::{Author, DBBook, FrontendBook, FrontendBookDetails};
 // TODO: Change this function in the future
 pub fn clear_db() -> Result<()> {
     fs::remove_file(DB_FILE).ok();

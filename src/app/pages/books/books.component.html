@@ -3,11 +3,10 @@
     <div style="padding: 0 0.89rem;">
         <div class="gallery">
             <a *ngFor="let book of books" class="gallery-item shadow" href="/books/{{book.id}}">
-                <img src={{convertPath(book.cover_path)}} alt="image">
+                <img src={{getSrc(book.cover_path)}} alt="image">
                 <div class="gallery-text gallery-tex-first">{{book.title}}</div>
                 <div class="gallery-text gallery-text-second">{{book.author_name}}</div>
             </a>
         </div>
     </div>
-    
 </div>

@@ -1,0 +1,25 @@
+<div class="book-details-container app-page" *ngIf="bookDetails">
+
+  <img class="book-cover shadow" [src]="getSrc(bookDetails.cover_path)" [alt]="bookDetails.title" />
+
+  <div class="book-info">
+    <h1 class="book-title">{{ bookDetails.title }}</h1>
+    <br>
+    <table class="book-info-table">
+      <tbody>
+        <tr>
+          <td class="book-info-label">Author</td>
+          <td class="book-info-value">{{ bookDetails.author_name }}</td>
+        </tr>
+        <tr>
+          <td class="book-info-label">Lector</td>
+          <td class="book-info-value">{{ bookDetails.lector_name }}</td>
+        </tr>
+        <tr>
+          <td class="book-info-label">Genre</td>
+          <td class="book-info-value">{{ bookDetails.genre_name }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

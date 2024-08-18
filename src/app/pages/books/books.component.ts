@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import Book from '../../models/books';
 import { invoke } from '@tauri-apps/api/tauri';
 import { CommonModule } from '@angular/common';
-import { appDataDir, join } from '@tauri-apps/api/path';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { Book } from '../../models/books';
+import { convertImgPath } from '../../common/convertImgPath';
 
 @Component({
   selector: 'app-books',
@@ -14,28 +13,19 @@ import { convertFileSrc } from '@tauri-apps/api/tauri';
 })
 export class BooksComponent {
   books: Book[] = [];
+  getSrc = (path: string) => convertImgPath(path);
+  ngOnInit(): void {
+    this.fetchBooks();
+  }
 
   async fetchBooks() {
     try {
       const books = await invoke<Book[]>('tauri_get_books');
       this.books = books;
-      console.log(this.books);
     } catch (error) {
       console.error(error);
     }
-  }
-
-  convertPath(path: string): string {
-    if (!path){
-      return 'assets/logo.svg';
-    }
-    return convertFileSrc(path);
-    
-  }
-
-  ngOnInit(): void {
-    this.fetchBooks();
-  }
+  } 
 }
 
 // https://github.com/sprout2000/tauview/blob/main/src/Grid.tsx
