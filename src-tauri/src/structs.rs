@@ -63,3 +63,11 @@ pub struct FrontendBookDetails {
     pub lector_id: i64,
     pub lector_name: String,
 }
+
+#[derive(Serialize)]
+pub struct DashboardData {
+    pub authors_amount: i64,
+    pub genres_amount: i64,
+    pub lectors_amount: i64,
+    pub books_amount: i64,
+}

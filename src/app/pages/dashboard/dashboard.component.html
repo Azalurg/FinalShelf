@@ -1,1 +1,25 @@
-<p class="app-page">dashboard works!</p>
+<div class="app-page">
+
+    <table class="details-info-table">
+        <tbody>
+            <tr>
+                <td class="details-info-label">Books</td>
+                <td class="details-info-value">{{dashboardData.books_amount}}
+                </td>
+            </tr>
+            <tr>
+                <td class="details-info-label">Authors</td>
+                <td class="details-info-value">{{dashboardData.authors_amount}}
+                </td>
+            </tr>
+            <tr>
+                <td class="details-info-label">Lector</td>
+                <td class="details-info-value">{{ dashboardData.lectors_amount }}</td>
+            </tr>
+            <tr>
+                <td class="details-info-label">Genre</td>
+                <td class="details-info-value">{{ dashboardData.genre_amount }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

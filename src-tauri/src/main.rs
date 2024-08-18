@@ -81,6 +81,19 @@ fn tauri_get_author_details(author_id: i64) -> Result<structs::AuthorDetails, St
     }
 }
 
+// -------------------
+// Dashboard functions
+// -------------------
+
+#[tauri::command]
+fn tauri_get_dashboard_data() -> Result<structs::DashboardData, String> {
+    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
+    match db::get_dashboard_data(&conn) {
+        Ok(data) => Ok(data),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
 
 fn main() {
     tauri::Builder::default()
@@ -96,7 +109,8 @@ fn main() {
             tauri_get_books,
             tauri_get_book_details,
             tauri_get_authors,
-            tauri_get_author_details
+            tauri_get_author_details,
+            tauri_get_dashboard_data
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

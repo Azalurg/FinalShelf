@@ -274,12 +274,38 @@ pub fn get_or_create_genre(conn: &Connection, genre_name: &str) -> Result<i64> {
 }
 
 // -------------------------
+// Dashboard
+// -------------------------
+
+pub fn get_dashboard_data(conn: &Connection) -> Result<(DashboardData)> {
+    let mut stmt = conn.prepare("SELECT COUNT(*) FROM authors")?;
+    let authors_amount: i64 = stmt.query_row([], |row| row.get(0))?;
+
+    let mut stmt = conn.prepare("SELECT COUNT(*) FROM genres")?;
+    let genres_amount: i64 = stmt.query_row([], |row| row.get(0))?;
+
+    let mut stmt = conn.prepare("SELECT COUNT(*) FROM lectors")?;
+    let lectors_amount: i64 = stmt.query_row([], |row| row.get(0))?;
+
+    let mut stmt = conn.prepare("SELECT COUNT(*) FROM books")?;
+    let books_amount: i64 = stmt.query_row([], |row| row.get(0))?;
+
+    Ok(DashboardData {
+        authors_amount,
+        genres_amount,
+        lectors_amount,
+        books_amount,
+    })
+}
+
+
+// -------------------------
 // TODO
 // -------------------------
 
 use std::fs;
 
-use crate::structs::{Author, AuthorDetails, DBBook, FrontendBook, FrontendBookDetails};
+use crate::structs::{Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails};
 // TODO: Change this function in the future
 pub fn clear_db() -> Result<()> {
     fs::remove_file(DB_FILE).ok();
