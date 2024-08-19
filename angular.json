@@ -6,7 +6,7 @@
     "analytics": false
   },
   "projects": {
-    "libraalchemy2": {
+    "finalshelf": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/libraalchemy2",
+            "outputPath": "dist/finalshelf",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -67,10 +67,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "tlibraalchemy2:build:production"
+              "buildTarget": "finalshelf:build:production"
             },
             "development": {
-              "buildTarget": "libraalchemy2:build:development"
+              "buildTarget": "finalshelf:build:development"
             }
           },
           "defaultConfiguration": "development"

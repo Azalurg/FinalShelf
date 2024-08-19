@@ -1,7 +1,8 @@
 use rusqlite::{params, Connection, Result};
 
-// const DB_FILE: &str = "libraalchemy2.db";
-const DB_FILE: &str = "/tmp/libraalchemy2.db";
+const DB_FILE: &str = "libraalchemy2.db";
+// const DB_FILE: &str = "/tmp/libraalchemy2.db";
+
  // Development database /tmp/libraalchemy2.db
 
 pub fn get_db_connection() -> Result<Connection> {

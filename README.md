@@ -2,3 +2,4 @@
 
 - paginacja
 - ulepszyć skaner
+- dodać env

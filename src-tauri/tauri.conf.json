@@ -3,10 +3,10 @@
     "beforeDevCommand": "npm run start",
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
-    "distDir": "../dist/libraalchemy2/browser" 
+    "distDir": "../dist/finalshelf/browser"
   },
   "package": {
-    "productName": "libraalchemy2",
+    "productName": "finalshelf",
     "version": "0.1.0"
   },
   "tauri": {
@@ -33,18 +33,18 @@
     },
     "windows": [
       {
-        "title": "LibraAlchemy2.0",
+        "title": "finalshelf",
         "width": 1280,
         "height": 720
       }
     ],
     "security": {
-      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
+      "csp": null
     },
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.libraalchemy2.app",
+      "identifier": "com.finalshelf.app",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
