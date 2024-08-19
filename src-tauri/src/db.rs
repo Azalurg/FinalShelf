@@ -1,12 +1,10 @@
 use rusqlite::{params, Connection, Result};
 
-const DB_FILE: &str = "libraalchemy2.db";
-// const DB_FILE: &str = "/tmp/libraalchemy2.db";
-
- // Development database /tmp/libraalchemy2.db
-
 pub fn get_db_connection() -> Result<Connection> {
-    Connection::open(DB_FILE)
+    match std::env::var("DATABASE_URL") {
+        Ok(url) => Connection::open(url),
+        Err(_) => Connection::open("finalshelf.db")
+    }
 }
 
 // -------------------------
@@ -311,6 +309,9 @@ use std::fs;
 use crate::structs::{Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails};
 // TODO: Change this function in the future
 pub fn clear_db() -> Result<()> {
-    fs::remove_file(DB_FILE).ok();
+    match std::env::var("DATABASE_URL") {
+        Ok(url) => fs::remove_file(url).ok(),
+        Err(_) => fs::remove_file("finalshelf.db").ok()
+    };
     Ok(())
 }

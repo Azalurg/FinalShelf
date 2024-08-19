@@ -1,8 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{fs::File, io::Read};
-
+use dotenv::dotenv;
 use rusqlite::Result;
 
 pub mod db;
@@ -96,6 +95,8 @@ fn tauri_get_dashboard_data() -> Result<structs::DashboardData, String> {
 
 
 fn main() {
+    dotenv().ok();
+
     tauri::Builder::default()
         .setup(|_app| {
             let conn = db::get_db_connection().expect("error while getting db connection");
