@@ -9,7 +9,7 @@ import { Author } from '../../models/authors';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './authors.component.html',
-  styleUrl: './authors.component.css'
+  styleUrl: './authors.component.scss'
 })
 export class AuthorsComponent {
   authors: Author[] = [];

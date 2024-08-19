@@ -1,0 +1,14 @@
+button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    color: black;
+    transition: 0.5s;
+    &:hover {
+        background-color: black;
+        color: white;
+        border-color: black;
+    }
+}

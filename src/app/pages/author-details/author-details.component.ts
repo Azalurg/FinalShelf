@@ -10,7 +10,7 @@ import { invoke } from '@tauri-apps/api';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './author-details.component.html',
-  styleUrl: './author-details.component.css'
+  styleUrl: './author-details.component.scss'
 })
 export class AuthorDetailsComponent {
   authorDetails: AuthorDetails | any;

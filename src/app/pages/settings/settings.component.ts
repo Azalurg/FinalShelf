@@ -6,7 +6,7 @@ import { invoke } from '@tauri-apps/api/tauri';
   standalone: true,
   imports: [],
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.css'
+  styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {
   async scanDirectory(): Promise<void>{
