@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Result};
+use rusqlite::{params, Connection, Result, ToSql};
 
 pub fn get_db_connection() -> Result<Connection> {
     match std::env::var("DATABASE_URL") {
@@ -96,8 +96,44 @@ pub fn increment_book_duration(conn: &Connection, book_id: i64, duration: u64) -
     Ok(())
 }
 
-pub fn get_all_books_list_frontend(conn: &Connection) -> Result<Vec<FrontendBook>> {
-    let mut stmt = conn.prepare("SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id")?;
+pub fn get_filtered_and_paginated_books(
+    conn: &Connection,
+    author_id: Option<i64>,
+    genre_id: Option<i64>,
+    lector_id: Option<i64>,
+    sort_params: Option<&str>,
+    sort_order: Option<&str>,
+    page: u64,
+    page_size: u64,
+) -> Result<Vec<FrontendBook>> {
+    let mut query = "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id".to_string();
+
+    let mut conditions = Vec::new();
+
+    if let Some(author) = author_id {
+        conditions.push(format!("books.author_id = {}", author).to_string());
+    }
+    if let Some(genre) = genre_id {
+        conditions.push(format!("books.genre_id = {}", genre).to_string()); // Adjust based on your schema
+    }
+    if let Some(lector) = lector_id {
+        conditions.push(format!("books.lector_id = {}", lector).to_string());
+    }
+    if !conditions.is_empty() {
+        query.push_str(" WHERE ");
+        query.push_str(&conditions.join(" AND "));
+    }
+
+    if let Some(sort_params) = sort_params {
+        if let Some(sort_order) = sort_order {
+            query.push_str(format!(" ORDER BY {} {}", sort_params, sort_order).as_str());
+        }
+    }
+
+    query.push_str(&format!(" LIMIT {} OFFSET {}", page_size, page * page_size));
+    // println!("Query: {}\n", query);
+
+    let mut stmt = conn.prepare(&query)?;
     let book_iter = stmt.query_map([], |row| {
         Ok(FrontendBook {
             id: row.get(0)?,
@@ -193,9 +229,9 @@ pub fn get_author_by_id(conn: &Connection, author_id: i64) -> Result<AuthorDetai
         "SELECT authors.id, authors.name, authors.picture_path, books.id, books.title, books.cover_path
          FROM authors
          JOIN books ON authors.id = books.author_id
-         WHERE authors.id = ?1"
+         WHERE authors.id = ?1",
     )?;
-    
+
     let mut rows = stmt.query(params![author_id])?;
 
     let mut author = None;
@@ -220,14 +256,13 @@ pub fn get_author_by_id(conn: &Connection, author_id: i64) -> Result<AuthorDetai
         });
     }
 
-      if let Some(mut author_details) = author {
+    if let Some(mut author_details) = author {
         author_details.books = books;
         Ok(author_details)
     } else {
         Err(rusqlite::Error::QueryReturnedNoRows)
     }
 }
-
 
 // pub fn get_authors(conn: &Connection) -> Result<Vec<Author>> {
 //     let mut stmt = conn.prepare("SELECT id, name FROM authors")?;

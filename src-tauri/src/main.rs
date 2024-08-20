@@ -47,9 +47,26 @@ fn tauri_kill() -> Result<(), String> {
 // -------------------
 
 #[tauri::command]
-fn tauri_get_books() -> Result<Vec<structs::FrontendBook>, String> {
+fn tauri_get_books(
+    author_id: Option<i64>,
+    genre_id: Option<i64>,
+    lectror_id: Option<i64>,
+    sort_params: Option<&str>,
+    sort_order: Option<&str>,
+    page: u64,
+    page_size: u64,
+) -> Result<Vec<structs::FrontendBook>, String> {
     let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_all_books_list_frontend(&conn) {
+    match db::get_filtered_and_paginated_books(
+        &conn,
+        author_id,
+        genre_id,
+        lectror_id,
+        sort_params,
+        sort_order,
+        page,
+        page_size,
+    ) {
         Ok(books) => Ok(books),
         Err(e) => Err(e.to_string()),
     }

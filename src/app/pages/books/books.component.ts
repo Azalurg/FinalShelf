@@ -20,7 +20,7 @@ export class BooksComponent {
 
   async fetchBooks() {
     try {
-      const books = await invoke<Book[]>('tauri_get_books');
+      const books = await invoke<Book[]>('tauri_get_books', {page: 0, pageSize: 10});
       this.books = books;
     } catch (error) {
       console.error(error);

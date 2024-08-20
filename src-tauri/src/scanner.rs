@@ -36,8 +36,6 @@ fn look_for_author_photo(path: &str, name: &str) -> String {
     };
 
     return look_for_cover(directory);
-
-
 }
 
 pub fn quick_scan(directory: &str) -> Result<()> {
