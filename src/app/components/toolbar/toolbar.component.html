@@ -1,0 +1,22 @@
+<div class="toolbar">
+  <ul class="toolbar__location">
+    <li *ngFor="let breadcrumb of breadcrumbs; let last = last">
+      <ng-container *ngIf="!last">
+        <a [href]="breadcrumb.url">{{ breadcrumb.name }}</a>
+        <span>  >  </span>
+      </ng-container>
+      <ng-container *ngIf="last">
+        {{ breadcrumb.name }}
+      </ng-container>
+    </li>
+  </ul>
+
+  <div class="toolbar__search">
+    <input type="text" placeholder="Search" />
+    <img src="assets/icons/search-magnifying-glass-svgrepo-com.svg" alt="" />
+  </div>
+
+  <div class="toolbar__clock">
+    {{ currentTime }}
+  </div>
+</div>

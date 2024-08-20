@@ -1,0 +1,69 @@
+@use 'abstracts' as *;
+
+.toolbar{
+    display: grid;
+    grid-template-columns: 1fr calc(34vw + 4rem) 1fr;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+    background-color: $shadow-3;
+    color: #fff;
+
+}
+
+.toolbar__location {
+    list-style: none;
+    display: flex;
+    align-items: end;
+    padding: 0;
+    li{
+        text-transform: capitalize;
+        a{
+            text-decoration: none;
+            color: #fff;
+            font-weight: 900;
+        }
+        span{
+           white-space: pre;
+        }
+    }
+}
+
+.toolbar__search{
+    display: flex;
+    align-items: center;
+    input{
+        height: 2rem;
+        width: 34vw;
+        background-color: $shadow-3;
+        border: none;
+        border-radius: 0.55rem 0 0 0.55rem; 
+        padding-left: 0.55rem;
+        outline: none;
+        color: #fff;
+        font-size: 1rem;
+
+        &:focus{
+            outline: none;
+        }
+    }
+}
+
+img{
+    height: 2rem;
+    background-color: $shadow-3;
+    border-radius: 0 0.55rem 0.55rem 0;
+    padding: 0.34rem;
+
+    &:hover{
+        cursor: pointer;
+        background-color: $shadow-2;
+    }
+}
+
+.toolbar__clock{
+    width: 100%;
+    display: flex;
+    justify-content: right;
+}

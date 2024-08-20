@@ -8,4 +8,4 @@
 - przeczytane
 - ranking
 - ustawienia?
-
+- przejść z linków (a) na router

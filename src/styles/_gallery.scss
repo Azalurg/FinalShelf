@@ -20,7 +20,7 @@
     img{
         width: 100%;
         aspect-ratio: 1/1;
-        filter: brightness(0.85);
+        filter: brightness(0.89);
         border-radius: 0.55rem 0.55rem 0 0;
     }
 }
@@ -51,15 +51,9 @@
 .gallery>a:hover {
     text-decoration: none;
     cursor: pointer;
-    box-shadow: 0 0.55rem 1.22rem $shadow-1 !important;
     transform: scale(1.05) translateY(-5%);
     img{
         filter: brightness(1);
     }
     
-}
-
-.shadow {
-    transition:$transition;
-    box-shadow: 0 0.21rem 0.89rem $shadow-2;
 }

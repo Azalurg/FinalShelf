@@ -3,7 +3,7 @@
 body {
     color: $foreground;
     background: $background-1;
-    background: linear-gradient(10deg, $background-1 21%, $background-2 89%);
+    background: linear-gradient(10deg, $background-1 21%, $background-2 89%,);
     // font-family: $ff-base;
     min-height: 100vh;
     line-height: 1.5;
@@ -28,37 +28,10 @@ body {
     width: 100%;
 }
 
-.navbar{
-    width: 89px;
-    background-color: #22222234;
-    height: 100vh;
-    display:  flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
-.navbar__icon, .navbar__logo{
-    width: 55px;
-}
-
-ul{
-    list-style-type: none;
-    padding: 0;
-
-
-    li:hover{
-        background-color: #22222234;
+.shadow {
+    transition:$transition;
+    box-shadow: 0.21rem 0.21rem 0.89rem $shadow-2;
+    &:hover {
+        box-shadow: 0.55rem 0.55rem 1.22rem $shadow-1 !important;
     }
-}
-
-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
 }
