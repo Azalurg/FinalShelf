@@ -9,12 +9,12 @@ import { invoke } from '@tauri-apps/api/tauri';
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {
-  async scanDirectory(): Promise<void>{
+  async fullScan(): Promise<void>{
     try{
-      const directory = prompt("Enter directory path to scan for books: ")
+      const directory = prompt("Enter directory path to scan for books (it can take few minutes): ")
       if (directory) {
-        await invoke("tauri_scan", {directory});
-        alert("Scan completed successfully!")
+        await invoke("tauri_full_scan", {directory});
+        alert("Scan completed successfully!") // TODO: fix alerts
       }
     }
     catch(error) {
@@ -23,10 +23,26 @@ export class SettingsComponent {
     }
   }
 
+  async quickScan(): Promise<void>{
+    try{
+        const directory = prompt("Enter directory path to scan for books: ")
+        await invoke("tauri_quick_scan", {directory});
+        alert("Scan completed successfully!")
+      }
+    catch(error) {
+      console.error("Error - tauri_quick_scan", error);
+      alert("Error")
+    }
+  }
+
   async clearDatabase(): Promise<void>{
     try{
+        const consent = prompt("Are you sure you want to clear the database? This action cannot be undone. Write 'delate database' to confirm.")
+        if (consent !== 'delete database'){
+          return
+        }
         await invoke("tauri_clear_db");
-        alert("Scan completed successfully!")
+        alert("Database cleared successfully!")
       }
     catch(error) {
       console.error("Error - tauri_clear_db", error);
