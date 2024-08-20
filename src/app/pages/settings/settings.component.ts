@@ -37,8 +37,9 @@ export class SettingsComponent {
 
   async clearDatabase(): Promise<void>{
     try{
-        const consent = prompt("Are you sure you want to clear the database? This action cannot be undone. Write 'delate database' to confirm.")
-        if (consent !== 'delete database'){
+        const consent = prompt("Are you sure you want to clear the database? This action cannot be undone. Write 'yes' to confirm.")
+        if (consent !== "yes"){
+          console.log("User did not confirm");
           return
         }
         await invoke("tauri_clear_db");

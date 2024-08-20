@@ -29,6 +29,17 @@ fn look_for_cover(directory: &str) -> String {
     String::new()
 }
 
+fn look_for_author_photo(path: &str, name: &str) -> String {
+    let directory = match path.find(name) {
+        Some(index) => &path[..index + name.len()],
+        None => return String::new(),
+    };
+
+    return look_for_cover(directory);
+
+
+}
+
 pub fn quick_scan(directory: &str) -> Result<()> {
     println!("Quick scan in {}", directory);
     let conn = db::get_db_connection()?;
@@ -99,8 +110,9 @@ fn process_metadata(conn: &rusqlite::Connection, tag: &Tag, parent_path: &str) -
     let author = Author {
         id: 0,
         name: author_name.clone(),
-        picture_path: "".to_string(),
+        picture_path: look_for_author_photo(parent_path, &author_name),
     };
+    println!("Author: {}", author.picture_path);
 
     let author_id = db::get_or_create_author(conn, &author)?;
     let lector_id = db::get_or_create_lector(conn, &lector)?;

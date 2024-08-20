@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AuthorDetails } from '../../models/authors';
-import { convertImgPathAuthor } from '../../common/convertImgPath';
+import { convertImgPathAuthor, convertImgPathBook } from '../../common/convertImgPath';
 import { ActivatedRoute } from '@angular/router';
 import { invoke } from '@tauri-apps/api';
 
@@ -15,7 +15,9 @@ import { invoke } from '@tauri-apps/api';
 export class AuthorDetailsComponent {
   authorDetails: AuthorDetails | any;
 
-  getSrc = (path: string) => convertImgPathAuthor(path);
+  getSrcAuthor = (path: string) => convertImgPathAuthor(path);
+  getSrcBook = (path: string) => convertImgPathBook(path);
+
   
   constructor(private route: ActivatedRoute) { }
 
