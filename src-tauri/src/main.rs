@@ -105,6 +105,50 @@ fn tauri_get_author_details(author_id: i64) -> Result<structs::AuthorDetails, St
 }
 
 // -------------------
+// Lector functions
+// -------------------
+
+#[tauri::command]
+fn tauri_get_lectors() -> Result<Vec<structs::Lector>, String> {
+    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
+    match db::get_all_lectors(&conn) {
+        Ok(lectors) => Ok(lectors),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+fn tauri_get_lector_details(lector_id: i64) -> Result<structs::LectorDetails, String> {
+    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
+    match db::get_lector_by_id(&conn, lector_id) {
+        Ok(lector) => Ok(lector),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+// -------------------
+// Genre functions
+// -------------------
+
+#[tauri::command]
+fn tauri_get_genres() -> Result<Vec<structs::Genre>, String> {
+    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
+    match db::get_all_genres(&conn) {
+        Ok(genres) => Ok(genres),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+fn tauri_get_genre_details(genre_id: i64) -> Result<structs::GenreDetails, String> {
+    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
+    match db::get_genre_by_id(&conn, genre_id) {
+        Ok(genre) => Ok(genre),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+// -------------------
 // Dashboard functions
 // -------------------
 
@@ -135,7 +179,11 @@ fn main() {
             tauri_get_book_details,
             tauri_get_authors,
             tauri_get_author_details,
-            tauri_get_dashboard_data
+            tauri_get_dashboard_data,
+            tauri_get_lectors,
+            tauri_get_lector_details,
+            tauri_get_genres,
+            tauri_get_genre_details,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

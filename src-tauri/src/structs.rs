@@ -17,14 +17,28 @@ pub struct AuthorDetails {
 
 #[derive(Serialize)]
 pub struct Lector {
-    id: i64,
-    name: String,
+    pub(crate) id: i64,
+    pub name: String,
+}
+
+#[derive(Serialize)]
+pub struct LectorDetails {
+    pub id: i64,
+    pub name: String,
+    pub books: Vec<FrontendBook>,
 }
 
 #[derive(Serialize)]
 pub struct Genre {
-    id: i64,
-    name: String,
+    pub id: i64,
+    pub name: String,
+}
+
+#[derive(Serialize)]
+pub struct GenreDetails {
+    pub id: i64,
+    pub name: String,
+    pub books: Vec<FrontendBook>,
 }
 
 #[derive(Serialize)]

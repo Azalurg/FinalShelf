@@ -35,3 +35,30 @@ body {
         box-shadow: 0.55rem 0.55rem 1.22rem $shadow-1 !important;
     }
 }
+
+.app-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(233px, 1fr));
+    grid-template-rows: 3rem;
+    gap: 21px;
+    align-content: center;
+    justify-content: center;
+    align-items: start;
+    justify-items: center;
+
+    list-style: none;
+    a{
+        text-decoration: none;
+        font-weight: 600;
+        color: $foreground;
+        transition: $transition;
+        background-color: $shadow-3;
+        padding: 1rem;
+        border-radius: 0.55rem;
+        display: block;
+        &:hover{
+            color: $accent-1;
+            font-size: 1.1rem;
+        }
+    };
+}

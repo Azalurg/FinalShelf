@@ -299,6 +299,61 @@ pub fn get_or_create_lector(conn: &Connection, lector_name: &str) -> Result<i64>
     Ok(lector_id)
 }
 
+pub fn get_all_lectors(conn: &Connection) -> Result<Vec<Lector>> {
+    let mut stmt = conn.prepare("SELECT id, name FROM lectors")?;
+    let lector_iter = stmt.query_map([], |row| {
+        Ok(Lector {
+            id: row.get(0)?,
+            name: row.get(1)?,
+        })
+    })?;
+
+    let mut lectors = Vec::new();
+    for lector in lector_iter {
+        lectors.push(lector?);
+    }
+    Ok(lectors)
+}
+
+pub fn get_lector_by_id(conn: &Connection, lector_id: i64) -> Result<LectorDetails> {
+    let mut stmt = conn.prepare(
+        "SELECT lectors.id, lectors.name, books.id, books.title, books.cover_path
+         FROM lectors
+         JOIN books ON lectors.id = books.lector_id
+         WHERE lectors.id = ?1",
+    )?;
+
+    let mut rows = stmt.query(params![lector_id])?;
+
+    let mut lector = None;
+    let mut books = Vec::new();
+
+    while let Some(row) = rows.next()? {
+        if lector.is_none() {
+            lector = Some(LectorDetails {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                books: Vec::new(),
+            });
+        }
+
+        books.push(FrontendBook {
+            id: row.get(2)?,
+            title: row.get(3)?,
+            cover_path: row.get(4)?,
+            author_id: 0,
+            author_name: "".to_string(),
+        });
+    }
+
+    if let Some(mut lector_details) = lector {
+        lector_details.books = books;
+        Ok(lector_details)
+    } else {
+        Err(rusqlite::Error::QueryReturnedNoRows)
+    }
+}
+
 // -------------------------
 // Genre database functions
 // -------------------------
@@ -316,6 +371,61 @@ pub fn get_or_create_genre(conn: &Connection, genre_name: &str) -> Result<i64> {
 
     let genre_id = conn.last_insert_rowid();
     Ok(genre_id)
+}
+
+pub fn get_all_genres(conn: &Connection) -> Result<Vec<Genre>> {
+    let mut stmt = conn.prepare("SELECT id, name FROM genres")?;
+    let genre_iter = stmt.query_map([], |row| {
+        Ok(Genre {
+            id: row.get(0)?,
+            name: row.get(1)?,
+        })
+    })?;
+
+    let mut genres = Vec::new();
+    for genre in genre_iter {
+        genres.push(genre?);
+    }
+    Ok(genres)
+}
+
+pub fn get_genre_by_id(conn: &Connection, genre_id: i64) -> Result<GenreDetails> {
+    let mut stmt = conn.prepare(
+        "SELECT genres.id, genres.name, books.id, books.title, books.cover_path
+         FROM genres
+         JOIN books ON genres.id = books.genre_id
+         WHERE genres.id = ?1",
+    )?;
+
+    let mut rows = stmt.query(params![genre_id])?;
+
+    let mut genre = None;
+    let mut books = Vec::new();
+
+    while let Some(row) = rows.next()? {
+        if genre.is_none() {
+            genre = Some(GenreDetails {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                books: Vec::new(),
+            });
+        }
+
+        books.push(FrontendBook {
+            id: row.get(2)?,
+            title: row.get(3)?,
+            cover_path: row.get(4)?,
+            author_id: 0,
+            author_name: "".to_string(),
+        });
+    }
+
+    if let Some(mut genre_details) = genre {
+        genre_details.books = books;
+        Ok(genre_details)
+    } else {
+        Err(rusqlite::Error::QueryReturnedNoRows)
+    }
 }
 
 // -------------------------
@@ -349,7 +459,7 @@ pub fn get_dashboard_data(conn: &Connection) -> Result<DashboardData> {
 
 use std::fs;
 
-use crate::structs::{Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails};
+use crate::structs::{Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails, Genre, GenreDetails, Lector, LectorDetails};
 // TODO: Change this function in the future
 pub fn clear_db() -> Result<()> {
     match std::env::var("DATABASE_URL") {

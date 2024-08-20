@@ -5,6 +5,7 @@ import { SettingsComponent } from "./pages/settings/settings.component";
 import { BookDetailsComponent } from "./pages/book-details/book-details.component";
 import { AuthorsComponent } from "./pages/authors/authors.component";
 import { AuthorDetailsComponent } from "./pages/author-details/author-details.component";
+import { LectorsComponent } from "./pages/lectors/lectors.component";
 
 
 export const routes: Routes = [
@@ -27,6 +28,10 @@ export const routes: Routes = [
   {
     path: 'authors/:id',
     component: AuthorDetailsComponent
+  },
+  {
+    path: 'lectors',
+    component: LectorsComponent
   },
   {
     path: 'settings',
