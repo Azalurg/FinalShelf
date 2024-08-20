@@ -3,7 +3,7 @@ use rusqlite::{params, Connection, Result};
 pub fn get_db_connection() -> Result<Connection> {
     match std::env::var("DATABASE_URL") {
         Ok(url) => Connection::open(url),
-        Err(_) => Connection::open("finalshelf.db")
+        Err(_) => Connection::open("finalshelf.db"),
     }
 }
 
@@ -216,7 +216,6 @@ pub fn get_author_by_id(conn: &Connection, author_id: i64) -> Result<AuthorDetai
     Err(rusqlite::Error::QueryReturnedNoRows)
 }
 
-
 // pub fn get_authors(conn: &Connection) -> Result<Vec<Author>> {
 //     let mut stmt = conn.prepare("SELECT id, name FROM authors")?;
 //     let author_iter = stmt.query_map([], |row| {
@@ -246,10 +245,7 @@ pub fn get_or_create_lector(conn: &Connection, lector_name: &str) -> Result<i64>
         return Ok(lector_id);
     }
 
-    conn.execute(
-        "INSERT INTO lectors (name) VALUES (?1)",
-        params![lector_name],
-    )?;
+    conn.execute("INSERT INTO lectors (name) VALUES (?1)", params![lector_name])?;
 
     let lector_id = conn.last_insert_rowid();
     Ok(lector_id)
@@ -278,7 +274,7 @@ pub fn get_or_create_genre(conn: &Connection, genre_name: &str) -> Result<i64> {
 // Dashboard
 // -------------------------
 
-pub fn get_dashboard_data(conn: &Connection) -> Result<(DashboardData)> {
+pub fn get_dashboard_data(conn: &Connection) -> Result<DashboardData> {
     let mut stmt = conn.prepare("SELECT COUNT(*) FROM authors")?;
     let authors_amount: i64 = stmt.query_row([], |row| row.get(0))?;
 
@@ -299,7 +295,6 @@ pub fn get_dashboard_data(conn: &Connection) -> Result<(DashboardData)> {
     })
 }
 
-
 // -------------------------
 // TODO
 // -------------------------
@@ -311,7 +306,7 @@ use crate::structs::{Author, AuthorDetails, DBBook, DashboardData, FrontendBook,
 pub fn clear_db() -> Result<()> {
     match std::env::var("DATABASE_URL") {
         Ok(url) => fs::remove_file(url).ok(),
-        Err(_) => fs::remove_file("finalshelf.db").ok()
+        Err(_) => fs::remove_file("finalshelf.db").ok(),
     };
     Ok(())
 }

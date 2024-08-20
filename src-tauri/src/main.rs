@@ -5,7 +5,7 @@ use dotenv::dotenv;
 use rusqlite::Result;
 
 pub mod db;
-pub mod metadata;
+pub mod scanner;
 pub mod structs;
 
 // -------------------
@@ -13,8 +13,16 @@ pub mod structs;
 // -------------------
 
 #[tauri::command]
-fn tauri_scan(directory: String) -> Result<(), String> {
-    match metadata::scan_for_metadata(directory) {
+fn tauri_full_scan(directory: String) -> Result<(), String> {
+    match scanner::full_scan(&directory) {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+fn tauri_quick_scan(directory: String) -> Result<(), String> {
+    match scanner::quick_scan(&directory) {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),
     }
@@ -61,7 +69,6 @@ fn tauri_get_book_details(book_id: i64) -> Result<structs::FrontendBookDetails, 
 // Author functions
 // -------------------
 
-
 #[tauri::command]
 fn tauri_get_authors() -> Result<Vec<structs::Author>, String> {
     let conn = db::get_db_connection().map_err(|e| e.to_string())?;
@@ -93,7 +100,6 @@ fn tauri_get_dashboard_data() -> Result<structs::DashboardData, String> {
     }
 }
 
-
 fn main() {
     dotenv().ok();
 
@@ -104,7 +110,8 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            tauri_scan,
+            tauri_full_scan,
+            tauri_quick_scan,
             tauri_clear_db,
             tauri_kill,
             tauri_get_books,
