@@ -189,32 +189,45 @@ pub fn get_all_authors(conn: &Connection) -> Result<Vec<Author>> {
 }
 
 pub fn get_author_by_id(conn: &Connection, author_id: i64) -> Result<AuthorDetails> {
-    let mut stmt = conn.prepare("SELECT authors.id, authors.name, authors.picture_path, books.id, books.title, books.cover_path FROM authors JOIN books ON authors.id = books.author_id WHERE authors.id = ?1")?;
+    let mut stmt = conn.prepare(
+        "SELECT authors.id, authors.name, authors.picture_path, books.id, books.title, books.cover_path
+         FROM authors
+         JOIN books ON authors.id = books.author_id
+         WHERE authors.id = ?1"
+    )?;
+    
     let mut rows = stmt.query(params![author_id])?;
 
-    if let Some(row) = rows.next()? {
-        let mut author = AuthorDetails {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            picture_path: row.get(2)?,
-            books: Vec::new(),
-        };
+    let mut author = None;
+    let mut books = Vec::new();
 
-        let mut books = Vec::new();
+    while let Some(row) = rows.next()? {
+        if author.is_none() {
+            author = Some(AuthorDetails {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                picture_path: row.get(2)?,
+                books: Vec::new(),
+            });
+        }
+
         books.push(FrontendBook {
             id: row.get(3)?,
             title: row.get(4)?,
             cover_path: row.get(5)?,
-            author_id: author.id,
-            author_name: author.name.clone(),
+            author_id: author_id,
+            author_name: author.as_ref().unwrap().name.clone(),
         });
-
-        author.books = books;
-        return Ok(author);
     }
 
-    Err(rusqlite::Error::QueryReturnedNoRows)
+      if let Some(mut author_details) = author {
+        author_details.books = books;
+        Ok(author_details)
+    } else {
+        Err(rusqlite::Error::QueryReturnedNoRows)
+    }
 }
+
 
 // pub fn get_authors(conn: &Connection) -> Result<Vec<Author>> {
 //     let mut stmt = conn.prepare("SELECT id, name FROM authors")?;
