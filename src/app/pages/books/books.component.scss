@@ -1,10 +1,18 @@
 @use 'abstracts' as *;
 
-.app-pagination {
-    width: 100%;
+.app-pagination,
+.app-sort{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.book-toolbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 21%;
 }
 
 button {

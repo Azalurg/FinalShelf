@@ -1,21 +1,22 @@
-import { Component } from '@angular/core';
-import { invoke } from '@tauri-apps/api/tauri';
-import { CommonModule } from '@angular/common';
-import { Book } from '../../models/books';
-import { convertImgPathBook } from '../../common/convertImgPath';
+import { Component } from "@angular/core";
+import { invoke } from "@tauri-apps/api/tauri";
+import { CommonModule } from "@angular/common";
+import { Book } from "../../models/books";
+import { convertImgPathBook } from "../../common/convertImgPath";
 
 @Component({
-  selector: 'app-books',
+  selector: "app-books",
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './books.component.html',
-  styleUrl: './books.component.scss'
+  templateUrl: "./books.component.html",
+  styleUrl: "./books.component.scss",
 })
-
 export class BooksComponent {
   books: Book[] = [];
   page = 0;
   pageSize = 25;
+  sortParams: any = "authors.name, title";
+  sortOrder: any = "ASC";
 
   getSrc = (path: string) => convertImgPathBook(path);
   ngOnInit(): void {
@@ -24,12 +25,17 @@ export class BooksComponent {
 
   async fetchBooks(): Promise<void> {
     try {
-      const books = await invoke<Book[]>('tauri_get_books', {page: this.page, pageSize: this.pageSize});
+      const books = await invoke<Book[]>("tauri_get_books", {
+        page: this.page,
+        pageSize: this.pageSize,
+        sortParams: this.sortParams,
+        sortOrder: this.sortOrder,
+      });
       this.books = books;
     } catch (error) {
       console.error(error);
     }
-  } 
+  }
 
   async nextPage(): Promise<void> {
     this.page++;
@@ -38,7 +44,6 @@ export class BooksComponent {
       this.page--;
       await this.fetchBooks();
     }
-
   }
 
   prevPage(): void {
@@ -53,9 +58,35 @@ export class BooksComponent {
     const newPageSize = parseInt(selectElement.value, 10);
 
     this.pageSize = newPageSize;
-    this.page = 0;  // Reset to the first page whenever the page size changes
+    this.page = 0; // Reset to the first page whenever the page size changes
     await this.fetchBooks();
-}
+  }
+
+  async changeSortOrder(event: Event): Promise<void> {
+    const selectElement = event.target as HTMLSelectElement;
+    const value = parseInt(selectElement.value, 0);
+    if (value === 0) {
+      this.sortParams = null;
+      this.sortOrder = null;
+    }
+    if (value === 1) {
+      this.sortParams = "title";
+      this.sortOrder = "ASC";
+    }
+    if (value === 2) {
+      this.sortParams = "title";
+      this.sortOrder = "DESC";
+    }
+    if (value === 3) {
+      this.sortParams = "authors.name, title";
+      this.sortOrder = "ASC";
+    }
+    if (value === 4) {
+      this.sortParams = "authors.name, title";
+      this.sortOrder = "DESC";
+    }
+    await this.fetchBooks();
+  }
 }
 
 // https://github.com/sprout2000/tauview/blob/main/src/Grid.tsx
