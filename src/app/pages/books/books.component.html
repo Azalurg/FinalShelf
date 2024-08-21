@@ -1,6 +1,16 @@
 <div class="app-page">
     <h1>Book list</h1>
-    <div class="gallery">
+    <div class="app-pagination">
+        <button (click)="prevPage()" style="margin-right: 1rem;"><img src="assets/icons/chevron-left-duo-svgrepo-com.svg"></button>
+        <select id="pageSize" (change)="changePageSize($event)">
+            <option [value]="10">10</option>
+            <option [value]="25" selected>25</option>
+            <option [value]="50">50</option>
+            <option [value]="100">100</option>
+        </select>
+        <button (click)="nextPage()" style="margin-left: 1rem;"><img src="assets/icons/chevron-right-duo-svgrepo-com.svg"></button>
+    </div>  
+        <div class="gallery">
         <a *ngFor="let book of books" class="gallery-item shadow" href="/books/{{book.id}}">
             <img src={{getSrc(book.cover_path)}} alt="image">
             <div class="gallery-text gallery-tex-first">{{book.title}}</div>
