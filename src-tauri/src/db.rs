@@ -454,10 +454,46 @@ pub fn get_dashboard_data(conn: &Connection) -> Result<DashboardData> {
 }
 
 // -------------------------
+// Search
+// -------------------------
+
+pub fn search_books(conn: &Connection, search_query: &str) -> Result<Vec<FrontendBook>> {
+    let mut found_books = HashMap::new();
+    let search_query = format!("%{}%", search_query);
+    
+    let queries = [
+        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id WHERE books.title LIKE ?1",
+        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id WHERE authors.name LIKE ?1",
+        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id JOIN genres ON genres.id = books.genre_id WHERE genres.name LIKE ?1",
+        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id JOIN lectors ON lectors.id = books.lector_id WHERE lectors.name LIKE ?1",
+    ];
+    
+    for query in &queries {
+        let mut stmt = conn.prepare(query)?;
+        let mut rows = stmt.query(params![&search_query])?;
+        
+        while let Some(row) = rows.next()? {
+            let book = FrontendBook {
+                id: row.get(0)?,
+                title: row.get(1)?,
+                cover_path: row.get(2)?,
+                author_id: row.get(3)?,
+                author_name: row.get(4)?,
+            };
+            found_books.insert(book.id, book);
+        }
+    }
+
+    Ok(found_books.into_iter().map(|(_, book)| book).collect())
+}
+
+
+
+// -------------------------
 // TODO
 // -------------------------
 
-use std::fs;
+use std::{collections::HashMap, fs, hash::Hash};
 
 use crate::structs::{Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails, Genre, GenreDetails, Lector, LectorDetails};
 // TODO: Change this function in the future

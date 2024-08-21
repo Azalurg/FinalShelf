@@ -1,0 +1,7 @@
+<div class="gallery">
+    <a *ngFor="let book of books" class="gallery-item shadow" href="/books/{{book.id}}">
+        <img src={{getSrc(book.cover_path)}} alt="image">
+        <div class="gallery-text gallery-tex-first">{{book.title}}</div>
+        <a class="gallery-text gallery-text-second">{{book.author_name}}</a>
+    </a>
+</div>

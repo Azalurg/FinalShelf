@@ -161,6 +161,19 @@ fn tauri_get_dashboard_data() -> Result<structs::DashboardData, String> {
     }
 }
 
+// // -------------------
+// // Search functions
+// // -------------------
+
+#[tauri::command]
+fn tauri_search_books(search_query: &str) -> Result<Vec<structs::FrontendBook>, String> {
+    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
+    match db::search_books(&conn, search_query) {
+        Ok(books) => Ok(books),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
 fn main() {
     dotenv().ok();
 
@@ -184,6 +197,7 @@ fn main() {
             tauri_get_lector_details,
             tauri_get_genres,
             tauri_get_genre_details,
+            tauri_search_books
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

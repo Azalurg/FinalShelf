@@ -1,11 +1,15 @@
+# FinalShelf
+
 ## Todo
 
-- paginacja
-- sortowanie
+### Implementacja
+
 - filtrowanie
-- nawigacja w aplikacji (dodatkowy panel górny)
-- zegarek
 - przeczytane
 - ranking
 - ustawienia?
+
+### Angular
+
 - przejść z linków (a) na router
+- naprawić / usprawnić wyszukiwanie (nowy design)

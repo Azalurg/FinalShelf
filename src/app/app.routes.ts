@@ -6,6 +6,7 @@ import { BookDetailsComponent } from "./pages/book-details/book-details.componen
 import { AuthorsComponent } from "./pages/authors/authors.component";
 import { AuthorDetailsComponent } from "./pages/author-details/author-details.component";
 import { LectorsComponent } from "./pages/lectors/lectors.component";
+import { SearchComponent } from "./pages/search/search.component";
 
 
 export const routes: Routes = [
@@ -36,5 +37,9 @@ export const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent
+  },
+  {
+    path: 'search',
+    component: SearchComponent
   }
 ]

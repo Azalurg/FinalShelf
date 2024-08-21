@@ -14,6 +14,8 @@ export class ToolbarComponent {
   currentTime: string = '';
 
   private intervalId: any;
+  
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.generateBreadcrumbs();
@@ -43,5 +45,9 @@ export class ToolbarComponent {
   private updateTime(): void {
     const now = new Date();
     this.currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  searchIt() {
+    this.router.navigate(['/search']);
   }
 }

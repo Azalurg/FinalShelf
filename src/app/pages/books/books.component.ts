@@ -2,12 +2,12 @@ import { Component } from "@angular/core";
 import { invoke } from "@tauri-apps/api/tauri";
 import { CommonModule } from "@angular/common";
 import { Book } from "../../models/books";
-import { convertImgPathBook } from "../../common/convertImgPath";
+import { BookListComponent } from "./book-list/book-list.component";
 
 @Component({
   selector: "app-books",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BookListComponent],
   templateUrl: "./books.component.html",
   styleUrl: "./books.component.scss",
 })
@@ -18,7 +18,7 @@ export class BooksComponent {
   sortParams: any = "authors.name, title";
   sortOrder: any = "ASC";
 
-  getSrc = (path: string) => convertImgPathBook(path);
+
   ngOnInit(): void {
     this.fetchBooks();
   }
