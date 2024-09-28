@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from '@tauri-apps/api/tauri';
 import { BookDetails } from '../../models/books';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,7 @@ import { convertImgPathBook } from '../../common/convertImgPath';
 @Component({
   selector: 'app-book-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './book-details.component.html',
   styleUrls: ['./book-details.component.scss']
 })

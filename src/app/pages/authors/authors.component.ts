@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { convertImgPathAuthor } from '../../common/convertImgPath';
 import { invoke } from '@tauri-apps/api';
 import { Author } from '../../models/authors';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-authors',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './authors.component.html',
   styleUrl: './authors.component.scss'
 })

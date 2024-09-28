@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AuthorDetails } from '../../models/authors';
 import { convertImgPathAuthor, convertImgPathBook } from '../../common/convertImgPath';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from '@tauri-apps/api';
 
 @Component({
   selector: 'app-author-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './author-details.component.html',
   styleUrl: './author-details.component.scss'
 })

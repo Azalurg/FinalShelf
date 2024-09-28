@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { invoke } from '@tauri-apps/api/tauri';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })

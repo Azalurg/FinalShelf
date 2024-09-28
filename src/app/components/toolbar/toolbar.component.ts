@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, UrlSegment } from '@angular/router';
 
 @Component({
   selector: 'app-toolbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.scss'
 })
 export class ToolbarComponent {
-  breadcrumbs: { name: string, url: string }[] = [];
+  navPaths: { name: string, url: string }[] = [];
   currentTime: string = '';
 
   private intervalId: any;
@@ -18,22 +18,22 @@ export class ToolbarComponent {
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    this.generateBreadcrumbs();
+    this.generateNavPaths();
     this.updateTime();
     this.intervalId = setInterval(() => this.updateTime(), 5000);
   }
 
   ngOnDestroy(): void {
     if (this.intervalId) {
-      clearInterval(this.intervalId); // Clear interval when the component is destroyed
+      clearInterval(this.intervalId);
     }
   }
 
-  generateBreadcrumbs(): void {
-    const urlSegments = window.location.pathname.split('/').filter(segment => segment);
+  generateNavPaths(): void {
+    const urlSegments = this.router.url.split('/').filter(segment => segment);
     let fullUrl = '';
-
-    this.breadcrumbs = urlSegments.map((segment, index) => {
+  
+    this.navPaths = urlSegments.map((segment, index) => {
       fullUrl += `/${segment}`;
       return {
         name: segment,

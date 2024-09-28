@@ -10,7 +10,7 @@
         <tr>
           <td class="details-info-label">Author</td>
           <td class="details-info-value">
-            <a class="details-link" [href]="'/authors/' + bookDetails.author_id">{{ bookDetails.author_name }}</a>
+            <a class="details-link" [routerLink]="['/authors', bookDetails.author_id]">{{ bookDetails.author_name }}</a>
           </td>
         </tr>
         <tr>

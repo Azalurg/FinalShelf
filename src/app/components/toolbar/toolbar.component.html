@@ -1,12 +1,12 @@
 <div class="toolbar">
   <ul class="toolbar__location">
-    <li *ngFor="let breadcrumb of breadcrumbs; let last = last">
+    <li *ngFor="let navPath of navPaths; let last = last">
       <ng-container *ngIf="!last">
-        <a [href]="breadcrumb.url">{{ breadcrumb.name }}</a>
+        <a [routerLink]="[navPath.url]">{{ navPath.name }}</a>
         <span>  >  </span>
       </ng-container>
       <ng-container *ngIf="last">
-        {{ breadcrumb.name }}
+        {{ navPath.name }}
       </ng-container>
     </li>
   </ul>

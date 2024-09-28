@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { invoke } from '@tauri-apps/api';
 
 @Component({
   selector: 'app-lectors',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './lectors.component.html',
   styleUrl: './lectors.component.scss'
 })

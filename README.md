@@ -36,5 +36,5 @@ This section for now in Polish, app in development ;-)
 
 ### Angular
 
-- przejść z linków (a) na router
 - naprawić / usprawnić wyszukiwanie (nowy design)
+- fix toolbar navPaths

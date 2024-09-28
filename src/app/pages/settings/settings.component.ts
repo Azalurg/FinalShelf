@@ -9,6 +9,9 @@ import { invoke } from '@tauri-apps/api/tauri';
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {
+
+  darkMode = false;
+
   async fullScan(): Promise<void>{
     try{
       const directory = prompt("Enter directory path to scan for books (it can take few minutes): ")
@@ -49,5 +52,11 @@ export class SettingsComponent {
       console.error("Error - tauri_clear_db", error);
       alert("Error")
     }
+  }
+
+  toggleDarkMode(): void {
+    this.darkMode = !this.darkMode;
+    document.body.classList.toggle('dark', this.darkMode);
+    console.log("Dark mode: ", this.darkMode);
   }
 }
