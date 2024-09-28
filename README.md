@@ -9,6 +9,10 @@
 - ranking
 - ustawienia?
 
+### Rust
+
+- Przechowywanie lokacji w formie ścieżki względnej
+
 ### Angular
 
 - przejść z linków (a) na router

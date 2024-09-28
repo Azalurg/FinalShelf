@@ -17,6 +17,7 @@
     display: flex;
     align-items: end;
     padding: 0;
+    margin: 0;
     li{
         text-transform: capitalize;
         a{
@@ -33,6 +34,7 @@
 .toolbar__search{
     display: flex;
     align-items: center;
+    margin: 0.5rem 0;
     input{
         height: 2rem;
         width: 34vw;

@@ -1,8 +1,8 @@
 <div class="app-page">
     <h1>Lectors</h1>
-    <ul class="app-list">
-        <li *ngFor="let lector of lectors">
+    <div class="app-grid">
+        <div *ngFor="let lector of lectors" class="grid-item">
             <a [href]="'/lectors/'+ lector.id">{{ lector.name }}</a>
-        </li>    
-    </ul>
+        </div>    
+    </div>
 </div>
