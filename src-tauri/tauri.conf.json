@@ -33,9 +33,9 @@
     },
     "windows": [
       {
-        "title": "finalshelf",
-        "width": 1280,
-        "height": 720
+        "title": "FinalShelf",
+        "width": 1360,
+        "height": 850
       }
     ],
     "security": {

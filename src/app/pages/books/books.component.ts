@@ -14,7 +14,7 @@ import { BookListComponent } from "./book-list/book-list.component";
 export class BooksComponent {
   books: Book[] = [];
   page = 0;
-  pageSize = 25;
+  pageSize = 21;
   sortParams: any = "authors.name, title";
   sortOrder: any = "ASC";
 
@@ -82,8 +82,8 @@ export class BooksComponent {
       this.sortOrder = "ASC";
     }
     if (value === 4) {
-      this.sortParams = "authors.name, title";
-      this.sortOrder = "DESC";
+      this.sortParams = "authors.name DESC, title";
+      this.sortOrder = "ASC";
     }
     await this.fetchBooks();
   }
