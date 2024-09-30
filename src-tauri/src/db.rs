@@ -299,12 +299,19 @@ pub fn get_or_create_lector(conn: &Connection, lector_name: &str) -> Result<i64>
     Ok(lector_id)
 }
 
-pub fn get_all_lectors(conn: &Connection) -> Result<Vec<Lector>> {
-    let mut stmt = conn.prepare("SELECT id, name FROM lectors")?;
+pub fn get_all_lectors(conn: &Connection) -> Result<Vec<LectorList>> {
+    let mut stmt = conn.prepare(
+        "SELECT l.id, l.name, COUNT(b.id) AS book_amount 
+        FROM lectors l 
+        JOIN books b ON l.id = b.lector_id 
+        GROUP BY l.id
+        ORDER BY book_amount DESC",
+    )?;
     let lector_iter = stmt.query_map([], |row| {
-        Ok(Lector {
+        Ok(LectorList {
             id: row.get(0)?,
             name: row.get(1)?,
+            books: row.get(2)?,
         })
     })?;
 
@@ -317,10 +324,11 @@ pub fn get_all_lectors(conn: &Connection) -> Result<Vec<Lector>> {
 
 pub fn get_lector_by_id(conn: &Connection, lector_id: i64) -> Result<LectorDetails> {
     let mut stmt = conn.prepare(
-        "SELECT lectors.id, lectors.name, books.id, books.title, books.cover_path
-         FROM lectors
-         JOIN books ON lectors.id = books.lector_id
-         WHERE lectors.id = ?1",
+        "SELECT l.id, l.name, b.id, b.title, b.cover_path, b.author_id, a.name
+         FROM lectors l
+         JOIN books b ON l.id = b.lector_id
+         JOIN authors a ON b.author_id = a.id
+         WHERE l.id = ?1",
     )?;
 
     let mut rows = stmt.query(params![lector_id])?;
@@ -341,8 +349,8 @@ pub fn get_lector_by_id(conn: &Connection, lector_id: i64) -> Result<LectorDetai
             id: row.get(2)?,
             title: row.get(3)?,
             cover_path: row.get(4)?,
-            author_id: 0,
-            author_name: "".to_string(),
+            author_id: row.get(5)?,
+            author_name: row.get(6)?,
         });
     }
 
@@ -460,18 +468,18 @@ pub fn get_dashboard_data(conn: &Connection) -> Result<DashboardData> {
 pub fn search_books(conn: &Connection, search_query: &str) -> Result<Vec<FrontendBook>> {
     let mut found_books = HashMap::new();
     let search_query = format!("%{}%", search_query);
-    
+
     let queries = [
-        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id WHERE books.title LIKE ?1",
-        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id WHERE authors.name LIKE ?1",
-        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id JOIN genres ON genres.id = books.genre_id WHERE genres.name LIKE ?1",
-        "SELECT books.id, books.title, books.cover_path, authors.id, authors.name FROM books JOIN authors ON books.author_id = authors.id JOIN lectors ON lectors.id = books.lector_id WHERE lectors.name LIKE ?1",
+        "SELECT b.id, b.title, b.cover_path, authors.id, authors.name FROM books b JOIN authors ON b.author_id = authors.id WHERE b.title LIKE ?1",
+        "SELECT b.id, b.title, b.cover_path, authors.id, authors.name FROM books b JOIN authors ON b.author_id = authors.id WHERE authors.name LIKE ?1",
+        "SELECT b.id, b.title, b.cover_path, authors.id, authors.name FROM books b JOIN authors ON b.author_id = authors.id JOIN genres ON genres.id = b.genre_id WHERE genres.name LIKE ?1",
+        "SELECT b.id, b.title, b.cover_path, authors.id, authors.name FROM books b JOIN authors ON b.author_id = authors.id JOIN lectors ON lectors.id = b.lector_id WHERE lectors.name LIKE ?1",
     ];
-    
+
     for query in &queries {
         let mut stmt = conn.prepare(query)?;
         let mut rows = stmt.query(params![&search_query])?;
-        
+
         while let Some(row) = rows.next()? {
             let book = FrontendBook {
                 id: row.get(0)?,
@@ -487,15 +495,16 @@ pub fn search_books(conn: &Connection, search_query: &str) -> Result<Vec<Fronten
     Ok(found_books.into_iter().map(|(_, book)| book).collect())
 }
 
-
-
 // -------------------------
 // TODO
 // -------------------------
 
 use std::{collections::HashMap, fs, hash::Hash};
 
-use crate::structs::{Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails, Genre, GenreDetails, Lector, LectorDetails};
+use crate::structs::{
+    Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails, Genre, GenreDetails, Lector,
+    LectorDetails, LectorList,
+};
 // TODO: Change this function in the future
 pub fn clear_db() -> Result<()> {
     match std::env::var("DATABASE_URL") {

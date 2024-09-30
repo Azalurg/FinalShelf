@@ -17,8 +17,15 @@ pub struct AuthorDetails {
 
 #[derive(Serialize)]
 pub struct Lector {
-    pub(crate) id: i64,
+    pub id: i64,
     pub name: String,
+}
+
+#[derive(Serialize)]
+pub struct LectorList {
+    pub id: i64,
+    pub name: String,
+    pub books: i64,
 }
 
 #[derive(Serialize)]

@@ -2,7 +2,7 @@
     <h1>Lectors</h1>
     <div class="app-grid">
         <div *ngFor="let lector of lectors" class="grid-item">
-            <a [routerLink]="['/lectors', lector.id]">{{ lector.name }}</a>
+            <a [routerLink]="['/lectors', lector.id]">{{ lector.name }} ({{ lector.books }})</a>
         </div>    
     </div>
 </div>

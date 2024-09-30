@@ -15,7 +15,9 @@
         </tr>
         <tr>
           <td class="details-info-label">Lector</td>
-          <td class="details-info-value">{{ bookDetails.lector_name }}</td>
+          <td class="details-info-value">
+            <a class="details-link" [routerLink]="['/lectors', bookDetails.lector_id]">{{ bookDetails.lector_name }}</a>
+          </td>
         </tr>
         <tr>
           <td class="details-info-label">Genre</td>

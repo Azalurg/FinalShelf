@@ -109,7 +109,7 @@ fn tauri_get_author_details(author_id: i64) -> Result<structs::AuthorDetails, St
 // -------------------
 
 #[tauri::command]
-fn tauri_get_lectors() -> Result<Vec<structs::Lector>, String> {
+fn tauri_get_lectors() -> Result<Vec<structs::LectorList>, String> {
     let conn = db::get_db_connection().map_err(|e| e.to_string())?;
     match db::get_all_lectors(&conn) {
         Ok(lectors) => Ok(lectors),

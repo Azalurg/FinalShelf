@@ -7,6 +7,7 @@ import { AuthorsComponent } from "./pages/authors/authors.component";
 import { AuthorDetailsComponent } from "./pages/author-details/author-details.component";
 import { LectorsComponent } from "./pages/lectors/lectors.component";
 import { SearchComponent } from "./pages/search/search.component";
+import { LectorsDetailsComponent } from "./pages/lectors-details/lectors-details.component";
 
 
 export const routes: Routes = [
@@ -33,6 +34,10 @@ export const routes: Routes = [
   {
     path: 'lectors',
     component: LectorsComponent
+  },
+  {
+    path: 'lectors/:id',
+    component: LectorsDetailsComponent
   },
   {
     path: 'settings',

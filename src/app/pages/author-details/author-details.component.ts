@@ -32,8 +32,8 @@ export class AuthorDetailsComponent {
 
   async fetchAuthorDetails(authorId: number) {
     try {
-      const authorDetails = await invoke<AuthorDetails>('tauri_get_author_details', { authorId });
-      this.authorDetails = authorDetails;
+      const authorDetailsData = await invoke<AuthorDetails>('tauri_get_author_details', { authorId });
+      this.authorDetails = authorDetailsData;
       console.log(this.authorDetails);
     } catch (error) {
       console.error(error);
