@@ -1,0 +1,9 @@
+<div class="app-page">
+    <div class="details-container">
+        <div class="details-info">
+            <h1 class="details-title">{{ genreDetails.name }} ({{ genreDetails.books.length }})</h1>
+        </div>
+    </div>
+
+    <app-book-list [books]="genreDetails.books"></app-book-list>
+</div>

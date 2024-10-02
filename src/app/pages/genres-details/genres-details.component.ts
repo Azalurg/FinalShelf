@@ -6,14 +6,14 @@ import { invoke } from '@tauri-apps/api';
 import { BookListComponent } from "../books/book-list/book-list.component";
 
 @Component({
-  selector: 'app-lectors-details',
+  selector: 'app-genres-details',
   standalone: true,
   imports: [CommonModule, RouterModule, BookListComponent],
-  templateUrl: './lectors-details.component.html',
-  styleUrl: './lectors-details.component.scss'
+  templateUrl: './genres-details.component.html',
+  styleUrl: './genres-details.component.scss'
 })
-export class LectorsDetailsComponent {
-  lectorDetails: any;
+export class GenresDetailsComponent {
+  genreDetails: any;
 
   getSrcBook = (path: string) => convertImgPathBook(path);
 
@@ -22,20 +22,22 @@ export class LectorsDetailsComponent {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const lectorId = Number(params.get('id'));
-      if (lectorId) {
-        this.fetchLectorDetails(lectorId);
+      const genreId = Number(params.get('id'));
+      if (genreId) {
+        this.fetchGenreDetails(genreId);
       }
     });
   }
 
-  async fetchLectorDetails(lectorId: number) {
+  async fetchGenreDetails(genreId: number) {
     try {
-      const lectorDetailsData = await invoke<any>('tauri_get_lector_details', { lectorId });
-      this.lectorDetails = lectorDetailsData;
-      console.log(this.lectorDetails);
+      const genreDetailsData = await invoke<any>('tauri_get_genre_details', { genreId });
+      this.genreDetails = genreDetailsData;
+      console.log(this.genreDetails);
     } catch (error) {
       console.error(error);
     }
   }
+
+
 }

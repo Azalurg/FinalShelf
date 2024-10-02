@@ -381,12 +381,18 @@ pub fn get_or_create_genre(conn: &Connection, genre_name: &str) -> Result<i64> {
     Ok(genre_id)
 }
 
-pub fn get_all_genres(conn: &Connection) -> Result<Vec<Genre>> {
-    let mut stmt = conn.prepare("SELECT id, name FROM genres")?;
+pub fn get_all_genres(conn: &Connection) -> Result<Vec<GenreList>> {
+    let mut stmt = conn.prepare(
+        "SELECT g.id, g.name, COUNT(b.id) AS book_amount 
+        FROM genres g
+        JOIN books b ON g.id = b.genre_id
+        GROUP BY g.id
+        ORDER BY book_amount DESC")?;
     let genre_iter = stmt.query_map([], |row| {
-        Ok(Genre {
+        Ok(GenreList {
             id: row.get(0)?,
             name: row.get(1)?,
+            books: row.get(2)?,
         })
     })?;
 
@@ -399,10 +405,11 @@ pub fn get_all_genres(conn: &Connection) -> Result<Vec<Genre>> {
 
 pub fn get_genre_by_id(conn: &Connection, genre_id: i64) -> Result<GenreDetails> {
     let mut stmt = conn.prepare(
-        "SELECT genres.id, genres.name, books.id, books.title, books.cover_path
-         FROM genres
-         JOIN books ON genres.id = books.genre_id
-         WHERE genres.id = ?1",
+        "SELECT g.id, g.name, b.id, b.title, b.cover_path, a.id, a.name
+         FROM genres g
+         JOIN books b ON g.id = b.genre_id
+         JOIN authors a ON b.author_id = a.id
+         WHERE g.id = ?1",
     )?;
 
     let mut rows = stmt.query(params![genre_id])?;
@@ -423,8 +430,8 @@ pub fn get_genre_by_id(conn: &Connection, genre_id: i64) -> Result<GenreDetails>
             id: row.get(2)?,
             title: row.get(3)?,
             cover_path: row.get(4)?,
-            author_id: 0,
-            author_name: "".to_string(),
+            author_id: row.get(5)?,
+            author_name: row.get(6)?,
         });
     }
 
@@ -502,8 +509,7 @@ pub fn search_books(conn: &Connection, search_query: &str) -> Result<Vec<Fronten
 use std::{collections::HashMap, fs, hash::Hash};
 
 use crate::structs::{
-    Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails, Genre, GenreDetails, Lector,
-    LectorDetails, LectorList,
+    Author, AuthorDetails, DBBook, DashboardData, FrontendBook, FrontendBookDetails, Genre, GenreDetails, GenreList, Lector, LectorDetails, LectorList
 };
 // TODO: Change this function in the future
 pub fn clear_db() -> Result<()> {

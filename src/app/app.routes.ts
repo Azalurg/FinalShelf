@@ -8,6 +8,8 @@ import { AuthorDetailsComponent } from "./pages/author-details/author-details.co
 import { LectorsComponent } from "./pages/lectors/lectors.component";
 import { SearchComponent } from "./pages/search/search.component";
 import { LectorsDetailsComponent } from "./pages/lectors-details/lectors-details.component";
+import { GenresComponent } from "./pages/genres/genres.component";
+import { GenresDetailsComponent } from "./pages/genres-details/genres-details.component";
 
 
 export const routes: Routes = [
@@ -38,6 +40,14 @@ export const routes: Routes = [
   {
     path: 'lectors/:id',
     component: LectorsDetailsComponent
+  },
+  {
+    path: 'genres',
+    component: GenresComponent
+  },
+  {
+    path: 'genres/:id',
+    component: GenresDetailsComponent
   },
   {
     path: 'settings',

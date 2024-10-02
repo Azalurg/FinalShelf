@@ -21,7 +21,9 @@
         </tr>
         <tr>
           <td class="details-info-label">Genre</td>
-          <td class="details-info-value">{{ bookDetails.genre_name }}</td>
+          <td class="details-info-value">
+            <a class="details-link" [routerLink]="['/genres', bookDetails.genre_id]">{{ bookDetails.genre_name }}</a>
+          </td>
         </tr>
       </tbody>
     </table>

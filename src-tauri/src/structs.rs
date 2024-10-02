@@ -42,6 +42,13 @@ pub struct Genre {
 }
 
 #[derive(Serialize)]
+pub struct GenreList {
+    pub id: i64,
+    pub name: String,
+    pub books: i64,
+}
+
+#[derive(Serialize)]
 pub struct GenreDetails {
     pub id: i64,
     pub name: String,

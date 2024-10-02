@@ -5,11 +5,5 @@
         </div>
     </div>
 
-    <div class="gallery">
-        <a *ngFor="let book of lectorDetails.books" class="gallery-item shadow" [routerLink]="['/books', book.id]">
-            <img src={{getSrcBook(book.cover_path)}} alt="image">
-            <div class="gallery-text gallery-tex-first">{{book.title}}</div>
-            <div class="gallery-text gallery-text-second">{{book.author_name}}</div>
-        </a>
-    </div>
+    <app-book-list [books]="lectorDetails.books"></app-book-list>
 </div>

@@ -131,7 +131,7 @@ fn tauri_get_lector_details(lector_id: i64) -> Result<structs::LectorDetails, St
 // -------------------
 
 #[tauri::command]
-fn tauri_get_genres() -> Result<Vec<structs::Genre>, String> {
+fn tauri_get_genres() -> Result<Vec<structs::GenreList>, String> {
     let conn = db::get_db_connection().map_err(|e| e.to_string())?;
     match db::get_all_genres(&conn) {
         Ok(genres) => Ok(genres),
