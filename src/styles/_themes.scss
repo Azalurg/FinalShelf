@@ -1,0 +1,22 @@
+:root {
+    --foreground: #eee;
+    --foreground-alt: #ccc;
+    --background-1: #0a2538;
+    --background-2: #004f64;
+    --shadow-1: hsla(0, 0%, 13%, 0.89);
+    --shadow-2: hsla(0, 0%, 13%, 0.55);
+    --shadow-3: hsla(0, 0%, 13%, 0.21);
+    --accent: #00aaaa;
+    --transition: 0.34s;
+}
+
+body.dark {
+    --foreground: #eee;
+    --foreground-alt: #ccc;
+    --background-1: #18191b;
+    --background-2: #242529;
+    --shadow-1: hsla(0, 0%, 55%, 0.89);
+    --shadow-2: hsla(0, 0%, 55%, 0.55);
+    --shadow-3: hsla(0, 0%, 55%, 0.21);
+    --accent: #83693d;
+}

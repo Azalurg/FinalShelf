@@ -1,8 +1,6 @@
-@use 'abstracts' as *;
-
 .navbar{
     width: 89px;
-    background-color: $shadow-3;
+    background-color: var(--shadow-3);
     height: 100vh;
     display:  flex;
     flex-direction: column;
@@ -24,7 +22,7 @@ ul{
 
 
     li:hover{
-        background-color: $shadow-3;
+        background-color: var(--shadow-3);
     }
 }
 

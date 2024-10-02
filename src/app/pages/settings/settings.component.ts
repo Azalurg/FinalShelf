@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { invoke } from '@tauri-apps/api/tauri';
 
 @Component({
@@ -11,6 +11,8 @@ import { invoke } from '@tauri-apps/api/tauri';
 export class SettingsComponent {
 
   darkMode = false;
+  selectedTheme = 'default';
+  themes = ['default', 'dark', 'light'];
 
   async fullScan(): Promise<void>{
     try{
@@ -54,9 +56,11 @@ export class SettingsComponent {
     }
   }
 
-  toggleDarkMode(): void {
-    this.darkMode = !this.darkMode;
-    document.body.classList.toggle('dark', this.darkMode);
-    console.log("Dark mode: ", this.darkMode);
+  updateTheme(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const value = selectElement.value;
+
+    document.body.classList.remove(...this.themes)
+    document.body.classList.add(value)
   }
 }

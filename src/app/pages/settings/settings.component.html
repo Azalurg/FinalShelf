@@ -8,19 +8,11 @@
       <button (click)="clearDatabase()">Clear database</button>
     </div>
     <div>
-      <h2>test box 1</h2>
-      <button>Test button</button>
-      <button>Test button</button>
-      <button>Test button</button>
-    </div>
-    <div>
-      <h2>test box 2</h2>
-      <button>Test button</button>
-    </div>
-    <div>
-      <h2>test box 3</h2>
-      <button (click)="toggleDarkMode()">Dark Mode</button>
-      <button>Test button</button>
+      <h2>Theme selection</h2>
+      <select id="theme-switch" (change)="updateTheme($event)">
+        <option value="main" selected>main</option>
+        <option value="dark">dark</option>
+      </select>
     </div>
   </div>
 </div>

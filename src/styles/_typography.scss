@@ -1,23 +1,16 @@
-@use 'abstracts' as *;
-
 body {
-    color: $foreground;
-    background: $background-1;
-    background: linear-gradient(10deg, $background-1 21%, $background-2 89%,);
-    // font-family: $ff-base;
+    color: var(--foreground);
+    background: var(--background-1);
+    background: linear-gradient(10deg, var(--background-1) 21%, var(--background-2) 89%, );
+    font-family: 'Courier New', Courier, monospace;
     min-height: 100vh;
     line-height: 1.5;
     font-size: 1rem;
     text-align: left;
     font-weight: 400;
-
-    &.dark {
-        color: $background-1;
-        background: $foreground;
-    }
 }
 
-.app{
+.app {
     display: flex;
     position: relative;
 }
@@ -28,16 +21,17 @@ body {
 }
 
 .app-page {
-    
+
     padding: 1rem;
     width: 100%;
 }
 
 .shadow {
-    transition:$transition;
-    box-shadow: 0.21rem 0.21rem 0.89rem $shadow-2;
+    transition: var(--transition);
+    box-shadow: 0.21rem 0.21rem 0.89rem var(--shadow-2);
+
     &:hover {
-        box-shadow: 0.55rem 0.55rem 1.22rem $shadow-1 !important;
+        box-shadow: 0.55rem 0.55rem 1.22rem var(--shadow-1) !important;
     }
 }
 
@@ -49,13 +43,13 @@ body {
 
 
 
-    .grid-item {        
-        a{
+    .grid-item {
+        a {
             padding: 0.55rem 0.89rem;
             text-decoration: none;
             font-weight: 600;
-            color: $foreground;          
-            background-color: $shadow-3;
+            color: var(--foreground);
+            background-color: var(--shadow-3);
             border-radius: 0.55rem;
 
             display: block;
@@ -66,9 +60,8 @@ body {
             transition: 0.34s;
 
             &:hover {
-                    color: $accent-1;
-                }
-
+                color: var(--accent);
+            }
         }
     }
 }
