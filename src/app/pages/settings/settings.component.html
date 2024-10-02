@@ -10,8 +10,9 @@
     <div>
       <h2>Theme selection</h2>
       <select id="theme-switch" (change)="updateTheme($event)">
-        <option value="main" selected>main</option>
-        <option value="dark">dark</option>
+        <ng-container *ngFor="let theme of themes">
+          <option [value]="theme" [selected]="theme === selectedTheme">{{ theme }}</option>
+        </ng-container>
       </select>
     </div>
   </div>

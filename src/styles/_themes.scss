@@ -1,22 +1,55 @@
 :root {
-    --foreground: #eee;
-    --foreground-alt: #ccc;
-    --background-1: #0a2538;
-    --background-2: #004f64;
+    --foreground: hsl(0, 0%, 93%);
+    --foreground-alt: hsl(0, 0%, 82%);
+    --background-1: hsl(205, 70%, 13%);
+    --background-2: hsl(193, 100%, 20%);
     --shadow-1: hsla(0, 0%, 13%, 0.89);
     --shadow-2: hsla(0, 0%, 13%, 0.55);
     --shadow-3: hsla(0, 0%, 13%, 0.21);
-    --accent: #00aaaa;
-    --transition: 0.34s;
+    --accent: hsl(184, 96%, 36%);
+    --transition: 0.275s;
 }
 
 body.dark {
-    --foreground: #eee;
-    --foreground-alt: #ccc;
-    --background-1: #18191b;
-    --background-2: #242529;
-    --shadow-1: hsla(0, 0%, 55%, 0.89);
-    --shadow-2: hsla(0, 0%, 55%, 0.55);
-    --shadow-3: hsla(0, 0%, 55%, 0.21);
-    --accent: #83693d;
+    --foreground: hsl(0, 0%, 93%);
+    --foreground-alt: hsl(0, 0%, 80%);
+    --background-1: hsl(220, 6%, 10%);
+    --background-2: hsl(230, 6%, 15%);
+    --shadow-1: hsla(0, 0%, 34%, 0.89);
+    --shadow-2: hsla(0, 0%, 34%, 0.55);
+    --shadow-3: hsla(0, 9%, 23%, 0.21);
+    --accent: hsl(40, 35%, 40%);
+}
+
+body.light {
+    --foreground: hsl(240, 50%, 13%);
+    --foreground-alt: hsl(240, 25%, 21%);
+    --background-1: hsl(210, 100%, 92%);
+    --background-2: hsl(340, 100%, 94%);
+    --shadow-1: hsla(210, 15%, 55%, 0.89);
+    --shadow-2: hsla(275, 15%, 54%, 0.55);
+    --shadow-3: hsla(340, 15%, 50%, 0.21);
+    --accent: hsl(275, 100%, 93%);
+}  
+
+body.lsd {
+    --foreground: hsl(0, 0%, 93%);
+    --foreground-alt: hsl(0, 0%, 80%);
+    --background-1: hsl(233, 34%, 13%);
+    --background-2: hsl(258, 55%, 34%);
+    --shadow-1: hsla(89, 55%, 34%, 0.89);
+    --shadow-2: hsla(144, 35%, 34%, 0.55);
+    --shadow-3: hsla(233, 21%, 34%, 0.21);
+    --accent: hsl(245, 34%, 55%);
+}
+
+body.night-city {
+    --foreground: hsl(45, 100%, 85%); /* Warm light */
+    --foreground-alt: hsl(45, 80%, 75%); /* Dimmer warm light */
+    --background-1: hsl(240, 40%, 10%); /* Deep space black-blue */
+    --background-2: hsl(240, 30%, 15%); /* Slightly lighter, for contrast */
+    --shadow-1: hsla(240, 50%, 5%, 0.89); /* Dark, cosmic shadows */
+    --shadow-2: hsla(240, 50%, 10%, 0.55); 
+    --shadow-3: hsla(240, 30%, 20%, 0.21); 
+    --accent: hsl(231, 32%, 25%); /* Golden sun peeking through */
 }

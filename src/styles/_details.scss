@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .details-container {
     padding: 2rem 1rem 2rem 2rem;
     display: flex;
@@ -42,17 +44,8 @@
 }
 
 .details-link {
+    @include button-link;
+    
     position: relative;
     left: -0.89rem;
-    padding: 0.55rem 0.89rem;
-    border-radius: 0.5rem;
-    background-color: var(--shadow-3);
-    color: var(--foreground);
-    text-decoration: none;
-    transition: background-color var(--transition);
-
-    &:hover {
-        background-color: var(--accent);
-    }
-
 }

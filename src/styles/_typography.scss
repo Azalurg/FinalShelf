@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 body {
     color: var(--foreground);
     background: var(--background-1);
@@ -45,23 +47,12 @@ body {
 
     .grid-item {
         a {
-            padding: 0.55rem 0.89rem;
-            text-decoration: none;
-            font-weight: 600;
-            color: var(--foreground);
-            background-color: var(--shadow-3);
-            border-radius: 0.55rem;
+            @include button-link;
 
             display: block;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-
-            transition: 0.34s;
-
-            &:hover {
-                color: var(--accent);
-            }
         }
     }
 }

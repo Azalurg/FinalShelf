@@ -1,10 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
 import { invoke } from '@tauri-apps/api/tauri';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
@@ -12,7 +13,9 @@ export class SettingsComponent {
 
   darkMode = false;
   selectedTheme = 'default';
-  themes = ['default', 'dark', 'light'];
+  themes = ['default', 'dark', 'light', 'lsd', 'night-city'];
+
+  // ----------------- Functions -----------------
 
   async fullScan(): Promise<void>{
     try{

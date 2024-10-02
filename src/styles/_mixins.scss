@@ -1,0 +1,13 @@
+@mixin button-link {
+    padding: 0.55rem 0.89rem;
+    color: var(--foreground);
+    background-color: var(--shadow-3);
+    text-decoration: none;
+    border-radius: 0.55rem;
+    transition: var(--transition);
+
+    &:hover {
+        background-color: var(--accent);
+        font-weight: 600;
+    }
+}
