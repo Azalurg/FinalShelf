@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { BookListComponent } from "../books/book-list/book-list.component";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { Book } from "../../models/books";
 
 @Component({

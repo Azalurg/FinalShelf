@@ -8,17 +8,19 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "window-set-title", "path-all", "protocol-asset", "dialog-open", "shell-open"] }
+tauri = { version = "2", features = [ "protocol-asset"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 walkdir = "2.5.0"
 id3 = "1.14.0"
 diesel = { version = "2.2.0", features = ["sqlite"] }
-libsqlite3-sys = { workspace = true, features = ["bundled"] }
+rusqlite = { version = "0.32.0", features = ["bundled"] }
 dotenvy = "0.15"
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

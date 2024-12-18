@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { AuthorDetails } from '../../models/authors';
 import { convertImgPathAuthor, convertImgPathBook } from '../../common/convertImgPath';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { invoke } from '@tauri-apps/api';
+import { invoke } from "@tauri-apps/api/core";
 
 @Component({
   selector: 'app-author-details',

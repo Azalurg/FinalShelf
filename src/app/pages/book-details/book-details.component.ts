@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { BookDetails } from '../../models/books';
 import { CommonModule } from '@angular/common';
 import { convertImgPathBook } from '../../common/convertImgPath';

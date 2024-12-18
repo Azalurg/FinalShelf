@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { invoke } from "@tauri-apps/api/tauri";
+import { invoke } from "@tauri-apps/api/core";
 import { CommonModule } from "@angular/common";
 import { Book } from "../../models/books";
 import { BookListComponent } from "./book-list/book-list.component";

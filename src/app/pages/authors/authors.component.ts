@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { convertImgPathAuthor } from '../../common/convertImgPath';
-import { invoke } from '@tauri-apps/api';
+import { invoke } from "@tauri-apps/api/core";
 import { Author } from '../../models/authors';
 import { RouterModule } from '@angular/router';
 

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { convertImgPathBook } from '../../common/convertImgPath';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { invoke } from '@tauri-apps/api';
+import { invoke } from "@tauri-apps/api/core";
 import { BookListComponent } from "../books/book-list/book-list.component";
 
 @Component({

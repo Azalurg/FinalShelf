@@ -178,6 +178,8 @@ fn main() {
     dotenv().ok();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
         .setup(|_app| {
             let conn = db::get_db_connection().expect("error while getting db connection");
             db::init_db(&conn).expect("error while initializing db");
