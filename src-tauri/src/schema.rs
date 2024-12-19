@@ -1,36 +1,36 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    absolute_paths (absolute_path_id) {
-        absolute_path_id -> Nullable<Integer>,
+    absolute_paths (id) {
+        id -> Text,
         name -> Text,
         path -> Text,
     }
 }
 
 diesel::table! {
-    authors (author_id) {
-        author_id -> Nullable<Integer>,
+    authors (id) {
+        id -> Text,
         name -> Text,
         relative_img_path -> Nullable<Text>,
     }
 }
 
 diesel::table! {
-    books (book_id) {
-        book_id -> Nullable<Integer>,
+    books (id) {
+        id -> Text,
         title -> Text,
         relative_cover_path -> Nullable<Text>,
-        genre_id -> Nullable<Integer>,
-        author_id -> Integer,
-        lector_id -> Nullable<Integer>,
+        genre_id -> Nullable<Text>,
+        author_id -> Text,
+        lector_id -> Nullable<Text>,
     }
 }
 
 diesel::table! {
-    books_read (book_read_id) {
-        book_read_id -> Nullable<Integer>,
-        book_title -> Text,
+    books_read (id) {
+        id -> Text,
+        book_id -> Text,
         rate -> Nullable<Integer>,
         tier -> Nullable<Integer>,
         note -> Nullable<Text>,
@@ -38,46 +38,49 @@ diesel::table! {
 }
 
 diesel::table! {
-    genres (genre_id) {
-        genre_id -> Nullable<Integer>,
+    genres (id) {
+        id -> Text,
         name -> Text,
     }
 }
 
 diesel::table! {
-    lectors (lector_id) {
-        lector_id -> Nullable<Integer>,
+    lectors (id) {
+        id -> Text,
         name -> Text,
     }
 }
 
 diesel::table! {
-    tags (tag_id) {
-        tag_id -> Nullable<Integer>,
+    tags (id) {
+        id -> Text,
         name -> Text,
     }
 }
 
 diesel::table! {
-    tags_authors (tag_author_id) {
-        tag_author_id -> Nullable<Integer>,
-        tag_id -> Integer,
-        author_name -> Text,
+    tags_authors (id) {
+        id -> Text,
+        tag_id -> Text,
+        author_id -> Text,
     }
 }
 
 diesel::table! {
-    tags_books (tag_book_id) {
-        tag_book_id -> Nullable<Integer>,
-        tag_id -> Integer,
-        book_title -> Text,
+    tags_books (id) {
+        id -> Text,
+        tag_id -> Text,
+        book_id -> Text,
     }
 }
 
 diesel::joinable!(books -> authors (author_id));
 diesel::joinable!(books -> genres (genre_id));
 diesel::joinable!(books -> lectors (lector_id));
+diesel::joinable!(books_read -> books (book_id));
+diesel::joinable!(tags_authors -> authors (author_id));
 diesel::joinable!(tags_authors -> tags (tag_id));
+diesel::joinable!(tags_books -> books (book_id));
 diesel::joinable!(tags_books -> tags (tag_id));
 
 diesel::allow_tables_to_appear_in_same_query!(

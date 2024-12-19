@@ -1,5 +1,4 @@
-use std::path::Path;
-use std::{env, fs};
+use std::env;
 
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;

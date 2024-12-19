@@ -1,63 +1,63 @@
 CREATE TABLE books (
-  book_id INT PRIMARY KEY,
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
   title VARCHAR(255) UNIQUE NOT NULL,
   relative_cover_path VARCHAR(255),
-  genre_id INT,
-  author_id INT NOT NULL,
-  lector_id INT,
-  FOREIGN KEY (genre_id) REFERENCES genres (genre_id),
-  FOREIGN KEY (author_id) REFERENCES authors (author_id),
-  FOREIGN KEY (lector_id) REFERENCES lectors (lector_id)
+  genre_id VARCHAR(255),
+  author_id VARCHAR(255) NOT NULL,
+  lector_id VARCHAR(255),
+  FOREIGN KEY (genre_id) REFERENCES genres (id),
+  FOREIGN KEY (author_id) REFERENCES authors (id),
+  FOREIGN KEY (lector_id) REFERENCES lectors (id)
 );
 
 CREATE TABLE authors (
-  author_id INT PRIMARY KEY,
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
   name VARCHAR(255) UNIQUE NOT NULL,
   relative_img_path VARCHAR(255)
 );
 
 CREATE TABLE lectors (
-  lector_id INT PRIMARY KEY,
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
   name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE genres (
-  genre_id INT PRIMARY KEY,
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
   name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE tags (
-  tag_id INT PRIMARY KEY,
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
   name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE tags_authors (
-  tag_author_id INT PRIMARY KEY,
-  tag_id INT NOT NULL,
-  author_name VARCHAR(255) NOT NULL,
-  FOREIGN KEY (tag_id) REFERENCES tags (tag_id)
-  -- NOTE: Removed FOREIGN KEY to authors(name) because SQLite does not support it
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
+  tag_id VARCHAR(255) NOT NULL,
+  author_id VARCHAR(255) NOT NULL,
+  FOREIGN KEY (tag_id) REFERENCES tags (id),
+  FOREIGN KEY (author_id) REFERENCES authors (id)
 );
 
 CREATE TABLE tags_books (
-  tag_book_id INT PRIMARY KEY,
-  tag_id INT NOT NULL,
-  book_title VARCHAR(255) NOT NULL,
-  FOREIGN KEY (tag_id) REFERENCES tags (tag_id)
-  -- NOTE: Removed FOREIGN KEY to books(title) because SQLite does not support it
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
+  tag_id VARCHAR(255) NOT NULL,
+  book_id VARCHAR(255) NOT NULL,
+  FOREIGN KEY (tag_id) REFERENCES tags (id),
+  FOREIGN KEY (book_id) REFERENCES books (id)
 );
 
 CREATE TABLE books_read (
-  book_read_id INT PRIMARY KEY,
-  book_title VARCHAR(255) NOT NULL,
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
+  book_id VARCHAR(255) NOT NULL,
   rate INT,
   tier INT,
-  note VARCHAR(511)
-  -- NOTE: Removed FOREIGN KEY to books(title) because SQLite does not support it
+  note VARCHAR(511),
+  FOREIGN KEY (book_id) REFERENCES books (id)
 );
 
 CREATE TABLE absolute_paths (
-  absolute_path_id INT PRIMARY KEY,
+  id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
   name VARCHAR(255) UNIQUE NOT NULL,
   path VARCHAR(255) UNIQUE NOT NULL
 );
