@@ -1,84 +1,53 @@
+use crate::schema::*;
+
 use diesel::prelude::*;
+use diesel::Queryable;
+use diesel::Insertable;
+use serde::{Deserialize, Serialize};
+use chrono::NaiveDateTime;
 
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::books)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct Book {
-    pub id: String,
-    pub title: String,
-    pub author_id: String,
-    pub genre_id: Option<String>,
-    pub lector_id: Option<String>,
-    pub relative_cover_path: Option<String>,
-}
-
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::authors)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
+#[table_name = "authors"]
 pub struct Author {
-    pub id: String,
     pub name: String,
     pub relative_img_path: Option<String>,
 }
 
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::lectors)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct Lector {
-    pub id: String,
-    pub name: String,
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
+#[table_name = "books"]
+pub struct Book {
+    pub title: String,
+    pub relative_cover_path: Option<String>,
+    pub author_name: String,
+    pub genre: Option<String>,
+    pub lector: Option<String>,
+    pub create_date: Option<NaiveDateTime>
 }
 
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::genres)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct Genre {
-    pub id: String,
-    pub name: String,
-}
-
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::tags)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct Tag {
-    pub id: String,
-    pub name: String,
-}
-
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::tags_authors)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct TagAuthor {
-    pub id: String,
-    pub tag_id: String,
-    pub author_id: String,
-}
-
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::tags_books)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct TagBook {
-    pub id: String,
-    pub tag_id: String,
-    pub book_id: String,
-}
-
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::books_read)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+// BooksRead table model
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
+#[table_name = "books_read"]
 pub struct BookRead {
-    pub id: String,
-    pub book_id: String,
+    pub id: i32,
+    pub book_title: String,
     pub rate: Option<i32>,
     pub tier: Option<i32>,
     pub note: Option<String>,
+    pub read_date: Option<NaiveDateTime>,
 }
 
-#[derive(Queryable, Selectable, Insertable)]
-#[diesel(table_name = crate::schema::absolute_paths)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct AbsolutePath {
-    pub id: String,
+// Tags table model
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
+#[table_name = "tags"]
+pub struct Tag {
+    pub id: i32,
     pub name: String,
-    pub path: String,
+}
+
+// TagsBooks table model
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
+#[table_name = "tags_books"]
+pub struct TagBook {
+    pub tag_id: i32,
+    pub book_title: String,
 }

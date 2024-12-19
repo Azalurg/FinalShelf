@@ -1,96 +1,57 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    absolute_paths (id) {
-        id -> Text,
-        name -> Text,
-        path -> Text,
-    }
-}
-
-diesel::table! {
-    authors (id) {
-        id -> Text,
+    authors (name) {
         name -> Text,
         relative_img_path -> Nullable<Text>,
     }
 }
 
 diesel::table! {
-    books (id) {
-        id -> Text,
+    books (title) {
         title -> Text,
         relative_cover_path -> Nullable<Text>,
-        genre_id -> Nullable<Text>,
-        author_id -> Text,
-        lector_id -> Nullable<Text>,
+        author_name -> Text,
+        genre -> Nullable<Text>,
+        lector -> Nullable<Text>,
+        create_date -> Nullable<Timestamp>,
     }
 }
 
 diesel::table! {
     books_read (id) {
-        id -> Text,
-        book_id -> Text,
+        id -> Integer,
+        book_title -> Text,
         rate -> Nullable<Integer>,
         tier -> Nullable<Integer>,
         note -> Nullable<Text>,
-    }
-}
-
-diesel::table! {
-    genres (id) {
-        id -> Text,
-        name -> Text,
-    }
-}
-
-diesel::table! {
-    lectors (id) {
-        id -> Text,
-        name -> Text,
+        read_date -> Nullable<Timestamp>,
     }
 }
 
 diesel::table! {
     tags (id) {
-        id -> Text,
+        id -> Integer,
         name -> Text,
     }
 }
 
 diesel::table! {
-    tags_authors (id) {
-        id -> Text,
-        tag_id -> Text,
-        author_id -> Text,
+    tags_books (tag_id, book_title) {
+        tag_id -> Integer,
+        book_title -> Text,
     }
 }
 
-diesel::table! {
-    tags_books (id) {
-        id -> Text,
-        tag_id -> Text,
-        book_id -> Text,
-    }
-}
-
-diesel::joinable!(books -> authors (author_id));
-diesel::joinable!(books -> genres (genre_id));
-diesel::joinable!(books -> lectors (lector_id));
-diesel::joinable!(books_read -> books (book_id));
-diesel::joinable!(tags_authors -> authors (author_id));
-diesel::joinable!(tags_authors -> tags (tag_id));
-diesel::joinable!(tags_books -> books (book_id));
+diesel::joinable!(books -> authors (author_name));
+diesel::joinable!(books_read -> books (book_title));
+diesel::joinable!(tags_books -> books (book_title));
 diesel::joinable!(tags_books -> tags (tag_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
-    absolute_paths,
     authors,
     books,
     books_read,
-    genres,
-    lectors,
     tags,
-    tags_authors,
     tags_books,
 );
