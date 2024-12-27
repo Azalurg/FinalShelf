@@ -1,10 +1,10 @@
 use crate::schema::*;
 
-use diesel::prelude::*;
-use diesel::Queryable;
-use diesel::Insertable;
-use serde::{Deserialize, Serialize};
 use chrono::NaiveDateTime;
+use diesel::prelude::*;
+use diesel::Insertable;
+use diesel::Queryable;
+use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
 #[table_name = "authors"]
@@ -21,7 +21,7 @@ pub struct Book {
     pub author_name: String,
     pub genre: Option<String>,
     pub lector: Option<String>,
-    pub create_date: Option<NaiveDateTime>
+    pub create_date: Option<NaiveDateTime>,
 }
 
 // BooksRead table model

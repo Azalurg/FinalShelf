@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
+import { RouteConfigLoadEnd } from '@angular/router';
 import { invoke } from '@tauri-apps/api/core';
 
 @Component({
@@ -56,6 +57,16 @@ export class SettingsComponent {
     catch(error) {
       console.error("Error - tauri_clear_db", error);
       alert("Error")
+    }
+  }
+
+  async ping(): Promise<void>{
+    try{
+      await invoke("ping");
+      console.log("Pong")
+    }
+    catch(error) {
+      console.log("Error")
     }
   }
 
