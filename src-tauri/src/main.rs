@@ -20,10 +20,7 @@ fn main() {
             db::init();
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![
-            ping,
-            quick_scan,
-            get_books])
+        .invoke_handler(tauri::generate_handler![ping, quick_scan, get_books])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -31,7 +31,5 @@ pub fn is_author_exists(name: &str) -> bool {
 
     let query = dsl::authors.filter(dsl::name.eq(name));
 
-    query
-        .first::<Author>(conn)
-        .is_ok()
+    query.first::<Author>(conn).is_ok()
 }

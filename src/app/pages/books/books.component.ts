@@ -25,12 +25,14 @@ export class BooksComponent {
 
   async fetchBooks(): Promise<void> {
     try {
-      const books = await invoke<Book[]>("tauri_get_books", {
-        page: this.page,
-        pageSize: this.pageSize,
-        sortParams: this.sortParams,
-        sortOrder: this.sortOrder,
-      });
+      const books = await invoke<Book[]>("get_books", 
+      //   {
+      //   page: this.page,
+      //   pageSize: this.pageSize,
+      //   sortParams: this.sortParams,
+      //   sortOrder: this.sortOrder,
+      // }
+    );
       this.books = books;
     } catch (error) {
       console.error(error);

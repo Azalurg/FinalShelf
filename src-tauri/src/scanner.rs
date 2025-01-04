@@ -1,18 +1,21 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::HashSet,
     fs,
     path::Path,
-    time::Instant,
+    time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
+use chrono::{NaiveDateTime, Utc};
 use id3::{Tag, TagLike};
 use rusqlite::Result;
 use walkdir::WalkDir;
 
 use crate::{
     models::models::{Author, Book},
-    services::books_service::{add_book, is_book_exists},
-    services::authors_service::{add_author, is_author_exists},
+    services::{
+        authors_service::{add_author, is_author_exists},
+        books_service::{add_book, is_book_exists},
+    },
 };
 
 fn look_for_cover(directory: &str) -> String {
@@ -39,27 +42,121 @@ fn look_for_author_photo(path: &str, name: &str) -> String {
     return look_for_cover(directory);
 }
 
+fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<NaiveDateTime> {
+    option_time?
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|duration| NaiveDateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
+}
+
 pub fn quick_scan(directory: &str) -> Result<(), String> {
     println!("Quick scan in {}", directory);
     let mut processed_dirs = HashSet::new();
     let start = Instant::now();
 
-    for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(|e| e.ok()) {
+    for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(Result::ok) {
         if let Some(mp3_path) = get_mp3_path(&entry) {
-            let parent_path = mp3_path.parent().and_then(Path::to_str).unwrap();
+            if let Some(parent_path) = mp3_path.parent().and_then(Path::to_str) {
+                // Skip already processed directories
+                if !processed_dirs.insert(parent_path.to_string()) {
+                    continue;
+                }
 
-            if processed_dirs.insert(parent_path.to_string()) {
+                // Process the MP3 file
                 if let Ok(tag) = Tag::read_from_path(mp3_path) {
-                    process_metadata(&tag, parent_path);
+                    let file_create_date = fs::metadata(mp3_path)
+                        .ok()
+                        .and_then(|metadata| system_time_to_naive_date_time(metadata.created().ok()));
+
+                    process_metadata(&tag, parent_path, file_create_date);
                 }
             }
         }
     }
 
     println!("Quick scan complete, elapsed time: {:?}", start.elapsed());
-
     Ok(())
 }
+
+// Helper function to extract mp3 path from a directory entry
+fn get_mp3_path(entry: &walkdir::DirEntry) -> Option<&Path> {
+    let path = entry.path();
+    if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("mp3") {
+        Some(path)
+    } else {
+        None
+    }
+}
+
+fn process_metadata(tag: &Tag, parent_path: &str, file_crate_date: Option<NaiveDateTime>) -> Option<Book> {
+    let title = tag.album().unwrap_or(&format!("Unknown ({})", parent_path)).to_string();
+
+    if is_book_exists(&title) {
+        return None;
+    }
+
+    let genre = tag.genre().unwrap_or("Unknown").to_string();
+    let lector = tag.artist().unwrap_or("Unknown").to_string();
+    // let year = tag.year().unwrap_or(0);
+    // let duration = tag.duration().unwrap_or(0) as u64;
+    let author_name = tag.album_artist().unwrap_or("Unknown").to_string();
+    let relative_cover_path = look_for_cover(parent_path);
+
+    if !is_author_exists(&author_name) {
+        let author = Author {
+            name: author_name.clone(),
+            relative_img_path: Some(look_for_author_photo(parent_path, &author_name)),
+        };
+        println!("Adding author: {:?}", author);
+        add_author(&author);
+    }
+
+    let book = Book {
+        title,
+        author_name,
+        relative_cover_path: Some(relative_cover_path),
+        genre: Some(genre),
+        lector: Some(lector),
+        create_date: file_crate_date,
+    };
+    println!("Adding book: {:?}", book);
+    add_book(&book)
+}
+
+// fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<NaiveDateTime> {
+//     option_time.and_then(|time| {
+//         time.duration_since(UNIX_EPOCH).ok().map(|duration| {
+//             NaiveDateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos())
+//         })
+//     })
+// }
+
+// pub fn quick_scan(directory: &str) -> Result<(), String> {
+//     println!("Quick scan in {}", directory);
+//     let mut processed_dirs = HashSet::new();
+//     let start = Instant::now();
+
+//     for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(|e| e.ok()) {
+//         if let Some(mp3_path) = get_mp3_path(&entry) {
+//             let parent_path = mp3_path.parent().and_then(Path::to_str).unwrap();
+
+//             if processed_dirs.insert(parent_path.to_string()) {
+//                 if let Ok(tag) = Tag::read_from_path(mp3_path) {
+//                     let file_crate_date = match fs::metadata(mp3_path) {
+//                         Ok(metadata) => system_time_to_naive_date_time(metadata.created().ok()),
+//                         Err(_) => None,
+//                     };
+
+//                     process_metadata(&tag, parent_path, file_crate_date);
+//                 }
+//             }
+//         }
+//     }
+
+//     println!("Quick scan complete, elapsed time: {:?}", start.elapsed());
+
+//     Ok(())
+// }
 
 // pub fn full_scan(directory: &str) -> Result<()> {
 //     println!("Full scan in {}", directory);
@@ -85,48 +182,3 @@ pub fn quick_scan(directory: &str) -> Result<(), String> {
 //     println!("Full scan complete, elapsed time: {:?}", start.elapsed());
 //     Ok(())
 // }
-
-// Helper function to extract mp3 path from a directory entry
-fn get_mp3_path(entry: &walkdir::DirEntry) -> Option<&Path> {
-    let path = entry.path();
-    if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("mp3") {
-        Some(path)
-    } else {
-        None
-    }
-}
-
-fn process_metadata(tag: &Tag, parent_path: &str) -> Option<Book> {
-    let title = tag.album().unwrap_or("Unknown").to_string();
-    let genre = tag.genre().unwrap_or("Unknown").to_string();
-    let lector = tag.artist().unwrap_or("Unknown").to_string();
-    let year = tag.year().unwrap_or(0);
-    let duration = tag.duration().unwrap_or(0) as u64;
-    let author_name = tag.album_artist().unwrap_or("Unknown").to_string();
-    let relative_cover_path = look_for_cover(parent_path);
-
-    if is_book_exists(&title) {
-        return None;
-    }
-
-    if !is_author_exists(&author_name) {
-        let author = Author {
-            name: author_name.clone(),
-            relative_img_path: Some(look_for_author_photo(parent_path, &author_name)),
-        };
-        println!("Adding author: {:?}", author);
-        add_author(&author);
-    }
-
-    let book = Book {
-        title,
-        author_name,
-        relative_cover_path: Some(relative_cover_path),
-        genre: Some(genre),
-        lector: Some(lector),
-        create_date: None
-
-    }; 
-    println!("Adding book: {:?}", book);
-    add_book(&book)
-}

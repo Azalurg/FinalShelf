@@ -38,7 +38,6 @@ pub fn add_book(new_book: &Book) -> Option<Book> {
         .expect("Error saving new book");
 
     get_book(&new_book.title)
-
 }
 
 pub fn is_book_exists(title: &str) -> bool {
@@ -46,9 +45,7 @@ pub fn is_book_exists(title: &str) -> bool {
 
     let query = dsl::books.filter(dsl::title.eq(title));
 
-    query
-        .first::<Book>(conn)
-        .is_ok()
+    query.first::<Book>(conn).is_ok()
 }
 
 // pub fn get_session(session_id: &String) -> Option<Session> {
