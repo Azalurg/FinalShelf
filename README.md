@@ -30,7 +30,20 @@ The application is built with Rust for efficient, high-performance audiobook man
 
 This is a database diagram illustrating the relationships between various entities. The structure is designed to ensure that the tags and books read can be accurately recreated, even if the book IDs change due to a full scan of the library. Additionally, there is a configuration file, FinalShelf.json, which contains supplementary settings, such as theme preferences and other customizations.
 
-## Todo
+## TODO
+
+- dodać datę utworzenia pliku na dysku do książki
+- dodać możliwość przechowywania ścieżek bezwzględnych
+    - poprawić funkcję skanującą
+    - dodać odpowiednie struktury do bazy danych
+    - zaktualizować funkcje na froncie
+- dodać paginację do serwisów
+- naprawić stare widoki na froncie
+- wprowadzić ład w Angular
+- dodać sortowanie i filtrowanie
+- dodać nowe widoki
+
+## OldTodo
 
 This section for now in Polish, app in development ;-)
 
