@@ -35,7 +35,7 @@ export class SettingsComponent {
   async quickScan(): Promise<void>{
     try{
         const directory = prompt("Enter directory path to scan for books: ")
-        await invoke("tauri_quick_scan", {directory});
+        await invoke("quick_scan", {directory});
         alert("Scan completed successfully!")
       }
     catch(error) {
@@ -61,6 +61,7 @@ export class SettingsComponent {
   }
 
   async ping(): Promise<void>{
+    console.log("Ping");
     try{
       await invoke("ping");
       console.log("Pong")
