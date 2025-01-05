@@ -2,7 +2,7 @@
 
 use crate::{
     db::establish_connection,
-    models::{models::Author, query::QueryParams},
+    models::{author::Author, query::QueryParams},
     schema::authors,
     schema::authors::dsl,
 };

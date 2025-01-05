@@ -57,11 +57,4 @@ diesel::joinable!(books_read -> books (book_title));
 diesel::joinable!(tags_books -> books (book_title));
 diesel::joinable!(tags_books -> tags (tag_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    absolute_paths,
-    authors,
-    books,
-    books_read,
-    tags,
-    tags_books,
-);
+diesel::allow_tables_to_appear_in_same_query!(absolute_paths, authors, books, books_read, tags, tags_books,);

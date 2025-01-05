@@ -1,7 +1,7 @@
 // get lists, get by ID, search, get dashboard data
 
 use crate::{
-    models::{models::Book, query::QueryParams},
+    models::{book::Book, query::QueryParams},
     services::books_service::list_books,
 };
 

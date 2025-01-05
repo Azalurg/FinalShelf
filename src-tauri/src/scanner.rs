@@ -11,7 +11,7 @@ use rusqlite::Result;
 use walkdir::WalkDir;
 
 use crate::{
-    models::models::{Author, Book},
+    models::{author::Author, book::Book},
     services::{
         authors_service::{add_author, is_author_exists},
         books_service::{add_book, is_book_exists},

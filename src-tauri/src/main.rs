@@ -8,7 +8,7 @@ mod scanner;
 mod schema;
 mod services;
 
-use commands::data::*;
+use commands::books::*;
 use commands::scanner::*;
 use commands::settings::*;
 

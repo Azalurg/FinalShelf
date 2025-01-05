@@ -7,7 +7,7 @@
 
 use crate::{
     db::establish_connection,
-    models::{models::Book, query::QueryParams},
+    models::{book::Book, query::QueryParams},
     schema::books,
     schema::books::dsl,
 };
