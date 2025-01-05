@@ -32,7 +32,6 @@ This is a database diagram illustrating the relationships between various entiti
 
 ## TODO
 
-- dodać datę utworzenia pliku na dysku do książki
 - dodać możliwość przechowywania ścieżek bezwzględnych
     - poprawić funkcję skanującą
     - dodać odpowiednie struktury do bazy danych

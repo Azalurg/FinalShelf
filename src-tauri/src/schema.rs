@@ -1,6 +1,15 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    absolute_paths (id) {
+        id -> Nullable<Integer>,
+        absolute_path -> Text,
+        add_date -> Timestamp,
+        last_use_date -> Nullable<Timestamp>,
+    }
+}
+
+diesel::table! {
     authors (name) {
         name -> Text,
         relative_img_path -> Nullable<Text>,
@@ -48,4 +57,11 @@ diesel::joinable!(books_read -> books (book_title));
 diesel::joinable!(tags_books -> books (book_title));
 diesel::joinable!(tags_books -> tags (tag_id));
 
-diesel::allow_tables_to_appear_in_same_query!(authors, books, books_read, tags, tags_books,);
+diesel::allow_tables_to_appear_in_same_query!(
+    absolute_paths,
+    authors,
+    books,
+    books_read,
+    tags,
+    tags_books,
+);
