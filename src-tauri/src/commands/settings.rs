@@ -2,12 +2,18 @@
 
 use crate::{
     models::path::AbsolutePath,
+    scanner::quick_scan,
     services::absolute_paths_service::{add_absolute_path, get_all_absolute_path, set_current_absolute_path_by_id},
 };
 
 #[tauri::command]
 pub fn ping_command() -> String {
     "ping".to_string()
+}
+
+#[tauri::command]
+pub fn quick_scan_command() -> Result<(), String> {
+    quick_scan()
 }
 
 #[tauri::command]

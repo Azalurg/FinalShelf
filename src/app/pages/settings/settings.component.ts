@@ -40,29 +40,11 @@ export class SettingsComponent {
 
   async quickScan(): Promise<void>{
     try{
-        // const directory = prompt("Enter directory path to scan for books: ")
-        // await invoke("quick_scan", {directory});
-        await invoke("quick_scan");
+        await invoke("quick_scan_command");
         alert("Scan completed successfully!")
       }
     catch(error) {
-      console.error("Error - quick_scan", error);
-      alert("Error")
-    }
-  }
-
-  async clearDatabase(): Promise<void>{
-    try{
-        const consent = prompt("Are you sure you want to clear the database? This action cannot be undone. Write 'yes' to confirm.")
-        if (consent !== "yes"){
-          console.log("User did not confirm");
-          return
-        }
-        await invoke("tauri_clear_db");
-        alert("Database cleared successfully!")
-      }
-    catch(error) {
-      console.error("Error - tauri_clear_db", error);
+      console.error("Error - quick_scan_command", error);
       alert("Error")
     }
   }

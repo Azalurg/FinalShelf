@@ -9,7 +9,6 @@ mod schema;
 mod services;
 
 use commands::books::*;
-use commands::scanner::*;
 use commands::settings::*;
 
 fn main() {
@@ -22,7 +21,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             ping_command,
-            quick_scan,
+            quick_scan_command,
             get_books,
             kill_command,
             add_absolute_path_command,
