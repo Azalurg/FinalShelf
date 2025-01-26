@@ -4,6 +4,7 @@ import { convertImgPathAuthor } from '../../common/convertImgPath';
 import { invoke } from "@tauri-apps/api/core";
 import { Author } from '../../models/authors';
 import { RouterModule } from '@angular/router';
+import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
 
 @Component({
   selector: 'app-authors',
@@ -14,9 +15,16 @@ import { RouterModule } from '@angular/router';
 })
 export class AuthorsComponent {
   authors: Author[] = [];
-  getSrc = (path: string) => convertImgPathAuthor(path);
+  absolute_path: string = "";
+  
+  getSrc = (path: string) => convertImgPathAuthor(path, this.absolute_path);
+
   ngOnInit(): void {
     this.fetchAuthors();
+    
+    getCurrentAbsolutePath().then((path) => {
+      this.absolute_path = path;
+    });
   }
 
   async fetchAuthors() {

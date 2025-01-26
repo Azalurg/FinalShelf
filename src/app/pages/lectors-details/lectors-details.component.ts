@@ -4,6 +4,7 @@ import { convertImgPathBook } from '../../common/convertImgPath';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from "@tauri-apps/api/core";
 import { BookListComponent } from "../books/book-list/book-list.component";
+import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
 
 @Component({
   selector: 'app-lectors-details',
@@ -14,8 +15,9 @@ import { BookListComponent } from "../books/book-list/book-list.component";
 })
 export class LectorsDetailsComponent {
   lectorDetails: any;
+  absolute_path: string = "";
 
-  getSrcBook = (path: string) => convertImgPathBook(path);
+   getSrcBook = (path: string, absolute_path: string) => convertImgPathBook(path, absolute_path);
 
   
   constructor(private route: ActivatedRoute) { }
@@ -26,6 +28,10 @@ export class LectorsDetailsComponent {
       if (lectorId) {
         this.fetchLectorDetails(lectorId);
       }
+      
+      getCurrentAbsolutePath().then((path) => {
+        this.absolute_path = path;
+      });
     });
   }
 

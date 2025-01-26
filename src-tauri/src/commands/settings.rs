@@ -3,7 +3,9 @@
 use crate::{
     models::path::AbsolutePath,
     scanner::quick_scan,
-    services::absolute_paths_service::{add_absolute_path, get_all_absolute_path, set_current_absolute_path_by_id},
+    services::absolute_paths_service::{
+        add_absolute_path, get_all_absolute_path, get_current_absolute_path, set_current_absolute_path_by_id,
+    },
 };
 
 #[tauri::command]
@@ -36,4 +38,9 @@ pub fn set_current_absolute_path_by_id_command(absolute_path_id: i32) -> Result<
     print!("Setting current path by id: {}", absolute_path_id);
     let _ = set_current_absolute_path_by_id(absolute_path_id);
     Ok(())
+}
+
+#[tauri::command]
+pub fn get_current_absolute_path_command() -> Option<AbsolutePath> {
+    get_current_absolute_path()
 }

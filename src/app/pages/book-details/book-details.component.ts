@@ -4,6 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { BookDetails } from '../../models/books';
 import { CommonModule } from '@angular/common';
 import { convertImgPathBook } from '../../common/convertImgPath';
+import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
 
 @Component({
   selector: 'app-book-details',
@@ -14,8 +15,9 @@ import { convertImgPathBook } from '../../common/convertImgPath';
 })
 export class BookDetailsComponent implements OnInit {
   bookDetails: BookDetails | any;
+  absolute_path: string = "";
 
-  getSrc = (path: string) => convertImgPathBook(path);
+  getSrc = (path: string) => convertImgPathBook(path, this.absolute_path);
 
 
   constructor(private route: ActivatedRoute) { }
@@ -26,6 +28,10 @@ export class BookDetailsComponent implements OnInit {
       if (bookId) {
         this.fetchBookDetails(bookId);
       }
+    });
+
+    getCurrentAbsolutePath().then((path) => {
+      this.absolute_path = path;
     });
   }
 

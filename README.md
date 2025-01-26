@@ -37,6 +37,7 @@ This is a database diagram illustrating the relationships between various entiti
     - dodać odpowiednie struktury do bazy danych
     - zaktualizować funkcje na froncie
     - podzielić QueryParams na raw i processed
+- dodać lazy loading do obrazków / resizing
 - dodać paginację do serwisów
 - naprawić stare widoki na froncie
 - wprowadzić ład w Angular

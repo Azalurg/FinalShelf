@@ -1,17 +1,26 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 
-export function convertImgPathBook(path: string): string {
-    if (!path){
-      return 'assets/book.jpg';
-    }
-    return convertFileSrc(path);
-    
+function resolveAbsolutePath(path: string, absolute_path: string): string {
+  if (path.startsWith("/") || path.match(/^[a-zA-Z]:\\/)) {
+    return path;
+  }
+  return `${absolute_path.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`;
+}
+
+export function convertImgPathBook(path: string, absolute_path: string): string {
+  if (!path) {
+    return 'assets/book.jpg';
   }
 
-  export function convertImgPathAuthor(path: string): string {
-    if (!path){
-      return 'assets/author.jpg';
-    }
-    return convertFileSrc(path);
-    
+  const fullPath = resolveAbsolutePath(path, absolute_path);
+  return convertFileSrc(fullPath);
+}
+
+export function convertImgPathAuthor(path: string, absolute_path: string): string {
+  if (!path) {
+    return 'assets/author.jpg';
   }
+
+  const fullPath = resolveAbsolutePath(path, absolute_path);
+  return convertFileSrc(fullPath);
+}

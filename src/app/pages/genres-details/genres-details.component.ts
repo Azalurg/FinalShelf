@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { convertImgPathBook } from '../../common/convertImgPath';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from "@tauri-apps/api/core";
 import { BookListComponent } from "../books/book-list/book-list.component";
@@ -14,9 +13,6 @@ import { BookListComponent } from "../books/book-list/book-list.component";
 })
 export class GenresDetailsComponent {
   genreDetails: any;
-
-  getSrcBook = (path: string) => convertImgPathBook(path);
-
   
   constructor(private route: ActivatedRoute) { }
 

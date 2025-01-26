@@ -26,7 +26,8 @@ fn main() {
             kill_command,
             add_absolute_path_command,
             get_all_absolute_path_command,
-            set_current_absolute_path_by_id_command
+            set_current_absolute_path_by_id_command,
+            get_current_absolute_path_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

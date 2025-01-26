@@ -1,7 +1,7 @@
 use std::{
     collections::HashSet,
     fs,
-    path::Path,
+    path::{Path, PathBuf},
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
@@ -19,28 +19,34 @@ use crate::{
     },
 };
 
-fn look_for_cover(directory: &str) -> String {
+fn look_for_cover(directory: &str, base_path: &Path) -> String {
     let exts = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".nfo"];
     let names = ["cover", "folder", "album", "poster", "default", "art"];
     for name in names.iter() {
         for ext in exts.iter() {
             let image_name = format!("{}{}", name, ext);
-            let image_path = format!("{}/{}", directory, image_name);
+            let image_path = Path::new(directory).join(image_name);
+
             if fs::metadata(&image_path).is_ok() {
-                return image_path;
+                // Return the relative path
+                return image_path
+                    .strip_prefix(base_path)
+                    .unwrap_or(&image_path)
+                    .to_string_lossy()
+                    .to_string();
             }
         }
     }
     String::new()
 }
 
-fn look_for_author_photo(path: &str, name: &str) -> String {
+fn look_for_author_photo(path: &str, name: &str, base_path: &Path) -> String {
     let directory = match path.find(name) {
         Some(index) => &path[..index + name.len()],
         None => return String::new(),
     };
 
-    return look_for_cover(directory);
+    look_for_cover(directory, base_path)
 }
 
 fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<NaiveDateTime> {
@@ -63,7 +69,9 @@ pub fn quick_scan() -> Result<(), String> {
     let mut processed_dirs = HashSet::new();
     let start = Instant::now();
 
-    for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(Result::ok) {
+    let base_path = Path::new(&directory);
+
+    for entry in WalkDir::new(&directory).min_depth(1).into_iter().filter_map(Result::ok) {
         if let Some(mp3_path) = get_mp3_path(&entry) {
             if let Some(parent_path) = mp3_path.parent().and_then(Path::to_str) {
                 // Skip already processed directories
@@ -77,7 +85,7 @@ pub fn quick_scan() -> Result<(), String> {
                         .ok()
                         .and_then(|metadata| system_time_to_naive_date_time(metadata.created().ok()));
 
-                    process_metadata(&tag, parent_path, file_create_date);
+                    process_metadata(&tag, parent_path, file_create_date, base_path);
                 }
             }
         }
@@ -97,7 +105,12 @@ fn get_mp3_path(entry: &walkdir::DirEntry) -> Option<&Path> {
     }
 }
 
-fn process_metadata(tag: &Tag, parent_path: &str, file_crate_date: Option<NaiveDateTime>) -> Option<Book> {
+fn process_metadata(
+    tag: &Tag,
+    parent_path: &str,
+    file_create_date: Option<NaiveDateTime>,
+    base_path: &Path,
+) -> Option<Book> {
     let title = tag.album().unwrap_or(&format!("Unknown ({})", parent_path)).to_string();
 
     if is_book_exists(&title) {
@@ -106,15 +119,13 @@ fn process_metadata(tag: &Tag, parent_path: &str, file_crate_date: Option<NaiveD
 
     let genre = tag.genre().unwrap_or("Unknown").to_string();
     let lector = tag.artist().unwrap_or("Unknown").to_string();
-    // let year = tag.year().unwrap_or(0);
-    // let duration = tag.duration().unwrap_or(0) as u64;
     let author_name = tag.album_artist().unwrap_or("Unknown").to_string();
-    let relative_cover_path = look_for_cover(parent_path);
+    let relative_cover_path = look_for_cover(parent_path, base_path);
 
     if !is_author_exists(&author_name) {
         let author = Author {
             name: author_name.clone(),
-            relative_img_path: Some(look_for_author_photo(parent_path, &author_name)),
+            relative_img_path: Some(look_for_author_photo(parent_path, &author_name, base_path)),
         };
         println!("Adding author: {:?}", author);
         add_author(&author);
@@ -126,68 +137,8 @@ fn process_metadata(tag: &Tag, parent_path: &str, file_crate_date: Option<NaiveD
         relative_cover_path: Some(relative_cover_path),
         genre: Some(genre),
         lector: Some(lector),
-        create_date: file_crate_date,
+        create_date: file_create_date,
     };
     println!("Adding book: {:?}", book);
     add_book(&book)
 }
-
-// fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<NaiveDateTime> {
-//     option_time.and_then(|time| {
-//         time.duration_since(UNIX_EPOCH).ok().map(|duration| {
-//             NaiveDateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos())
-//         })
-//     })
-// }
-
-// pub fn quick_scan(directory: &str) -> Result<(), String> {
-//     println!("Quick scan in {}", directory);
-//     let mut processed_dirs = HashSet::new();
-//     let start = Instant::now();
-
-//     for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(|e| e.ok()) {
-//         if let Some(mp3_path) = get_mp3_path(&entry) {
-//             let parent_path = mp3_path.parent().and_then(Path::to_str).unwrap();
-
-//             if processed_dirs.insert(parent_path.to_string()) {
-//                 if let Ok(tag) = Tag::read_from_path(mp3_path) {
-//                     let file_crate_date = match fs::metadata(mp3_path) {
-//                         Ok(metadata) => system_time_to_naive_date_time(metadata.created().ok()),
-//                         Err(_) => None,
-//                     };
-
-//                     process_metadata(&tag, parent_path, file_crate_date);
-//                 }
-//             }
-//         }
-//     }
-
-//     println!("Quick scan complete, elapsed time: {:?}", start.elapsed());
-
-//     Ok(())
-// }
-
-// pub fn full_scan(directory: &str) -> Result<()> {
-//     println!("Full scan in {}", directory);
-//     let mut books_hashmap = HashMap::new();
-//     let start = Instant::now();
-
-//     for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(|e| e.ok()) {
-//         if let Some(mp3_path) = get_mp3_path(&entry) {
-//             if let Ok(tag) = Tag::read_from_path(mp3_path) {
-//                 let title = tag.album().unwrap_or("Unknown").to_string();
-//                 let duration = tag.duration().unwrap_or(0) as u64;
-
-//                 if let Some(&book_id) = books_hashmap.get(&title) {
-//                     db::increment_book_duration(&conn, book_id, duration)?;
-//                 } else {
-//                     let book_id = process_metadata(&conn, &tag, mp3_path.parent().unwrap().to_str().unwrap())?;
-//                     books_hashmap.insert(title, book_id);
-//                 }
-//             }
-//         }
-//     }
-
-//     println!("Full scan complete, elapsed time: {:?}", start.elapsed());
-//     Ok(())
-// }

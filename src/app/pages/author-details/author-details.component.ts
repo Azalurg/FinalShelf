@@ -4,6 +4,7 @@ import { AuthorDetails } from '../../models/authors';
 import { convertImgPathAuthor, convertImgPathBook } from '../../common/convertImgPath';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from "@tauri-apps/api/core";
+import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
 
 @Component({
   selector: 'app-author-details',
@@ -14,9 +15,10 @@ import { invoke } from "@tauri-apps/api/core";
 })
 export class AuthorDetailsComponent {
   authorDetails: AuthorDetails | any;
+  absolute_path: string = "";
 
-  getSrcAuthor = (path: string) => convertImgPathAuthor(path);
-  getSrcBook = (path: string) => convertImgPathBook(path);
+  getSrcAuthor = (path: string) => convertImgPathAuthor(path, this.absolute_path);
+  getSrcBook = (path: string) => convertImgPathBook(path, this.absolute_path);
 
   
   constructor(private route: ActivatedRoute) { }
@@ -27,6 +29,10 @@ export class AuthorDetailsComponent {
       if (authorId) {
         this.fetchAuthorDetails(authorId);
       }
+
+      getCurrentAbsolutePath().then((path) => {
+        this.absolute_path = path;
+      });
     });
   }
 
