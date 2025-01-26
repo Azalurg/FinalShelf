@@ -2,9 +2,20 @@
   <h1>Settings</h1>
   <div class="db-settings">
     <div>
+      <h2>Directory</h2>
+      <select id="absolute-path" (change)="updatePath($event)">
+        <ng-container *ngFor="let path of absolutePaths">
+          <option [value]="path.id" [selected]="path === selectedPath">
+            {{ path.absolute_path }}
+          </option>
+        </ng-container>
+      </select>      
+      <button (click)="addPath()">Add path</button>
+    </div>
+    <div>
       <h2>Database</h2>
+      
       <button (click)="quickScan()">Quick scan</button>
-      <button (click)="fullScan()">Full scan</button>
       <button (click)="clearDatabase()">Clear database</button>
     </div>
     <div>

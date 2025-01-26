@@ -1,8 +1,8 @@
-//Functions: get_current_absolute_path, get_all_absolute_path, check_if_absolute_path_in_db, check_if_path_exists, add_path, update_last_use_date, delete_path 
+//Functions: get_current_absolute_path, get_all_absolute_path, check_if_absolute_path_in_db, check_if_path_exists, add_path, update_last_use_date, delete_path
 
 use crate::{
     db::establish_connection,
-    models::path::AbsolutePath,
+    models::path::{AbsolutePath, NewAbsolutePath},
 };
 
 use diesel::prelude::*;
@@ -25,7 +25,7 @@ pub fn get_all_absolute_path() -> Vec<AbsolutePath> {
     query.load::<AbsolutePath>(conn).expect("Error loading absolute paths")
 }
 
-pub fn check_if_absolute_path_in_db(absolute_path: &str) -> bool {
+fn check_if_absolute_path_in_db_by_name(absolute_path: &str) -> bool {
     let conn = &mut establish_connection();
 
     let query = crate::schema::absolute_paths::dsl::absolute_paths
@@ -34,7 +34,20 @@ pub fn check_if_absolute_path_in_db(absolute_path: &str) -> bool {
     query.first::<AbsolutePath>(conn).is_ok()
 }
 
-pub fn set_current_absolute_path_by_id(absolute_path_id: i32) -> Option<AbsolutePath> {
+fn check_if_absolute_path_in_db_by_id(absolute_path_id: i32) -> bool {
+    let conn = &mut establish_connection();
+
+    let query = crate::schema::absolute_paths::dsl::absolute_paths
+        .filter(crate::schema::absolute_paths::dsl::id.eq(absolute_path_id));
+
+    query.first::<AbsolutePath>(conn).is_ok()
+}
+
+pub fn set_current_absolute_path_by_id(absolute_path_id: i32) -> Result<AbsolutePath, String> {
+    if !check_if_absolute_path_in_db_by_id(absolute_path_id) {
+        return Err("Path already exists".to_string());
+    }
+
     use crate::schema::absolute_paths::dsl;
 
     let conn = &mut establish_connection();
@@ -44,11 +57,38 @@ pub fn set_current_absolute_path_by_id(absolute_path_id: i32) -> Option<Absolute
     diesel::update(dsl::absolute_paths.filter(dsl::id.eq(absolute_path_id)))
         .set(dsl::last_use_date.eq(Some(now)))
         .execute(conn)
-        .ok()?;
+        .ok()
+        .ok_or("Error setting current path".to_string())?;
 
     dsl::absolute_paths
         .filter(dsl::id.eq(absolute_path_id))
         .first::<AbsolutePath>(conn)
         .ok()
+        .ok_or("Error setting current path".to_string())
 }
 
+pub fn add_absolute_path(absolute_path: String) -> Result<(), String> {
+    print!("Adding path: {}", absolute_path);
+    let conn = &mut establish_connection();
+
+    if check_if_absolute_path_in_db_by_name(absolute_path.as_str()) {
+        return Err("Path already exists".to_string());
+    }
+
+    let now = chrono::Utc::now().naive_utc();
+
+    let new_absolute_path = NewAbsolutePath {
+        absolute_path,
+        add_date: now.clone(),
+        last_use_date: Some(now),
+    };
+
+    println!("Debug: {:?}", new_absolute_path);
+
+    diesel::insert_into(crate::schema::absolute_paths::table)
+        .values(&new_absolute_path)
+        .execute(conn)
+        .map_err(|e| format!("Error inserting absolute path: {}", e))?;
+
+    Ok(())
+}

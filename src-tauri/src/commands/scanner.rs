@@ -5,6 +5,6 @@
 use crate::scanner;
 
 #[tauri::command]
-pub fn quick_scan(directory: String) -> Result<(), String> {
-    scanner::quick_scan(&directory)
+pub fn quick_scan() -> Result<(), String> {
+    scanner::quick_scan()
 }

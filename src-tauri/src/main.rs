@@ -20,7 +20,15 @@ fn main() {
             db::init();
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![ping, quick_scan, get_books])
+        .invoke_handler(tauri::generate_handler![
+            ping_command,
+            quick_scan,
+            get_books,
+            kill_command,
+            add_absolute_path_command,
+            get_all_absolute_path_command,
+            set_current_absolute_path_by_id_command
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

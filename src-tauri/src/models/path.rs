@@ -13,3 +13,11 @@ pub struct AbsolutePath {
     pub add_date: NaiveDateTime,
     pub last_use_date: Option<NaiveDateTime>,
 }
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
+#[table_name = "absolute_paths"]
+pub struct NewAbsolutePath {
+    pub absolute_path: String,
+    pub add_date: NaiveDateTime,
+    pub last_use_date: Option<NaiveDateTime>,
+}

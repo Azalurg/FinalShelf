@@ -13,6 +13,7 @@ use walkdir::WalkDir;
 use crate::{
     models::{author::Author, book::Book},
     services::{
+        absolute_paths_service::get_current_absolute_path,
         authors_service::{add_author, is_author_exists},
         books_service::{add_book, is_book_exists},
     },
@@ -49,7 +50,15 @@ fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<Nai
         .map(|duration| NaiveDateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
 }
 
-pub fn quick_scan(directory: &str) -> Result<(), String> {
+pub fn quick_scan() -> Result<(), String> {
+    let absolute_path = get_current_absolute_path();
+    let directory: String;
+    if let Some(absolute_path) = absolute_path {
+        directory = absolute_path.absolute_path;
+    } else {
+        return Err("No path to scan".to_string());
+    }
+
     println!("Quick scan in {}", directory);
     let mut processed_dirs = HashSet::new();
     let start = Instant::now();
