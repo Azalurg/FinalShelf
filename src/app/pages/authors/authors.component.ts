@@ -29,7 +29,7 @@ export class AuthorsComponent {
 
   async fetchAuthors() {
     try {
-      const authors = await invoke<Author[]>('tauri_get_authors');
+      const authors = await invoke<Author[]>('get_authors_list_command', {});
       this.authors = authors;
     } catch (error) {
       console.error(error);

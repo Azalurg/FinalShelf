@@ -25,9 +25,9 @@ export class AuthorDetailsComponent {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const authorId = Number(params.get('id'));
-      if (authorId) {
-        this.fetchAuthorDetails(authorId);
+      const authorName = params.get('name');
+      if (authorName) {
+        this.fetchAuthorDetails(authorName);
       }
 
       getCurrentAbsolutePath().then((path) => {
@@ -36,9 +36,9 @@ export class AuthorDetailsComponent {
     });
   }
 
-  async fetchAuthorDetails(authorId: number) {
+  async fetchAuthorDetails(authorName: string) {
     try {
-      const authorDetailsData = await invoke<AuthorDetails>('tauri_get_author_details', { authorId });
+      const authorDetailsData = await invoke<AuthorDetails>('get_author_command', { name: authorName });
       this.authorDetails = authorDetailsData;
       console.log(this.authorDetails);
     } catch (error) {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from '@tauri-apps/api/core';
-import { BookDetails } from '../../models/books';
+import { Book } from '../../models/books';
 import { CommonModule } from '@angular/common';
 import { convertImgPathBook } from '../../common/convertImgPath';
 import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
@@ -14,7 +14,7 @@ import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
   styleUrls: ['./book-details.component.scss']
 })
 export class BookDetailsComponent implements OnInit {
-  bookDetails: BookDetails | any;
+  bookDetails: Book | any;
   absolute_path: string = "";
 
   getSrc = (path: string) => convertImgPathBook(path, this.absolute_path);
@@ -24,9 +24,9 @@ export class BookDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const bookId = Number(params.get('id'));
-      if (bookId) {
-        this.fetchBookDetails(bookId);
+        const bookTitle =params.get('title');
+      if (bookTitle) {
+        this.fetchBookDetails(bookTitle);
       }
     });
 
@@ -35,9 +35,9 @@ export class BookDetailsComponent implements OnInit {
     });
   }
 
-  async fetchBookDetails(bookId: number) {
+  async fetchBookDetails(bookTitle: string) {
     try {
-      const bookDetails = await invoke<BookDetails>('tauri_get_book_details', { bookId });
+      const bookDetails = await invoke<Book>('get_book_command', { title: bookTitle });
       this.bookDetails = bookDetails;
       console.log(this.bookDetails);
     } catch (error) {

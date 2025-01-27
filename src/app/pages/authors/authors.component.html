@@ -1,8 +1,8 @@
 <div class="app-page">
     <h1>Author list</h1>
     <div class="gallery">
-        <a *ngFor="let author of authors" class="gallery-item shadow" [routerLink]="['/authors', author.id]">
-            <img src={{getSrc(author.picture_path)}} alt="image">
+        <a *ngFor="let author of authors" class="gallery-item shadow" [routerLink]="['/authors', author.name]">
+            <img src={{getSrc(author.relative_img_path)}} alt="image">
             <div class="gallery-text gallery-tex-first">{{author.name}}</div>
         </a>
 </div>

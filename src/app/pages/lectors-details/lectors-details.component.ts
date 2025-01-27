@@ -24,9 +24,9 @@ export class LectorsDetailsComponent {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const lectorId = Number(params.get('id'));
-      if (lectorId) {
-        this.fetchLectorDetails(lectorId);
+      const lectorName = params.get('name');
+      if (lectorName) {
+        this.fetchLectorDetails(lectorName);
       }
       
       getCurrentAbsolutePath().then((path) => {
@@ -35,9 +35,9 @@ export class LectorsDetailsComponent {
     });
   }
 
-  async fetchLectorDetails(lectorId: number) {
+  async fetchLectorDetails(lectorName: string) {
     try {
-      const lectorDetailsData = await invoke<any>('tauri_get_lector_details', { lectorId });
+      const lectorDetailsData = await invoke<any>('tauri_get_lector_details', { lectorId: lectorName });
       this.lectorDetails = lectorDetailsData;
       console.log(this.lectorDetails);
     } catch (error) {

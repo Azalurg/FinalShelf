@@ -1,13 +1,13 @@
-import { BookDetails } from "./books";
+import { Book } from "./books";
 
 interface Author {
-  id: number;
   name: string;
-  picture_path: string;
+  relative_img_path: string;
 }
 
-interface AuthorDetails extends Author {
-  books: BookDetails[];
+interface AuthorDetails {
+  author: Author;
+  books: Book[];
 }
 
 export { Author, AuthorDetails };

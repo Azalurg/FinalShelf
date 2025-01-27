@@ -48,39 +48,26 @@ pub fn is_book_exists(title: &str) -> bool {
     query.first::<Book>(conn).is_ok()
 }
 
-// pub fn get_session(session_id: &String) -> Option<Session> {
-//     let connection = &mut establish_db_connection();
+pub fn get_books_by_author(author_name: &str) -> Vec<Book> {
+    let conn = &mut establish_connection();
 
-//     dsl::sessions
-//         .filter(dsl::id.eq(session_id))
-//         .first::<Session>(connection)
-//         .ok()
-// }
+    let query = dsl::books.filter(dsl::author_name.eq(author_name));
 
-// pub fn store_session(new_session: &NewSession) {
-//     let connection = &mut establish_db_connection();
+    query.load::<Book>(conn).expect("Error loading books")
+}
 
-//     diesel::insert_into(sessions::table)
-//         .values(new_session)
-//         .execute(connection)
-//         .expect("Error saving new session");
-// }
+pub fn get_books_by_genre(genre: &str) -> Vec<Book> {
+    let conn = &mut establish_connection();
 
-// pub fn update_session_name(session_id: String, name: String) {
-//     let connection = &mut establish_db_connection();
+    let query = dsl::books.filter(dsl::genre.eq(genre));
 
-//     diesel::update(dsl::sessions)
-//         .filter(dsl::id.eq(session_id.clone()))
-//         .set(dsl::name.eq(name.clone()))
-//         .execute(connection)
-//         .expect("Error updating session name");
-// }
+    query.load::<Book>(conn).expect("Error loading books")
+}
 
-// pub fn delete_session(session_id: String) {
-//     let connection = &mut establish_db_connection();
+pub fn get_books_by_lector(lector: &str) -> Vec<Book> {
+    let conn = &mut establish_connection();
 
-//     diesel::delete(dsl::sessions)
-//         .filter(crate::schema::sessions::dsl::id.eq(session_id))
-//         .execute(connection)
-//         .expect("Error deleting session");
-// }
+    let query = dsl::books.filter(dsl::lector.eq(lector));
+
+    query.load::<Book>(conn).expect("Error loading books")
+}

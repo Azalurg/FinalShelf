@@ -20,7 +20,7 @@ pub fn quick_scan_command() -> Result<(), String> {
 
 #[tauri::command]
 pub fn kill_command() -> Result<(), String> {
-    std::process::exit(0);
+    panic!("\n--- Killed by user ---\n");
 }
 
 #[tauri::command]

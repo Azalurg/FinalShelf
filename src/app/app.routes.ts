@@ -18,7 +18,7 @@ export const routes: Routes = [
     component: DashboardComponent,
   },
   {
-    path: 'books/:id',
+    path: 'books/:title',
     component: BookDetailsComponent,
   },
   {
@@ -30,7 +30,7 @@ export const routes: Routes = [
     component: AuthorsComponent
   },
   {
-    path: 'authors/:id',
+    path: 'authors/:name',
     component: AuthorDetailsComponent
   },
   {

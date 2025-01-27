@@ -25,7 +25,7 @@ export class BooksComponent {
 
   async fetchBooks(): Promise<void> {
     try {
-      const books = await invoke<Book[]>("get_books", 
+      const books = await invoke<Book[]>("get_books_list_command", 
       //   {
       //   page: this.page,
       //   pageSize: this.pageSize,

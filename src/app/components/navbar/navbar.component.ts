@@ -12,7 +12,7 @@ import { invoke } from "@tauri-apps/api/core";
 export class NavbarComponent {
   async exit(): Promise<void>{
     try{
-        await invoke("tauri_kill");
+        await invoke("kill_command");
       }
     catch(error) {
       alert("Error")

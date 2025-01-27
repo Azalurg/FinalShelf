@@ -2,9 +2,11 @@
 
 use crate::{
     db::establish_connection,
-    models::{author::Author, query::QueryParams},
-    schema::authors,
-    schema::authors::dsl,
+    models::{
+        author::{Author, AuthorWithBooks},
+        query::QueryParams,
+    },
+    schema::authors::{self, dsl},
 };
 
 use diesel::prelude::*;
@@ -32,4 +34,17 @@ pub fn is_author_exists(name: &str) -> bool {
     let query = dsl::authors.filter(dsl::name.eq(name));
 
     query.first::<Author>(conn).is_ok()
+}
+
+pub fn get_author(name: &str) -> Option<AuthorWithBooks> {
+    let conn = &mut establish_connection();
+
+    let author = dsl::authors
+        .filter(dsl::name.eq(name))
+        .first::<Author>(conn)
+        .expect("Error loading author");
+
+    let books = crate::services::books_service::get_books_by_author(&author.name);
+
+    Some(AuthorWithBooks { author, books })
 }
