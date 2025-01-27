@@ -1,8 +1,6 @@
 // Tags table model
 use crate::schema::*;
 
-use chrono::NaiveDateTime;
-use diesel::prelude::*;
 use diesel::Insertable;
 use diesel::Queryable;
 use serde::{Deserialize, Serialize};

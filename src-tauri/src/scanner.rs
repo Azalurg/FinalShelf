@@ -1,11 +1,11 @@
 use std::{
     collections::HashSet,
     fs,
-    path::{Path, PathBuf},
+    path::Path,
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
-use chrono::{NaiveDateTime, Utc};
+use chrono::NaiveDateTime;
 use id3::{Tag, TagLike};
 use rusqlite::Result;
 use walkdir::WalkDir;

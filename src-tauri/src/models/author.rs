@@ -1,6 +1,5 @@
 use crate::schema::*;
 
-use diesel::prelude::*;
 use diesel::Insertable;
 use diesel::Queryable;
 use serde::{Deserialize, Serialize};
@@ -14,7 +13,7 @@ pub struct Author {
     pub relative_img_path: Option<String>,
 }
 
-#[derive(Queryable, Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct AuthorWithBooks {
     pub author: Author,
     pub books: Vec<Book>,

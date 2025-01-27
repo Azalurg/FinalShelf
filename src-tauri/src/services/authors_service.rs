@@ -1,5 +1,3 @@
-// Add author service
-
 use crate::{
     db::establish_connection,
     models::{
