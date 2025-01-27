@@ -8,7 +8,7 @@ mod scanner;
 mod schema;
 mod services;
 
-use commands::{authors::*, books::*, settings::*};
+use commands::{authors_commands::*, books_commands::*, settings_commands::*};
 
 fn main() {
     tauri::Builder::default()

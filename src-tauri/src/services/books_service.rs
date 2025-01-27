@@ -1,10 +1,3 @@
-// use crate::{
-//     db::establish_db_connection,
-//     models::session::{NewSession, Session},
-//     schema::sessions,
-//     schema::sessions::dsl,
-// };
-
 use crate::{
     db::establish_connection,
     models::{book::Book, query::QueryParams},
