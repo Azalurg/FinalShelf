@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from "@tauri-apps/api/core";
 import { BookListComponent } from "../books/book-list/book-list.component";
 import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
+import { LectorDetails } from '../../models/lectors';
 
 @Component({
   selector: 'app-lectors-details',
@@ -14,8 +15,8 @@ import { getCurrentAbsolutePath } from '../../common/getCurrentAbsolutePath';
   styleUrl: './lectors-details.component.scss'
 })
 export class LectorsDetailsComponent {
-  lectorDetails: any;
-  absolute_path: string = "";
+  lectorDetails: LectorDetails | any;
+  absolute_path = "";
 
    getSrcBook = (path: string, absolute_path: string) => convertImgPathBook(path, absolute_path);
 
@@ -27,6 +28,8 @@ export class LectorsDetailsComponent {
       const lectorName = params.get('name');
       if (lectorName) {
         this.fetchLectorDetails(lectorName);
+      } else {
+        console.error("No lector name provided");
       }
       
       getCurrentAbsolutePath().then((path) => {
@@ -36,9 +39,10 @@ export class LectorsDetailsComponent {
   }
 
   async fetchLectorDetails(lectorName: string) {
+    console.log("fetching lector details");
     try {
-      const lectorDetailsData = await invoke<any>('tauri_get_lector_details', { lectorId: lectorName });
-      this.lectorDetails = lectorDetailsData;
+      const lectorDetailsData = await invoke<LectorDetails>('get_lector_command', { lectorName: lectorName });
+      this.lectorDetails = lectorDetailsData || [];
       console.log(this.lectorDetails);
     } catch (error) {
       console.error(error);

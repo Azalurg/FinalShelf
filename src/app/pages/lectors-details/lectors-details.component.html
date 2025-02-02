@@ -1,9 +1,11 @@
 <div class="app-page">
     <div class="details-container">
         <div class="details-info">
-            <h1 class="details-title">{{ lectorDetails.name }} ({{ lectorDetails.books.length }})</h1>
+            <h1 class="details-title">{{ lectorDetails?.name }} ({{ lectorDetails?.books_amount }})</h1>
         </div>
     </div>
 
-    <app-book-list [books]="lectorDetails.books"></app-book-list>
+    <app-book-list [books]="lectorDetails?.books"></app-book-list>
+
+    
 </div>

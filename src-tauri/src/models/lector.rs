@@ -1,13 +1,13 @@
-use diesel::sqlite::Sqlite;
-use serde::{Deserialize, Serialize};
-use crate::schema::*;
 use crate::models::book::Book;
-use diesel::{Queryable};
+use crate::schema::*;
+use diesel::sqlite::Sqlite;
+use diesel::Queryable;
+use serde::{Deserialize, Serialize};
 
 use diesel::prelude::*;
 
 #[derive(QueryableByName, Serialize, Deserialize, Debug)]
-pub struct Lector{
+pub struct Lector {
     #[diesel(sql_type = diesel::sql_types::Text)]
     pub name: String,
     #[diesel(sql_type = diesel::sql_types::BigInt)]
@@ -15,7 +15,8 @@ pub struct Lector{
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct LectorWithBooks{
-    name: String,
-    books: Vec<Book>,
+pub struct LectorWithBooks {
+    pub name: String,
+    pub books: Vec<Book>,
+    pub books_amount: i64,
 }

@@ -3,6 +3,7 @@ import { convertImgPathBook } from '../../../common/convertImgPath';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { getCurrentAbsolutePath } from '../../../common/getCurrentAbsolutePath';
+import { Book } from '../../../models/books';
 
 @Component({
   selector: 'app-book-list',
@@ -12,9 +13,9 @@ import { getCurrentAbsolutePath } from '../../../common/getCurrentAbsolutePath';
   styleUrls: ['./book-list.component.scss']
 })
 export class BookListComponent implements OnInit {
-  @Input() books: any[] = [];
-  absolute_path: string = "";
-  isLoaded: boolean = false;  // Flag to control loading state
+  @Input() books: Book[] | undefined = [];
+  absolute_path = "";
+  isLoaded = false;  // Flag to control loading state
 
   // Function to get the image source path
   getSrc = (path: string) => convertImgPathBook(path, this.absolute_path);

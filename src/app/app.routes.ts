@@ -38,7 +38,7 @@ export const routes: Routes = [
     component: LectorsComponent
   },
   {
-    path: 'lectors/:id',
+    path: 'lectors/:name',
     component: LectorsDetailsComponent
   },
   {
