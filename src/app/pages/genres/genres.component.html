@@ -2,7 +2,7 @@
     <h1>Lectors</h1>
     <div class="app-grid">
         <div *ngFor="let genre of genres" class="grid-item">
-            <a [routerLink]="['/genres', genre.id]">{{ genre.name }} ({{ genre.books }})</a>
+            <a [routerLink]="['/genres', genre.name]">{{ genre.name }} ({{ genre.books_amount }})</a>
         </div>    
     </div>
 </div>

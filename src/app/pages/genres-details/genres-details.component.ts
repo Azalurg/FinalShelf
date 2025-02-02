@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { invoke } from "@tauri-apps/api/core";
 import { BookListComponent } from "../books/book-list/book-list.component";
+import { GenreDetails } from '../../models/genres';
 
 @Component({
   selector: 'app-genres-details',
@@ -12,22 +13,22 @@ import { BookListComponent } from "../books/book-list/book-list.component";
   styleUrl: './genres-details.component.scss'
 })
 export class GenresDetailsComponent {
-  genreDetails: any;
+  genreDetails: GenreDetails | any;
   
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      const genreId = Number(params.get('id'));
-      if (genreId) {
-        this.fetchGenreDetails(genreId);
+      const genreName = params.get('name');
+      if (genreName) {
+        this.fetchGenreDetails(genreName);
       }
     });
   }
 
-  async fetchGenreDetails(genreId: number) {
+  async fetchGenreDetails(genreName: string) {
     try {
-      const genreDetailsData = await invoke<any>('tauri_get_genre_details', { genreId });
+      const genreDetailsData = await invoke<GenreDetails>('get_genre_command', { genreName });
       this.genreDetails = genreDetailsData;
       console.log(this.genreDetails);
     } catch (error) {

@@ -1,5 +1,6 @@
 pub(crate) mod author;
 pub(crate) mod book;
+pub(crate) mod genre;
 pub(crate) mod lector;
 pub(crate) mod path;
 pub(crate) mod query;

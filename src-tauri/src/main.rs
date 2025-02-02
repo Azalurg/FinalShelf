@@ -8,7 +8,7 @@ mod scanner;
 mod schema;
 mod services;
 
-use commands::{authors_commands::*, books_commands::*, lectors_commands::*, settings_commands::*};
+use commands::{authors_commands::*, books_commands::*, genres_commands::*, lectors_commands::*, settings_commands::*};
 
 fn main() {
     tauri::Builder::default()
@@ -35,7 +35,10 @@ fn main() {
             get_author_command,
             // --- lectors ---
             get_lectors_list_command,
-            get_lector_command
+            get_lector_command,
+            // --- genres ---
+            get_genres_list_command,
+            get_genre_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

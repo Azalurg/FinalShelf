@@ -31,12 +31,6 @@ export class BooksComponent {
         sortBy: this.sortBy,
         sortOrder: this.sortOrder,
       }
-      //   {
-      //   page: this.page,
-      //   pageSize: this.pageSize,
-      //   sortParams: this.sortParams,
-      //   sortOrder: this.sortOrder,
-      // }
     );
       this.books = books;
     } catch (error) {

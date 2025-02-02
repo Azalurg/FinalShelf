@@ -46,7 +46,7 @@ export const routes: Routes = [
     component: GenresComponent
   },
   {
-    path: 'genres/:id',
+    path: 'genres/:name',
     component: GenresDetailsComponent
   },
   {
