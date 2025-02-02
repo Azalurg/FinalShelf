@@ -4,7 +4,7 @@
         <div class="app-pagination">
             <button (click)="prevPage()" style="margin-right: 1rem;"><img
                     src="assets/icons/chevron-left-duo-svgrepo-com.svg"></button>
-            <select id="pageSize" (change)="changePageSize($event)">
+            <select id="limit" (change)="changePageSize($event)">
                 <option [value]="9">9</option>
                 <option [value]="21" selected>21</option>
                 <option [value]="40">40</option>

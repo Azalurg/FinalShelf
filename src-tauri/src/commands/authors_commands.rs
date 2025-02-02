@@ -15,8 +15,16 @@ pub async fn get_authors_list_command(
     page: Option<i64>,
     page_size: Option<i64>,
 ) -> Vec<Author> {
-    let query_params = QueryParams::new(None, None, sort_by, sort_order, page, page_size);
-
+    let query_params = QueryParams {
+        page,
+        limit: page_size,
+        author_name: None,
+        genre: None,
+        title: None,
+        lector: None,
+        sort_by,
+        sort_order,
+    };
     list_authors(query_params)
 }
 

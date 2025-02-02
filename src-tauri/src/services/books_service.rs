@@ -15,11 +15,53 @@ pub fn get_book(title: &str) -> Option<Book> {
 }
 
 pub fn list_books(query_params: QueryParams) -> Vec<Book> {
+    use crate::schema::books::dsl;
+
     let conn = &mut establish_connection();
 
-    let query = dsl::books.order_by(dsl::author_name.desc());
+    let page = query_params.page.unwrap_or(1);
+    let limit = query_params.limit.unwrap_or(10);
+    let offset = (page - 1) * limit;
 
-    query.load::<Book>(conn).expect("Error loading books")
+    let mut query = dsl::books.into_boxed();
+
+    // Apply sorting dynamically
+    if let Some(sort_field) = query_params.sort_by {
+        let order = query_params.sort_order.unwrap_or("asc".to_string());
+
+        query = match sort_field.as_str() {
+            "title" => {
+                if order == "desc" {
+                    query.order(dsl::title.desc())
+                } else {
+                    query.order(dsl::title.asc())
+                }
+            },
+            "author_name" => {
+                if order == "desc" {
+                    query.order(dsl::author_name.desc())
+                } else {
+                    query.order(dsl::author_name.asc())
+                }
+            },
+            "create_date" => {
+                if order == "desc" {
+                    query.order(dsl::create_date.desc())
+                } else {
+                    query.order(dsl::create_date.asc())
+                }
+            },
+            _ => query.order(dsl::author_name.asc()), // Default sorting
+        };
+    }
+
+    let books = query
+        .limit(limit)
+        .offset(offset)
+        .load::<Book>(conn)
+        .expect("Error loading books");
+
+    books
 }
 
 pub fn add_book(new_book: &Book) -> Option<Book> {

@@ -14,9 +14,9 @@ import { BookListComponent } from "./book-list/book-list.component";
 export class BooksComponent {
   books: Book[] = [];
   page = 0;
-  pageSize = 21;
-  sortParams: any = "authors.name, title";
-  sortOrder: any = "ASC";
+  limit = 21;
+  sortBy = "title";
+  sortOrder = "asc";
 
 
   ngOnInit(): void {
@@ -25,7 +25,12 @@ export class BooksComponent {
 
   async fetchBooks(): Promise<void> {
     try {
-      const books = await invoke<Book[]>("get_books_list_command", 
+      const books = await invoke<Book[]>("get_books_list_command", {
+        page: this.page + 1,
+        limit: this.limit,
+        sortBy: this.sortBy,
+        sortOrder: this.sortOrder,
+      }
       //   {
       //   page: this.page,
       //   pageSize: this.pageSize,
@@ -59,7 +64,7 @@ export class BooksComponent {
     const selectElement = event.target as HTMLSelectElement;
     const newPageSize = parseInt(selectElement.value, 10);
 
-    this.pageSize = newPageSize;
+    this.limit = newPageSize;
     this.page = 0; // Reset to the first page whenever the page size changes
     await this.fetchBooks();
   }
@@ -68,24 +73,24 @@ export class BooksComponent {
     const selectElement = event.target as HTMLSelectElement;
     const value = parseInt(selectElement.value, 0);
     if (value === 0) {
-      this.sortParams = null;
-      this.sortOrder = null;
+      this.sortBy = "author_name";
+      this.sortOrder = "asc";
     }
     if (value === 1) {
-      this.sortParams = "title";
-      this.sortOrder = "ASC";
+      this.sortBy = "title";
+      this.sortOrder = "asc";
     }
     if (value === 2) {
-      this.sortParams = "title";
-      this.sortOrder = "DESC";
+      this.sortBy = "title";
+      this.sortOrder = "desc";
     }
     if (value === 3) {
-      this.sortParams = "authors.name, title";
-      this.sortOrder = "ASC";
+      this.sortBy = "author_name";
+      this.sortOrder = "asc";
     }
     if (value === 4) {
-      this.sortParams = "authors.name DESC, title";
-      this.sortOrder = "ASC";
+      this.sortBy = "author_name";
+      this.sortOrder = "desc";
     }
     await this.fetchBooks();
   }
