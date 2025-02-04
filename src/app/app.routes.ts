@@ -1,60 +1,61 @@
 import { Routes } from "@angular/router";
-import { DashboardComponent } from "./pages/dashboard/dashboard.component";
-import { BooksComponent } from "./pages/books/books.component";
-import { SettingsComponent } from "./pages/settings/settings.component";
-import { BookDetailsComponent } from "./pages/book-details/book-details.component";
-import { AuthorsComponent } from "./pages/authors/authors.component";
-import { AuthorDetailsComponent } from "./pages/author-details/author-details.component";
-import { LectorsComponent } from "./pages/lectors/lectors.component";
-import { SearchComponent } from "./pages/search/search.component";
-import { LectorsDetailsComponent } from "./pages/lectors-details/lectors-details.component";
-import { GenresComponent } from "./pages/genres/genres.component";
-import { GenresDetailsComponent } from "./pages/genres-details/genres-details.component";
+import { BookDetailsPageComponent } from "./features/books/pages/details/details.component";
+import { BooksListPageComponent } from "./features/books/pages/list/list.component";
+import { AuthorsListPageComponent } from "./features/authors/list/authors.component";
+import { AuthorDetailsPageComponent } from "./features/authors/details/author-details.component";
+import { LectorsListPageComponent } from "./features/lectors/list/lectors.component";
+import { LectorsDetailsPageComponent } from "./features/lectors/details/lectors-details.component";
+import { GenresListPageComponent } from "./features/genres/list/genres.component";
+import { GenresDetailsPageComponent } from "./features/genres/details/genres-details.component";
+import { SettingsPageComponent } from "./features/settings/settings.component";
+import { SearchPageComponent } from "./features/search/search.component";
+import { DashboardPageComponent } from "./features/dashboard/dashboard.component";
+
 
 
 export const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent,
+    component: DashboardPageComponent,
   },
   {
     path: 'books/:title',
-    component: BookDetailsComponent,
+    component: BookDetailsPageComponent,
   },
   {
     path: 'books',
-    component: BooksComponent
+    component: BooksListPageComponent
   },
   {
     path: 'authors',
-    component: AuthorsComponent
+    component: AuthorsListPageComponent
   },
   {
     path: 'authors/:name',
-    component: AuthorDetailsComponent
+    component: AuthorDetailsPageComponent
   },
   {
     path: 'lectors',
-    component: LectorsComponent
+    component: LectorsListPageComponent
   },
   {
     path: 'lectors/:name',
-    component: LectorsDetailsComponent
+    component: LectorsDetailsPageComponent
   },
   {
     path: 'genres',
-    component: GenresComponent
+    component: GenresListPageComponent
   },
   {
     path: 'genres/:name',
-    component: GenresDetailsComponent
+    component: GenresDetailsPageComponent
   },
   {
     path: 'settings',
-    component: SettingsComponent
+    component: SettingsPageComponent
   },
   {
     path: 'search',
-    component: SearchComponent
+    component: SearchPageComponent
   }
 ]
