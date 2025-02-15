@@ -1,5 +1,5 @@
-<div class="toolbar">
-  <ul class="toolbar__location">
+<div class="topbar">
+  <ul class="topbar__location">
     <li *ngFor="let navPath of navPaths; let last = last">
       <ng-container *ngIf="!last">
         <a [routerLink]="[navPath.url]">{{ navPath.name }}</a>
@@ -11,12 +11,12 @@
     </li>
   </ul>
 
-  <div class="toolbar__search">
+  <div class="topbar__search">
     <input id="search_input" type="text" placeholder="Search" />
     <img (click)="searchIt()" src="assets/icons/search-magnifying-glass-svgrepo-com.svg" alt="" />
   </div>
 
-  <div class="toolbar__clock">
+  <div class="topbar__clock">
     {{ currentTime }}
   </div>
 </div>

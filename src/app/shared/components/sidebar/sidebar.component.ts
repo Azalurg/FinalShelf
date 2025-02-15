@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { invoke } from "@tauri-apps/api/core";
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-sidebar',
   standalone: true,
   imports: [RouterModule],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.scss'
 })
-export class NavbarComponent {
+export class SidebarComponent {
   async exit(): Promise<void>{
     try{
         await invoke("kill_command");

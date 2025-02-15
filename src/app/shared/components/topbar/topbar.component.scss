@@ -1,4 +1,4 @@
-.toolbar{
+.topbar{
     display: grid;
     grid-template-columns: 1fr calc(34vw + 4rem) 1fr;
     align-content: center;
@@ -10,7 +10,7 @@
 
 }
 
-.toolbar__location {
+.topbar__location {
     list-style: none;
     display: flex;
     align-items: end;
@@ -29,7 +29,7 @@
     }
 }
 
-.toolbar__search{
+.topbar__search{
     display: flex;
     align-items: center;
     margin: 0.5rem 0;
@@ -62,7 +62,7 @@ img{
     }
 }
 
-.toolbar__clock{
+.topbar__clock{
     width: 100%;
     display: flex;
     justify-content: right;

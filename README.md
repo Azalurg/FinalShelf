@@ -32,14 +32,9 @@ This is a database diagram illustrating the relationships between various entiti
 
 ## TODO
 
-- dodać możliwość przechowywania ścieżek bezwzględnych
-    - poprawić funkcję skanującą
-    - dodać odpowiednie struktury do bazy danych
-    - zaktualizować funkcje na froncie
-    - podzielić QueryParams na raw i processed
 - dodać lazy loading do obrazków / resizing
 - dodać paginację do serwisów
-- naprawić stare widoki na froncie
+- naprawić wyszukiwanie
 - wprowadzić ład w Angular
 - dodać sortowanie i filtrowanie
 - dodać nowe widoki

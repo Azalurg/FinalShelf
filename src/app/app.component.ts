@@ -1,16 +1,16 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { NavbarComponent } from "./shared/components/navbar/navbar.component";
-import { ToolbarComponent } from "./shared/components/toolbar/toolbar.component";
+import { SidebarComponent } from "./shared/components/sidebar/sidebar.component";
+import { TopbarComponent } from "./shared/components/topbar/topbar.component";
 
 @Component({
   selector: "app-root",
   imports: [
     CommonModule,
     RouterOutlet,
-    NavbarComponent,
-    ToolbarComponent
+    SidebarComponent,
+    TopbarComponent
 ],
   standalone: true,
   templateUrl: "./app.component.html",
