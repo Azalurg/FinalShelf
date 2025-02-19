@@ -21,16 +21,11 @@ The application is built with Rust for efficient, high-performance audiobook man
 
 ## Development
 
-### Data & database
-<div align="center">
-    <img src="./img/database-schema.png" alt="HTML View" align="center" width="500px" style="margin-right: 20px;">
-</div>
+### Database
 
-<br>
+There will be something in the future ;-)
 
-This is a database diagram illustrating the relationships between various entities. The structure is designed to ensure that the tags and books read can be accurately recreated, even if the book IDs change due to a full scan of the library. Additionally, there is a configuration file, FinalShelf.json, which contains supplementary settings, such as theme preferences and other customizations.
-
-## TODO
+### TODO
 
 - dodać lazy loading do obrazków / resizing
 - dodać paginację do serwisów
@@ -39,23 +34,19 @@ This is a database diagram illustrating the relationships between various entiti
 - dodać sortowanie i filtrowanie
 - dodać nowe widoki
 
-## OldTodo
-
-This section for now in Polish, app in development ;-)
-
-### Implementacja
+---
 
 - filtrowanie
 - przeczytane
 - ranking
 - ustawienia?
 
-### Rust
+---
 
 - Przechowywanie lokacji w formie ścieżki względnej
 - Dodać plik przechowujący ustawienia aplikacji
 
-### Angular
+---
 
 - wyodrębnić część wyścielającą książki tak aby dało się użyć tego samego kodu dla autorów
 - dodać widok listy dla książek / autorów
