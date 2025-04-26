@@ -8,7 +8,10 @@ mod scanner;
 mod schema;
 mod services;
 
-use commands::{authors_commands::*, books_commands::*, genres_commands::*, lectors_commands::*, settings_commands::*};
+use commands::{
+    authors_commands::*, books_commands::*, genres_commands::*, lectors_commands::*, search_commands::*,
+    settings_commands::*,
+};
 
 fn main() {
     tauri::Builder::default()
@@ -27,6 +30,8 @@ fn main() {
             get_all_absolute_path_command,
             set_current_absolute_path_by_id_command,
             get_current_absolute_path_command,
+            // --- search ---
+            search_command,
             // --- books ---
             get_books_list_command,
             get_book_command,
