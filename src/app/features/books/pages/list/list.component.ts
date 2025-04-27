@@ -18,7 +18,6 @@ export class BooksListPageComponent {
   sortBy = "title";
   sortOrder = "asc";
 
-
   ngOnInit(): void {
     this.fetchBooks();
   }
@@ -30,8 +29,7 @@ export class BooksListPageComponent {
         limit: this.limit,
         sortBy: this.sortBy,
         sortOrder: this.sortOrder,
-      }
-    );
+      });
       this.books = books;
       console.log(this.books);
     } catch (error) {

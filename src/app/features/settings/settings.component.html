@@ -9,7 +9,7 @@
             {{ path.absolute_path }}
           </option>
         </ng-container>
-      </select>      
+      </select>
       <button (click)="addPath()">Add path</button>
     </div>
     <div>
@@ -20,13 +20,15 @@
       <h2>Theme selection</h2>
       <select id="theme-switch" (change)="updateTheme($event)">
         <ng-container *ngFor="let theme of themes">
-          <option [value]="theme" [selected]="theme === selectedTheme">{{ theme }}</option>
+          <option [value]="theme" [selected]="theme === selectedTheme">
+            {{ theme }}
+          </option>
         </ng-container>
       </select>
     </div>
     <div>
       <h2>Test</h2>
-     <button (click)="ping()">Ping</button>
+      <button (click)="ping()">Ping</button>
     </div>
   </div>
 </div>

@@ -1,34 +1,54 @@
 <div class="details-container app-page" *ngIf="bookDetails">
-
-  <img class="details-img" [src]="getSrc(bookDetails.relative_cover_path)" [alt]="bookDetails.title" />
+  <img
+    class="details-img"
+    [src]="getSrc(bookDetails.relative_cover_path)"
+    [alt]="bookDetails.title"
+  />
 
   <div class="details-info">
     <h1 class="details-title">{{ bookDetails.title }}</h1>
     <div class="details-status">
       <button class="details-read-button" (click)="markAsRead()">
-        <img [src]="bookDetails.read ? 'assets/icons/check-svgrepo-com.svg' : 'assets/icons/bookmark-svgrepo-com.svg'" 
-             alt="Status">
+        <img
+          [src]="
+            bookDetails.read
+              ? 'assets/icons/check-svgrepo-com.svg'
+              : 'assets/icons/bookmark-svgrepo-com.svg'
+          "
+          alt="Status"
+        />
       </button>
-      
     </div>
     <table class="details-info-table">
       <tbody>
         <tr>
           <td class="details-info-label">Author</td>
           <td class="details-info-value">
-            <a class="details-link" [routerLink]="['/authors', bookDetails.author_name]">{{ bookDetails.author_name }}</a>
+            <a
+              class="details-link"
+              [routerLink]="['/authors', bookDetails.author_name]"
+              >{{ bookDetails.author_name }}</a
+            >
           </td>
         </tr>
         <tr>
           <td class="details-info-label">Lector</td>
           <td class="details-info-value">
-            <a class="details-link" [routerLink]="['/lectors', bookDetails.lector]">{{ bookDetails.lector }}</a>
+            <a
+              class="details-link"
+              [routerLink]="['/lectors', bookDetails.lector]"
+              >{{ bookDetails.lector }}</a
+            >
           </td>
         </tr>
         <tr>
           <td class="details-info-label">Genre</td>
           <td class="details-info-value">
-            <a class="details-link" [routerLink]="['/genres', bookDetails.genre]">{{ bookDetails.genre }}</a>
+            <a
+              class="details-link"
+              [routerLink]="['/genres', bookDetails.genre]"
+              >{{ bookDetails.genre }}</a
+            >
           </td>
         </tr>
       </tbody>

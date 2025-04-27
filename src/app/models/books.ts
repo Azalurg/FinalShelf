@@ -1,12 +1,12 @@
 interface Book {
-    title: string,
-    relative_cover_path: string,
-    author_name: string,
-    genre: string,
-    lector: string,
-    create_date: string,
-    read: boolean,
-    score: number,
+  title: string;
+  relative_cover_path: string;
+  author_name: string;
+  genre: string;
+  lector: string;
+  create_date: string;
+  read: boolean;
+  score: number;
 }
 
 // interface BookDetails extends Book {
@@ -19,6 +19,4 @@ interface Book {
 //     lector_name: string,
 // }
 
-
 export { Book };
-

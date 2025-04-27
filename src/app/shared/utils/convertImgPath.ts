@@ -4,21 +4,27 @@ function resolveAbsolutePath(path: string, absolute_path: string): string {
   if (path.startsWith("/") || path.match(/^[a-zA-Z]:\\/)) {
     return path;
   }
-  return `${absolute_path.replace(/\/$/, '')}/${path.replace(/^\/+/, '')}`;
+  return `${absolute_path.replace(/\/$/, "")}/${path.replace(/^\/+/, "")}`;
 }
 
-export function convertImgPathBook(path: string, absolute_path: string): string {
+export function convertImgPathBook(
+  path: string,
+  absolute_path: string,
+): string {
   if (!path) {
-    return 'assets/book.jpg';
+    return "assets/book.jpg";
   }
 
   const fullPath = resolveAbsolutePath(path, absolute_path);
   return convertFileSrc(fullPath);
 }
 
-export function convertImgPathAuthor(path: string, absolute_path: string): string {
+export function convertImgPathAuthor(
+  path: string,
+  absolute_path: string,
+): string {
   if (!path) {
-    return 'assets/author.jpg';
+    return "assets/author.jpg";
   }
 
   const fullPath = resolveAbsolutePath(path, absolute_path);

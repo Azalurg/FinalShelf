@@ -1,11 +1,13 @@
 <div class="app-page">
-    <div class="details-container">
-        <div class="details-info">
-            <h1 class="details-title">{{ lectorDetails?.name }} ({{ lectorDetails?.books_amount }})</h1>
-        </div>
+  <div class="details-container">
+    <div class="details-info">
+      <h1 class="details-title">
+        {{ lectorDetails?.name }} ({{ lectorDetails?.books_amount }})
+      </h1>
     </div>
+  </div>
 
-    <app-book-list-component [books]="lectorDetails?.books"></app-book-list-component>
-
-    
+  <app-book-list-component
+    [books]="lectorDetails?.books"
+  ></app-book-list-component>
 </div>

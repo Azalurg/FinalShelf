@@ -1,21 +1,21 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { Router, RouterModule } from "@angular/router";
 
 @Component({
-  selector: 'app-topbar',
+  selector: "app-topbar",
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './topbar.component.html',
-  styleUrl: './topbar.component.scss'
+  templateUrl: "./topbar.component.html",
+  styleUrl: "./topbar.component.scss",
 })
 export class TopbarComponent {
-  navPaths: { name: string, url: string }[] = [];
-  currentTime: string = '';
+  navPaths: { name: string; url: string }[] = [];
+  currentTime: string = "";
 
   private intervalId: any;
-  
-  constructor(private router: Router) { }
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.generateNavPaths();
@@ -30,24 +30,27 @@ export class TopbarComponent {
   }
 
   generateNavPaths(): void {
-    const urlSegments = this.router.url.split('/').filter(segment => segment);
-    let fullUrl = '';
-  
+    const urlSegments = this.router.url.split("/").filter((segment) => segment);
+    let fullUrl = "";
+
     this.navPaths = urlSegments.map((segment, index) => {
       fullUrl += `/${segment}`;
       return {
         name: segment,
-        url: fullUrl
+        url: fullUrl,
       };
     });
   }
 
   private updateTime(): void {
     const now = new Date();
-    this.currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    this.currentTime = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 
   searchIt() {
-    this.router.navigate(['/search']);
+    this.router.navigate(["/search"]);
   }
 }

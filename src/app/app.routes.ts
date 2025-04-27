@@ -11,51 +11,49 @@ import { SettingsPageComponent } from "./features/settings/settings.component";
 import { SearchPageComponent } from "./features/search/search.component";
 import { DashboardPageComponent } from "./features/dashboard/dashboard.component";
 
-
-
 export const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: DashboardPageComponent,
   },
   {
-    path: 'books/:title',
+    path: "books/:title",
     component: BookDetailsPageComponent,
   },
   {
-    path: 'books',
-    component: BooksListPageComponent
+    path: "books",
+    component: BooksListPageComponent,
   },
   {
-    path: 'authors',
-    component: AuthorsListPageComponent
+    path: "authors",
+    component: AuthorsListPageComponent,
   },
   {
-    path: 'authors/:name',
-    component: AuthorDetailsPageComponent
+    path: "authors/:name",
+    component: AuthorDetailsPageComponent,
   },
   {
-    path: 'lectors',
-    component: LectorsListPageComponent
+    path: "lectors",
+    component: LectorsListPageComponent,
   },
   {
-    path: 'lectors/:name',
-    component: LectorsDetailsPageComponent
+    path: "lectors/:name",
+    component: LectorsDetailsPageComponent,
   },
   {
-    path: 'genres',
-    component: GenresListPageComponent
+    path: "genres",
+    component: GenresListPageComponent,
   },
   {
-    path: 'genres/:name',
-    component: GenresDetailsPageComponent
+    path: "genres/:name",
+    component: GenresDetailsPageComponent,
   },
   {
-    path: 'settings',
-    component: SettingsPageComponent
+    path: "settings",
+    component: SettingsPageComponent,
   },
   {
-    path: 'search',
-    component: SearchPageComponent
-  }
-]
+    path: "search",
+    component: SearchPageComponent,
+  },
+];

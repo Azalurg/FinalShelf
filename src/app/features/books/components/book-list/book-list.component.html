@@ -1,11 +1,15 @@
 <div class="gallery" *ngIf="isLoaded; else loading">
-    <a *ngFor="let book of books" class="gallery-item shadow" [routerLink]="['/books', book.title]">
-        <img src={{getSrc(book.relative_cover_path)}} alt="image">
-        <div class="gallery-text gallery-tex-first">{{book.title}}</div>
-        <a class="gallery-text gallery-text-second">{{book.author_name}}</a>
-    </a>
+  <a
+    *ngFor="let book of books"
+    class="gallery-item shadow"
+    [routerLink]="['/books', book.title]"
+  >
+    <img src="{{ getSrc(book.relative_cover_path) }}" alt="image" />
+    <div class="gallery-text gallery-tex-first">{{ book.title }}</div>
+    <a class="gallery-text gallery-text-second">{{ book.author_name }}</a>
+  </a>
 </div>
 
 <ng-template #loading>
-    <p>Loading...</p>
-  </ng-template>
+  <p>Loading...</p>
+</ng-template>

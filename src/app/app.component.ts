@@ -6,12 +6,7 @@ import { TopbarComponent } from "./shared/components/topbar/topbar.component";
 
 @Component({
   selector: "app-root",
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    SidebarComponent,
-    TopbarComponent
-],
+  imports: [CommonModule, RouterOutlet, SidebarComponent, TopbarComponent],
   standalone: true,
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",

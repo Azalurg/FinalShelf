@@ -3,7 +3,7 @@
     <li *ngFor="let navPath of navPaths; let last = last">
       <ng-container *ngIf="!last">
         <a [routerLink]="[navPath.url]">{{ navPath.name }}</a>
-        <span>  >  </span>
+        <span> > </span>
       </ng-container>
       <ng-container *ngIf="last">
         {{ navPath.name }}
@@ -13,7 +13,11 @@
 
   <div class="topbar__search">
     <input id="search_input" type="text" placeholder="Search" />
-    <img (click)="searchIt()" src="assets/icons/search-magnifying-glass-svgrepo-com.svg" alt="" />
+    <img
+      (click)="searchIt()"
+      src="assets/icons/search-magnifying-glass-svgrepo-com.svg"
+      alt=""
+    />
   </div>
 
   <div class="topbar__clock">

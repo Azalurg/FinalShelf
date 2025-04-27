@@ -1,31 +1,34 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
-import { AuthorDetails } from '../../../models/authors';
-import { convertImgPathAuthor, convertImgPathBook } from '../../../shared/utils/convertImgPath';
-import { getCurrentAbsolutePath } from '../../../shared/utils/getCurrentAbsolutePath';
+import { AuthorDetails } from "../../../models/authors";
+import {
+  convertImgPathAuthor,
+  convertImgPathBook,
+} from "../../../shared/utils/convertImgPath";
+import { getCurrentAbsolutePath } from "../../../shared/utils/getCurrentAbsolutePath";
 
 @Component({
-  selector: 'app-author-details',
+  selector: "app-author-details",
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './author-details.component.html',
-  styleUrl: './author-details.component.scss'
+  templateUrl: "./author-details.component.html",
+  styleUrl: "./author-details.component.scss",
 })
 export class AuthorDetailsPageComponent {
   authorDetails: AuthorDetails | any;
   absolute_path = "";
 
-  getSrcAuthor = (path: string) => convertImgPathAuthor(path, this.absolute_path);
+  getSrcAuthor = (path: string) =>
+    convertImgPathAuthor(path, this.absolute_path);
   getSrcBook = (path: string) => convertImgPathBook(path, this.absolute_path);
 
-  
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const authorName = params.get('name');
+    this.route.paramMap.subscribe((params) => {
+      const authorName = params.get("name");
       if (authorName) {
         this.fetchAuthorDetails(authorName);
       }
@@ -38,12 +41,14 @@ export class AuthorDetailsPageComponent {
 
   async fetchAuthorDetails(authorName: string) {
     try {
-      const authorDetailsData = await invoke<AuthorDetails>('get_author_command', { name: authorName });
+      const authorDetailsData = await invoke<AuthorDetails>(
+        "get_author_command",
+        { name: authorName },
+      );
       this.authorDetails = authorDetailsData;
       console.log(this.authorDetails);
     } catch (error) {
       console.error(error);
     }
   }
-
 }
