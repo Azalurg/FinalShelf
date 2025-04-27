@@ -30,7 +30,7 @@ body.light {
     --shadow-2: hsla(275, 15%, 54%, 0.55);
     --shadow-3: hsla(340, 15%, 50%, 0.21);
     --accent: hsl(275, 100%, 93%);
-}  
+}
 
 body.lsd {
     --foreground: hsl(0, 0%, 93%);
@@ -44,12 +44,12 @@ body.lsd {
 }
 
 body.night-city {
-    --foreground: hsl(45, 100%, 85%); /* Warm light */
-    --foreground-alt: hsl(45, 80%, 75%); /* Dimmer warm light */
-    --background-1: hsl(240, 40%, 10%); /* Deep space black-blue */
-    --background-2: hsl(240, 30%, 15%); /* Slightly lighter, for contrast */
-    --shadow-1: hsla(240, 50%, 5%, 0.89); /* Dark, cosmic shadows */
-    --shadow-2: hsla(240, 50%, 10%, 0.55); 
-    --shadow-3: hsla(240, 30%, 20%, 0.21); 
-    --accent: hsl(231, 32%, 25%); /* Golden sun peeking through */
+    --foreground: hsl(45, 100%, 85%);
+    --foreground-alt: hsl(45, 80%, 75%);
+    --background-1: hsl(240, 40%, 10%);
+    --background-2: hsl(240, 30%, 15%);
+    --shadow-1: hsla(240, 50%, 5%, 0.89);
+    --shadow-2: hsla(240, 50%, 10%, 0.55);
+    --shadow-3: hsla(240, 30%, 20%, 0.21);
+    --accent: hsl(231, 32%, 25%);
 }

@@ -1,10 +1,16 @@
 <div class="details-container app-page" *ngIf="bookDetails">
 
-  <img class="details-img shadow" [src]="getSrc(bookDetails.relative_cover_path)" [alt]="bookDetails.title" />
+  <img class="details-img" [src]="getSrc(bookDetails.relative_cover_path)" [alt]="bookDetails.title" />
 
   <div class="details-info">
     <h1 class="details-title">{{ bookDetails.title }}</h1>
-    <br>
+    <div class="details-status">
+      <button class="details-read-button" (click)="markAsRead()">
+        <img [src]="bookDetails.read ? 'assets/icons/check-svgrepo-com.svg' : 'assets/icons/bookmark-svgrepo-com.svg'" 
+             alt="Status">
+      </button>
+      
+    </div>
     <table class="details-info-table">
       <tbody>
         <tr>

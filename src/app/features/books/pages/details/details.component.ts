@@ -43,5 +43,16 @@ export class BookDetailsPageComponent implements OnInit {
       console.error(error);
     }
   }
-    
+
+  async markAsRead() {
+    if (this.bookDetails) {
+      this.bookDetails.read = !this.bookDetails.read;
+      try {
+        await invoke('update_book_command', { book: this.bookDetails });
+        console.log('Book updated successfully');
+      } catch (error) {
+        console.error('Error updating book:', error);
+      }
+    }
+  } 
 }
