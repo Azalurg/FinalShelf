@@ -138,6 +138,8 @@ fn process_metadata(
         genre: Some(genre),
         lector: Some(lector),
         create_date: file_create_date,
+        read: Some(false),
+        score: Some(0),
     };
     println!("Adding book: {:?}", book);
     add_book(&book)

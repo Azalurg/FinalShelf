@@ -5,6 +5,8 @@ interface Book {
     genre: string,
     lector: string,
     create_date: string,
+    read: boolean,
+    score: number,
 }
 
 // interface BookDetails extends Book {

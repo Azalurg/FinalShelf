@@ -106,3 +106,22 @@ pub fn get_books_by_lector(lector: &str) -> Vec<Book> {
 
     query.load::<Book>(conn).expect("Error loading books")
 }
+
+pub fn get_read_books() -> Vec<Book> {
+    let conn = &mut establish_connection();
+
+    let query = dsl::books.filter(dsl::read.eq(true));
+
+    query.load::<Book>(conn).expect("Error loading books")
+}
+
+pub fn update_book(book: &Book) -> Option<Book> {
+    let conn = &mut establish_connection();
+
+    diesel::update(books::table.find(&book.title)) // More efficient than filter
+        .set(book)
+        .execute(conn)
+        .expect("Error updating book");
+
+    get_book(&book.title)
+}

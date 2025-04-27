@@ -1,0 +1,5 @@
+-- Your SQL goes here
+ALTER TABLE books ADD COLUMN read BOOLEAN DEFAULT FALSE;
+ALTER TABLE books ADD COLUMN score INT DEFAULT 0;
+
+DROP TABLE books_read;

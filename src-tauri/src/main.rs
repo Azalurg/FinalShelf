@@ -35,6 +35,8 @@ fn main() {
             // --- books ---
             get_books_list_command,
             get_book_command,
+            get_all_read_books_command,
+            update_book_command,
             // --- authors ---
             get_authors_list_command,
             get_author_command,

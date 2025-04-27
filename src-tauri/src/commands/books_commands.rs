@@ -2,7 +2,7 @@
 
 use crate::{
     models::{book::Book, query::QueryParams},
-    services::books_service::{get_book, list_books},
+    services::books_service::{get_book, get_read_books, list_books, update_book},
 };
 
 #[tauri::command]
@@ -29,4 +29,14 @@ pub async fn get_books_list_command(
 #[tauri::command]
 pub async fn get_book_command(title: String) -> Option<Book> {
     get_book(&title)
+}
+
+#[tauri::command]
+pub async fn get_all_read_books_command() -> Vec<Book> {
+    get_read_books()
+}
+
+#[tauri::command]
+pub async fn update_book_command(book: Book) -> Option<Book> {
+    update_book(&book)
 }

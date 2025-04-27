@@ -24,17 +24,8 @@ diesel::table! {
         genre -> Nullable<Text>,
         lector -> Nullable<Text>,
         create_date -> Nullable<Timestamp>,
-    }
-}
-
-diesel::table! {
-    books_read (id) {
-        id -> Integer,
-        book_title -> Text,
-        rate -> Nullable<Integer>,
-        tier -> Nullable<Integer>,
-        note -> Nullable<Text>,
-        read_date -> Nullable<Timestamp>,
+        read -> Nullable<Bool>,
+        score -> Nullable<Integer>,
     }
 }
 
@@ -53,8 +44,7 @@ diesel::table! {
 }
 
 diesel::joinable!(books -> authors (author_name));
-diesel::joinable!(books_read -> books (book_title));
 diesel::joinable!(tags_books -> books (book_title));
 diesel::joinable!(tags_books -> tags (tag_id));
 
-diesel::allow_tables_to_appear_in_same_query!(absolute_paths, authors, books, books_read, tags, tags_books,);
+diesel::allow_tables_to_appear_in_same_query!(absolute_paths, authors, books, tags, tags_books,);
