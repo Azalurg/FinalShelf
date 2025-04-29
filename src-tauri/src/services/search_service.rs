@@ -1,58 +1,41 @@
-use std::collections::HashSet;
-
-use diesel::{QueryDsl, RunQueryDsl, TextExpressionMethods};
-
 use crate::db::establish_connection;
 use crate::models::book::Book;
-use crate::schema::books::dsl::books as books_schema;
+use crate::schema::books::dsl::*;
+use diesel::{QueryDsl, RunQueryDsl, SqliteConnection, TextExpressionMethods};
+use std::collections::HashSet;
 
-pub fn search(target: String, by: Vec<String>) -> Vec<Book> {
-    let by_set = by.into_iter().collect::<HashSet<String>>();
+pub fn search(target: &str, by: &[String]) -> Vec<Book> {
+    let conn = &mut establish_connection();
+    let mut seen_ids = HashSet::new();
     let mut result = Vec::new();
-    for by in by_set {
-        result.append(&mut search_by(&target, by));
+
+    for by_field in by.iter().map(String::as_str).collect::<HashSet<_>>() {
+        if let Ok(books_found) = search_by(conn, target, by_field) {
+            for book in books_found {
+                if seen_ids.insert(book.title.clone()) {
+                    result.push(book);
+                }
+            }
+        }
     }
     result
 }
 
-fn search_by(target: &String, by: String) -> Vec<Book> {
-    match by.as_str() {
-        "title" => search_by_title(target),
-        "author_name" => search_by_author_name(target),
-        "genre_name" => search_by_genre_name(target),
-        "lector_name" => search_by_lector_name(target),
-        _ => Vec::new(),
+fn search_by(conn: &mut SqliteConnection, target: &str, by: &str) -> Result<Vec<Book>, diesel::result::Error> {
+    let pattern = format!("%{}%", target);
+    match by {
+        "title" => books
+            .filter(crate::schema::books::title.like(&pattern))
+            .load::<Book>(conn),
+        "author_name" => books
+            .filter(crate::schema::books::author_name.like(&pattern))
+            .load::<Book>(conn),
+        "genre_name" => books
+            .filter(crate::schema::books::genre.like(&pattern))
+            .load::<Book>(conn),
+        "lector_name" => books
+            .filter(crate::schema::books::lector.like(&pattern))
+            .load::<Book>(conn),
+        _ => Ok(Vec::new()),
     }
-}
-
-fn search_by_title(target: &String) -> Vec<Book> {
-    let conn = &mut establish_connection();
-
-    let query = books_schema.filter(crate::schema::books::dsl::title.like(format!("%{}%", target)));
-
-    query.load::<Book>(conn).expect("Error loading books")
-}
-
-fn search_by_author_name(target: &String) -> Vec<Book> {
-    let conn = &mut establish_connection();
-
-    let query = books_schema.filter(crate::schema::books::dsl::author_name.like(format!("%{}%", target)));
-
-    query.load::<Book>(conn).expect("Error loading books")
-}
-
-fn search_by_genre_name(target: &String) -> Vec<Book> {
-    let conn = &mut establish_connection();
-
-    let query = books_schema.filter(crate::schema::books::dsl::genre.like(format!("%{}%", target)));
-
-    query.load::<Book>(conn).expect("Error loading books")
-}
-
-fn search_by_lector_name(target: &String) -> Vec<Book> {
-    let conn = &mut establish_connection();
-
-    let query = books_schema.filter(crate::schema::books::dsl::lector.like(format!("%{}%", target)));
-
-    query.load::<Book>(conn).expect("Error loading books")
 }

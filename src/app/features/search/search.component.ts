@@ -1,7 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { Book } from "../../models/books";
 import { BookListComponent } from "../books/components/book-list/book-list.component";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-search",
@@ -10,29 +12,41 @@ import { BookListComponent } from "../books/components/book-list/book-list.compo
   templateUrl: "./search.component.html",
   styleUrl: "./search.component.scss",
 })
-export class SearchPageComponent {
-  searchResults: any[] = [];
+export class SearchPageComponent implements OnInit, OnDestroy {
+  books: Book[] = [];
   searchQuery: string = "";
-  books: any[] = [];
+  private routeSub!: Subscription;
+
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.search_books();
+    this.routeSub = this.route.queryParams.subscribe((params) => {
+      this.searchQuery = params["query"] || "";
+      this.search_books();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
   }
 
   async search_books(): Promise<void> {
-    console.log("Voici les livres");
-    const searchInput = document.getElementById("search_input");
-    if (searchInput) {
-      const search_query = (searchInput as HTMLInputElement).value;
-      try {
-        const books = await invoke<Book[]>("tauri_search_books", {
-          searchQuery: search_query,
-        });
-        this.books = books;
-        console.log(this.books);
-      } catch (error) {
-        console.error(error);
-      }
+    if (!this.searchQuery.trim()) {
+      this.books = [];
+      return;
+    }
+    try {
+      const books = await invoke<Book[]>("search_command", {
+        target: this.searchQuery,
+        by: ["title"],
+      });
+      this.books = books;
+      console.log(this.books);
+    } catch (error) {
+      console.error(error);
+      this.books = [];
     }
   }
 }

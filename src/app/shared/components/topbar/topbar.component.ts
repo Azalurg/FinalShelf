@@ -1,21 +1,29 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
-import { Router, RouterModule } from "@angular/router";
+import { Component, OnDestroy } from "@angular/core";
+import { Router, RouterModule, NavigationEnd } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { filter, Subscription } from "rxjs";
 
 @Component({
   selector: "app-topbar",
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule], // Dodaj FormsModule
   templateUrl: "./topbar.component.html",
   styleUrl: "./topbar.component.scss",
 })
-export class TopbarComponent {
+export class TopbarComponent implements OnDestroy {
   navPaths: { name: string; url: string }[] = [];
   currentTime: string = "";
+  searchTerm: string = "";
 
   private intervalId: any;
+  private routerSubscription: Subscription;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    this.routerSubscription = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => this.generateNavPaths());
+  }
 
   ngOnInit(): void {
     this.generateNavPaths();
@@ -24,9 +32,8 @@ export class TopbarComponent {
   }
 
   ngOnDestroy(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
+    if (this.intervalId) clearInterval(this.intervalId);
+    this.routerSubscription.unsubscribe();
   }
 
   generateNavPaths(): void {
@@ -51,6 +58,11 @@ export class TopbarComponent {
   }
 
   searchIt() {
-    this.router.navigate(["/search"]);
+    if (this.searchTerm.trim()) {
+      this.router.navigate(["/search"], {
+        queryParams: { query: this.searchTerm.trim() },
+      });
+      this.searchTerm = "";
+    }
   }
 }

@@ -10,6 +10,7 @@ import { GenresDetailsPageComponent } from "./features/genres/details/genres-det
 import { SettingsPageComponent } from "./features/settings/settings.component";
 import { SearchPageComponent } from "./features/search/search.component";
 import { DashboardPageComponent } from "./features/dashboard/dashboard.component";
+import { ReadBooksListPageComponent } from "./features/books/pages/read-books-list/read-books-list.component";
 
 export const routes: Routes = [
   {
@@ -23,6 +24,10 @@ export const routes: Routes = [
   {
     path: "books",
     component: BooksListPageComponent,
+  },
+  {
+    path: "read",
+    component: ReadBooksListPageComponent,
   },
   {
     path: "authors",

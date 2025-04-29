@@ -12,11 +12,17 @@
   </ul>
 
   <div class="topbar__search">
-    <input id="search_input" type="text" placeholder="Search" />
+    <input
+      id="search_input"
+      type="text"
+      placeholder="Search"
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="searchIt()"
+    />
     <img
       (click)="searchIt()"
       src="assets/icons/search-magnifying-glass-svgrepo-com.svg"
-      alt=""
+      alt="Search"
     />
   </div>
 
