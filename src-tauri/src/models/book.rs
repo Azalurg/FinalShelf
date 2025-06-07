@@ -18,3 +18,12 @@ pub struct Book {
     pub read: Option<bool>,
     pub score: Option<i32>,
 }
+
+#[derive(Serialize)]
+pub struct BookListResponse {
+    pub books: Vec<Book>,
+    pub total_count: i64,
+    pub page: i64,
+    pub limit: i64,
+    pub total_pages: i64,
+}

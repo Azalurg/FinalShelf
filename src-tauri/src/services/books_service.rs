@@ -1,10 +1,12 @@
 use crate::{
     db::establish_connection,
-    models::{book::Book, query::QueryParams},
-    schema::books,
-    schema::books::dsl,
+    models::{
+        book::{Book, BookListResponse},
+        query::QueryParams,
+    },
+    schema::books::{self, dsl},
 };
-use diesel::prelude::*;
+use diesel::{dsl::count_star, prelude::*};
 
 pub fn get_book(title: &str) -> Option<Book> {
     let conn = &mut establish_connection();
@@ -14,20 +16,49 @@ pub fn get_book(title: &str) -> Option<Book> {
     query.first::<Book>(conn).ok()
 }
 
-pub fn list_books(query_params: QueryParams) -> Vec<Book> {
-    use crate::schema::books::dsl;
-
+pub fn list_books(query_params: QueryParams) -> Result<BookListResponse, diesel::result::Error> {
     let conn = &mut establish_connection();
 
-    let page = query_params.page.unwrap_or(1);
-    let limit = query_params.limit.unwrap_or(10);
+    let page = query_params.page.unwrap_or(1).max(1);
+    let limit = query_params.limit.unwrap_or(21).clamp(1, 100);
     let offset = (page - 1) * limit;
 
     let mut query = dsl::books.into_boxed();
+    let mut count_query = dsl::books.into_boxed();
 
-    // Apply sorting dynamically
-    if let Some(sort_field) = query_params.sort_by {
-        let order = query_params.sort_order.unwrap_or("asc".to_string());
+    // Declare pattern variables outside the closures to extend their lifetime
+    if let Some(ref author) = query_params.author_name {
+        let author_pattern = format!("%{}%", author);
+        query = query.filter(dsl::author_name.like(author_pattern.clone()));
+        count_query = count_query.filter(dsl::author_name.like(author_pattern));
+    }
+
+    if let Some(ref genre_filter) = query_params.genre {
+        let genre_pattern = format!("%{}%", genre_filter);
+        query = query.filter(dsl::genre.like(genre_pattern.clone()));
+        count_query = count_query.filter(dsl::genre.like(genre_pattern));
+    }
+
+    if let Some(ref title_filter) = query_params.title {
+        let title_pattern = format!("%{}%", title_filter);
+        query = query.filter(dsl::title.like(title_pattern.clone()));
+        count_query = count_query.filter(dsl::title.like(title_pattern));
+    }
+
+    if let Some(ref lector_filter) = query_params.lector {
+        let lector_pattern = format!("%{}%", lector_filter);
+        query = query.filter(dsl::lector.like(lector_pattern.clone()));
+        count_query = count_query.filter(dsl::lector.like(lector_pattern));
+    }
+
+    if let Some(read_filter) = query_params.read_status {
+        query = query.filter(dsl::read.eq(read_filter));
+        count_query = count_query.filter(dsl::read.eq(read_filter));
+    }
+
+    // Apply sorting
+    if let Some(ref sort_field) = query_params.sort_by {
+        let order = query_params.sort_order.as_deref().unwrap_or("asc");
 
         query = match sort_field.as_str() {
             "title" => {
@@ -51,17 +82,35 @@ pub fn list_books(query_params: QueryParams) -> Vec<Book> {
                     query.order(dsl::create_date.asc())
                 }
             },
-            _ => query.order(dsl::author_name.asc()), // Default sorting
+            "score" => {
+                if order == "desc" {
+                    query.order(dsl::score.desc())
+                } else {
+                    query.order(dsl::score.asc())
+                }
+            },
+            _ => query.order(dsl::author_name.asc()),
         };
+    } else {
+        query = query.order(dsl::author_name.asc());
     }
 
-    let books = query
-        .limit(limit)
-        .offset(offset)
-        .load::<Book>(conn)
-        .expect("Error loading books");
+    // Get total count first
+    let total_count: i64 = count_query.select(count_star()).first(conn)?;
 
-    books
+    // Calculate total pages
+    let total_pages = (total_count + limit - 1) / limit;
+
+    // Get books with pagination
+    let books = query.limit(limit).offset(offset).load::<Book>(conn)?;
+
+    Ok(BookListResponse {
+        books,
+        total_count,
+        page,
+        limit,
+        total_pages,
+    })
 }
 
 pub fn add_book(new_book: &Book) -> Option<Book> {

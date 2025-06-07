@@ -19,4 +19,12 @@ interface Book {
 //     lector_name: string,
 // }
 
-export { Book };
+interface BookListResponse {
+  books: Book[];
+  total_count: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+}
+
+export { Book, BookListResponse };

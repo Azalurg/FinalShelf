@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct QueryParams {
     pub page: Option<i64>,
     pub limit: Option<i64>,
@@ -8,6 +8,7 @@ pub struct QueryParams {
     pub lector: Option<String>,
     pub sort_by: Option<String>,
     pub sort_order: Option<String>,
+    pub read_status: Option<bool>,
 }
 
 impl QueryParams {
@@ -20,6 +21,7 @@ impl QueryParams {
         lector: Option<String>,
         sort_by: Option<String>,
         sort_order: Option<String>,
+        read_status: Option<bool>,
     ) -> Self {
         Self {
             page,
@@ -30,6 +32,7 @@ impl QueryParams {
             lector,
             sort_by,
             sort_order,
+            read_status,
         }
     }
 }

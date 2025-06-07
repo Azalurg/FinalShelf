@@ -1,0 +1,66 @@
+<!-- generic-list.component.html -->
+<div class="generic-list">
+  <div class="gl-toolbar">
+    <div class="app-pagination">
+      <button (click)="prevPage()" [disabled]="config.page === 1">
+        <img
+          src="assets/icons/chevron-left-duo-svgrepo-com.svg"
+          alt="Previous"
+        />
+      </button>
+      <select [ngModel]="config.pageSize" (change)="changePageSize($event)">
+        <option *ngFor="let size of [9, 21, 40, 66, 99]" [value]="size">
+          {{ size }}
+        </option>
+      </select>
+      <button
+        (click)="nextPage()"
+        [disabled]="config.page === config.totalPages"
+      >
+        <img src="assets/icons/chevron-right-duo-svgrepo-com.svg" alt="Next" />
+      </button>
+    </div>
+
+    <div class="app-sort">
+      <label for="sort">Sort:</label>
+      <select id="sort" (change)="changeSortOrder($event)">
+        <option
+          *ngFor="let option of config.sortOptions; let i = index"
+          [value]="i"
+        >
+          {{ option }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="gallery">
+    <a
+      *ngFor="let item of items"
+      class="gallery-item shadow"
+      [routerLink]="[listType === 'books' ? item.title : item.name]"
+    >
+      <img
+        [src]="
+          listType === 'books'
+            ? getSrc(item.relative_cover_path)
+            : getSrc(item.relative_img_path)
+        "
+        [alt]="listType === 'books' ? 'Book cover' : 'Author photo'"
+      />
+      <div class="gallery-text gallery-text-first">
+        {{ listType === "books" ? item.title : item.name }}
+      </div>
+      <div
+        *ngIf="listType === 'books'"
+        class="gallery-text gallery-text-second"
+      >
+        {{ item.author_name }}
+      </div>
+    </a>
+  </div>
+
+  <div *ngIf="!items.length" class="loading">
+    <p>No items found</p>
+  </div>
+</div>
