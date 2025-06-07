@@ -4,88 +4,55 @@
   </div>
   <div class="sidebar__menu">
     <ul>
-      <li>
-        <a [routerLink]="['/']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/house-01-svgrepo-com.svg"
-            alt="Dashboard"
-        /></a>
-      </li>
-      <li>
-        <a [routerLink]="['/books']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/book-svgrepo-com.svg"
-            alt="Books"
-        /></a>
-      </li>
-      <li>
-        <a [routerLink]="['/authors']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/user-02-svgrepo-com.svg"
-            alt="Authors"
-        /></a>
-      </li>
-      <li>
-        <a [routerLink]="['/lectors']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/user-voice-svgrepo-com.svg"
-            alt="Lectors"
-        /></a>
-      </li>
-      <li>
-        <a [routerLink]="['/genres']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/notebook-svgrepo-com.svg"
-            alt="Genres"
-        /></a>
+      <li *ngFor="let item of menuItems">
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          *ngIf="!item.isExternal; else externalLink"
+          [title]="item.label"
+        >
+          <img class="sidebar__icon" [src]="item.icon" [alt]="item.label" />
+        </a>
+        <ng-template #externalLink>
+          <a [href]="item.path[0]" target="_blank" [title]="item.label">
+            <img class="sidebar__icon" [src]="item.icon" [alt]="item.label" />
+          </a>
+        </ng-template>
       </li>
     </ul>
   </div>
   <div class="sidebar__user">
     <ul>
-      <li>
-        <a [routerLink]="['/read']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/bookmark-svgrepo-com.svg"
-            alt="Read"
-        /></a>
-      </li>
-      <li>
-        <a [routerLink]="['/ranking']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/star-svgrepo-com.svg"
-            alt="Ranking"
-        /></a>
+      <li *ngFor="let item of userItems">
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [title]="item.label"
+        >
+          <img class="sidebar__icon" [src]="item.icon" [alt]="item.label" />
+        </a>
       </li>
     </ul>
   </div>
   <div class="sidebar__settings">
     <ul>
-      <li>
-        <a href="https://github.com/Azalurg/FinalShelf" target="_blank"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/globe-svgrepo-com.svg"
-            alt="Profile"
-        /></a>
+      <li *ngFor="let item of settingItems">
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          *ngIf="!item.isExternal; else externalLink"
+          [title]="item.label"
+        >
+          <img class="sidebar__icon" [src]="item.icon" [alt]="item.label" />
+        </a>
+        <ng-template #externalLink>
+          <a [href]="item.path[0]" target="_blank" [title]="item.label">
+            <img class="sidebar__icon" [src]="item.icon" [alt]="item.label" />
+          </a>
+        </ng-template>
       </li>
       <li>
-        <a [routerLink]="['/settings']"
-          ><img
-            class="sidebar__icon"
-            src="assets/icons/settings-svgrepo-com.svg"
-            alt="Settings"
-        /></a>
-      </li>
-      <li>
-        <button (click)="exit()">
+        <button (click)="exit()" title="Logout">
           <img
             class="sidebar__icon"
             src="assets/icons/close-circle-svgrepo-com.svg"
