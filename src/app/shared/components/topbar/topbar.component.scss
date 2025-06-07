@@ -49,15 +49,20 @@
   }
 }
 
-img {
-  height: 2rem;
-  background-color: var(--shadow-3);
-  border-radius: 0 0.55rem 0.55rem 0;
-  padding: 0.34rem;
+button {
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
 
-  &:hover {
-    cursor: pointer;
-    background-color: var(--shadow-2);
+  img {
+    height: 2rem;
+    background-color: var(--shadow-3);
+    border-radius: 0 0.55rem 0.55rem 0;
+    padding: 0.34rem;
+    &:hover {
+      background-color: var(--shadow-2);
+    }
   }
 }
 

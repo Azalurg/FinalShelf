@@ -19,11 +19,12 @@
       [(ngModel)]="searchTerm"
       (keyup.enter)="searchIt()"
     />
-    <img
-      (click)="searchIt()"
-      src="assets/icons/search-magnifying-glass-svgrepo-com.svg"
-      alt="Search"
-    />
+    <button (click)="searchIt()">
+      <img
+        src="assets/icons/search-magnifying-glass-svgrepo-com.svg"
+        alt="Search"
+      />
+    </button>
   </div>
 
   <div class="topbar__clock">

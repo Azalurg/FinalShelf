@@ -32,6 +32,7 @@
     "@angular/compiler-cli": "^17.0.0",
     "@tauri-apps/cli": "^2.1.0",
     "@types/jasmine": "~5.1.0",
+    "@types/node": "^22.15.30",
     "angular-eslint": "19.0.2",
     "eslint": "^9.16.0",
     "jasmine-core": "~5.1.0",

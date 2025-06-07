@@ -13,8 +13,8 @@ import { filter, Subscription } from "rxjs";
 })
 export class TopbarComponent implements OnDestroy {
   navPaths: { name: string; url: string }[] = [];
-  currentTime: string = "";
-  searchTerm: string = "";
+  currentTime = "";
+  searchTerm = "";
 
   private intervalId: any;
   private routerSubscription: Subscription;
@@ -39,13 +39,15 @@ export class TopbarComponent implements OnDestroy {
   generateNavPaths(): void {
     const urlSegments = this.router.url.split("/").filter((segment) => segment);
     let fullUrl = "";
-
-    this.navPaths = urlSegments.map((segment, index) => {
+    this.navPaths = [];
+    urlSegments.forEach((segment) => {
+      segment = segment.split("?")[0];
+      segment = decodeURIComponent(segment);
       fullUrl += `/${segment}`;
-      return {
+      this.navPaths.push({
         name: segment,
         url: fullUrl,
-      };
+      });
     });
   }
 
