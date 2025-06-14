@@ -1,0 +1,33 @@
+<div class="topbar">
+  <ul class="topbar__location">
+    <li *ngFor="let navPath of navPaths; let last = last">
+      <ng-container *ngIf="!last">
+        <a [routerLink]="[navPath.url]">{{ navPath.name }}</a>
+        <span> > </span>
+      </ng-container>
+      <ng-container *ngIf="last">
+        {{ navPath.name }}
+      </ng-container>
+    </li>
+  </ul>
+
+  <div class="topbar__search">
+    <input
+      id="search_input"
+      type="text"
+      placeholder="Search"
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="searchIt()"
+    />
+    <button (click)="searchIt()">
+      <img
+        src="assets/icons/search-magnifying-glass-svgrepo-com.svg"
+        alt="Search"
+      />
+    </button>
+  </div>
+
+  <div class="topbar__clock">
+    {{ currentTime }}
+  </div>
+</div>

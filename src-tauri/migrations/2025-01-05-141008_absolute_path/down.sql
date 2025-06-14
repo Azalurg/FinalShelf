@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS absolute_paths;

@@ -1,0 +1,34 @@
+<div class="app-page">
+  <h1>Settings</h1>
+  <div class="db-settings">
+    <div>
+      <h2>Directory</h2>
+      <select id="absolute-path" (change)="updatePath($event)">
+        <ng-container *ngFor="let path of absolutePaths">
+          <option [value]="path.id" [selected]="path === selectedPath">
+            {{ path.absolute_path }}
+          </option>
+        </ng-container>
+      </select>
+      <button (click)="addPath()">Add path</button>
+    </div>
+    <div>
+      <h2>Database</h2>
+      <button (click)="quickScan()">Quick scan</button>
+    </div>
+    <div>
+      <h2>Theme selection</h2>
+      <select id="theme-switch" (change)="updateTheme($event)">
+        <ng-container *ngFor="let theme of themes">
+          <option [value]="theme" [selected]="theme === selectedTheme">
+            {{ theme }}
+          </option>
+        </ng-container>
+      </select>
+    </div>
+    <div>
+      <h2>Test</h2>
+      <button (click)="ping()">Ping</button>
+    </div>
+  </div>
+</div>

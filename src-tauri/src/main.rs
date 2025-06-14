@@ -1,203 +1,51 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use dotenv::dotenv;
-use rusqlite::Result;
+mod commands;
+mod db;
+mod models;
+mod scanner;
+mod schema;
+mod services;
 
-pub mod db;
-pub mod scanner;
-pub mod structs;
-
-// -------------------
-// General functions
-// -------------------
-
-#[tauri::command]
-fn tauri_full_scan(directory: String) -> Result<(), String> {
-    match scanner::full_scan(&directory) {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[tauri::command]
-fn tauri_quick_scan(directory: String) -> Result<(), String> {
-    match scanner::quick_scan(&directory) {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[tauri::command]
-fn tauri_clear_db() -> Result<(), String> {
-    db::clear_db();
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    db::init_db(&conn);
-    Ok(())
-}
-
-#[tauri::command]
-fn tauri_kill() -> Result<(), String> {
-    println!("App will be closed");
-    panic!()
-}
-
-// -------------------
-// Book functions
-// -------------------
-
-#[tauri::command]
-fn tauri_get_books(
-    author_id: Option<i64>,
-    genre_id: Option<i64>,
-    lectror_id: Option<i64>,
-    sort_params: Option<&str>,
-    sort_order: Option<&str>,
-    page: u64,
-    page_size: u64,
-) -> Result<Vec<structs::FrontendBook>, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_filtered_and_paginated_books(
-        &conn,
-        author_id,
-        genre_id,
-        lectror_id,
-        sort_params,
-        sort_order,
-        page,
-        page_size,
-    ) {
-        Ok(books) => Ok(books),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[tauri::command]
-fn tauri_get_book_details(book_id: i64) -> Result<structs::FrontendBookDetails, String> {
-    println!("Getting book details for book_id: {}", book_id);
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_book_by_id(&conn, book_id) {
-        Ok(book) => Ok(book),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-// -------------------
-// Author functions
-// -------------------
-
-#[tauri::command]
-fn tauri_get_authors() -> Result<Vec<structs::Author>, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_all_authors(&conn) {
-        Ok(authors) => Ok(authors),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[tauri::command]
-fn tauri_get_author_details(author_id: i64) -> Result<structs::AuthorDetails, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_author_by_id(&conn, author_id) {
-        Ok(author) => Ok(author),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-// -------------------
-// Lector functions
-// -------------------
-
-#[tauri::command]
-fn tauri_get_lectors() -> Result<Vec<structs::LectorList>, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_all_lectors(&conn) {
-        Ok(lectors) => Ok(lectors),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[tauri::command]
-fn tauri_get_lector_details(lector_id: i64) -> Result<structs::LectorDetails, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_lector_by_id(&conn, lector_id) {
-        Ok(lector) => Ok(lector),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-// -------------------
-// Genre functions
-// -------------------
-
-#[tauri::command]
-fn tauri_get_genres() -> Result<Vec<structs::GenreList>, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_all_genres(&conn) {
-        Ok(genres) => Ok(genres),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[tauri::command]
-fn tauri_get_genre_details(genre_id: i64) -> Result<structs::GenreDetails, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_genre_by_id(&conn, genre_id) {
-        Ok(genre) => Ok(genre),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-// -------------------
-// Dashboard functions
-// -------------------
-
-#[tauri::command]
-fn tauri_get_dashboard_data() -> Result<structs::DashboardData, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::get_dashboard_data(&conn) {
-        Ok(data) => Ok(data),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-// // -------------------
-// // Search functions
-// // -------------------
-
-#[tauri::command]
-fn tauri_search_books(search_query: &str) -> Result<Vec<structs::FrontendBook>, String> {
-    let conn = db::get_db_connection().map_err(|e| e.to_string())?;
-    match db::search_books(&conn, search_query) {
-        Ok(books) => Ok(books),
-        Err(e) => Err(e.to_string()),
-    }
-}
+use commands::{
+    authors_commands::*, books_commands::*, genres_commands::*, lectors_commands::*, search_commands::*,
+    settings_commands::*,
+};
 
 fn main() {
-    dotenv().ok();
-
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
         .setup(|_app| {
-            let conn = db::get_db_connection().expect("error while getting db connection");
-            db::init_db(&conn).expect("error while initializing db");
+            db::init();
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            tauri_full_scan,
-            tauri_quick_scan,
-            tauri_clear_db,
-            tauri_kill,
-            tauri_get_books,
-            tauri_get_book_details,
-            tauri_get_authors,
-            tauri_get_author_details,
-            tauri_get_dashboard_data,
-            tauri_get_lectors,
-            tauri_get_lector_details,
-            tauri_get_genres,
-            tauri_get_genre_details,
-            tauri_search_books
+            // --- settings ---
+            ping_command,
+            quick_scan_command,
+            kill_command,
+            add_absolute_path_command,
+            get_all_absolute_path_command,
+            set_current_absolute_path_by_id_command,
+            get_current_absolute_path_command,
+            // --- search ---
+            search_command,
+            // --- books ---
+            get_books_list_command,
+            get_book_command,
+            get_all_read_books_command,
+            update_book_command,
+            // --- authors ---
+            get_authors_list_command,
+            get_author_command,
+            // --- lectors ---
+            get_lectors_list_command,
+            get_lector_command,
+            // --- genres ---
+            get_genres_list_command,
+            get_genre_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

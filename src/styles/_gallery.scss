@@ -1,57 +1,55 @@
 .gallery {
-    width: 100%;
-    margin-top: 2rem;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  margin-top: 2rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .gallery-item {
-    width: 8.9rem;
-    height: calc(8.9rem * 1.32471);
-    margin: 1rem;
-    border-radius: 0.55rem;
-    background-color: var(--accent);
-    text-decoration: none;
-    img{
-        width: 100%;
-        aspect-ratio: 1/1;
-        filter: brightness(0.89);
-        border-radius: 0.55rem 0.55rem 0 0;
-    }
+  width: 8.9rem;
+  height: calc(8.9rem * 1.32471);
+  margin: 1rem;
+  border-radius: 0.55rem;
+  background-color: var(--accent);
+  text-decoration: none;
+  img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    filter: brightness(0.89);
+    border-radius: 0.55rem 0.55rem 0 0;
+  }
 }
 
-
 .gallery-text {
-    overflow: hidden;
-    padding: 0.05rem 0.5rem;
-    text-align: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: center;
-    display: block;
-    color: var(--foreground);
+  overflow: hidden;
+  padding: 0.05rem 0.5rem;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  display: block;
+  color: var(--foreground);
 }
 
 .gallery-tex-first {
-    padding-top: 0.3rem;
-    font-size: 0.9rem;
+  padding-top: 0.3rem;
+  font-size: 0.9rem;
 }
 
 .gallery-text-second {
-    padding-top: 0.15rem;
-    font-size: 0.8rem;
-    color: var(--foreground-alt);
+  padding-top: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--foreground-alt);
 }
 
-.gallery>a:hover {
-    text-decoration: none;
-    cursor: pointer;
-    transform: scale(1.05) translateY(-5%);
-    img{
-        filter: brightness(1);
-    }
-    
+.gallery > a:hover {
+  text-decoration: none;
+  cursor: pointer;
+  transform: scale(1.05) translateY(-5%);
+  img {
+    filter: brightness(1);
+  }
 }

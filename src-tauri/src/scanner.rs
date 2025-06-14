@@ -1,89 +1,97 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::HashSet,
     fs,
     path::Path,
-    time::Instant,
+    time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
+use chrono::NaiveDateTime;
 use id3::{Tag, TagLike};
 use rusqlite::Result;
 use walkdir::WalkDir;
 
 use crate::{
-    db::{self},
-    structs::{Author, DBBook},
+    models::{author::Author, book::Book},
+    services::{
+        absolute_paths_service::get_current_absolute_path,
+        authors_service::{add_author, is_author_exists},
+        books_service::{add_book, is_book_exists},
+    },
 };
 
-fn look_for_cover(directory: &str) -> String {
+fn look_for_cover(directory: &str, base_path: &Path) -> String {
     let exts = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".nfo"];
     let names = ["cover", "folder", "album", "poster", "default", "art"];
     for name in names.iter() {
         for ext in exts.iter() {
             let image_name = format!("{}{}", name, ext);
-            let image_path = format!("{}/{}", directory, image_name);
+            let image_path = Path::new(directory).join(image_name);
+
             if fs::metadata(&image_path).is_ok() {
-                return image_path;
+                // Return the relative path
+                return image_path
+                    .strip_prefix(base_path)
+                    .unwrap_or(&image_path)
+                    .to_string_lossy()
+                    .to_string();
             }
         }
     }
     String::new()
 }
 
-fn look_for_author_photo(path: &str, name: &str) -> String {
+fn look_for_author_photo(path: &str, name: &str, base_path: &Path) -> String {
     let directory = match path.find(name) {
         Some(index) => &path[..index + name.len()],
         None => return String::new(),
     };
 
-    return look_for_cover(directory);
+    look_for_cover(directory, base_path)
 }
 
-pub fn quick_scan(directory: &str) -> Result<()> {
+fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<NaiveDateTime> {
+    option_time?
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|duration| NaiveDateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
+}
+
+pub fn quick_scan() -> Result<(), String> {
+    let absolute_path = get_current_absolute_path();
+    let directory: String;
+    if let Some(absolute_path) = absolute_path {
+        directory = absolute_path.absolute_path;
+    } else {
+        return Err("No path to scan".to_string());
+    }
+
     println!("Quick scan in {}", directory);
-    let conn = db::get_db_connection()?;
     let mut processed_dirs = HashSet::new();
     let start = Instant::now();
 
-    for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(|e| e.ok()) {
-        if let Some(mp3_path) = get_mp3_path(&entry) {
-            let parent_path = mp3_path.parent().and_then(Path::to_str).unwrap();
+    let base_path = Path::new(&directory);
 
-            if processed_dirs.insert(parent_path.to_string()) {
+    for entry in WalkDir::new(&directory).min_depth(1).into_iter().filter_map(Result::ok) {
+        if let Some(mp3_path) = get_mp3_path(&entry) {
+            if let Some(parent_path) = mp3_path.parent().and_then(Path::to_str) {
+                // Skip already processed directories
+                if !processed_dirs.insert(parent_path.to_string()) {
+                    continue;
+                }
+
+                // Process the MP3 file
                 if let Ok(tag) = Tag::read_from_path(mp3_path) {
-                    process_metadata(&conn, &tag, parent_path)?;
+                    let file_create_date = fs::metadata(mp3_path)
+                        .ok()
+                        .and_then(|metadata| system_time_to_naive_date_time(metadata.created().ok()));
+
+                    process_metadata(&tag, parent_path, file_create_date, base_path);
                 }
             }
         }
     }
 
     println!("Quick scan complete, elapsed time: {:?}", start.elapsed());
-
-    Ok(())
-}
-
-pub fn full_scan(directory: &str) -> Result<()> {
-    println!("Full scan in {}", directory);
-    let conn = db::get_db_connection()?;
-    let mut books_hashmap = HashMap::new();
-    let start = Instant::now();
-
-    for entry in WalkDir::new(directory).min_depth(1).into_iter().filter_map(|e| e.ok()) {
-        if let Some(mp3_path) = get_mp3_path(&entry) {
-            if let Ok(tag) = Tag::read_from_path(mp3_path) {
-                let title = tag.album().unwrap_or("Unknown").to_string();
-                let duration = tag.duration().unwrap_or(0) as u64;
-
-                if let Some(&book_id) = books_hashmap.get(&title) {
-                    db::increment_book_duration(&conn, book_id, duration)?;
-                } else {
-                    let book_id = process_metadata(&conn, &tag, mp3_path.parent().unwrap().to_str().unwrap())?;
-                    books_hashmap.insert(title, book_id);
-                }
-            }
-        }
-    }
-
-    println!("Full scan complete, elapsed time: {:?}", start.elapsed());
     Ok(())
 }
 
@@ -97,37 +105,42 @@ fn get_mp3_path(entry: &walkdir::DirEntry) -> Option<&Path> {
     }
 }
 
-fn process_metadata(conn: &rusqlite::Connection, tag: &Tag, parent_path: &str) -> Result<i64> {
-    let title = tag.album().unwrap_or("Unknown").to_string();
+fn process_metadata(
+    tag: &Tag,
+    parent_path: &str,
+    file_create_date: Option<NaiveDateTime>,
+    base_path: &Path,
+) -> Option<Book> {
+    let title = tag.album().unwrap_or(&format!("Unknown ({})", parent_path)).to_string();
+
+    if is_book_exists(&title) {
+        return None;
+    }
+
     let genre = tag.genre().unwrap_or("Unknown").to_string();
     let lector = tag.artist().unwrap_or("Unknown").to_string();
-    let year = tag.year().unwrap_or(0);
-    let duration = tag.duration().unwrap_or(0) as u64;
     let author_name = tag.album_artist().unwrap_or("Unknown").to_string();
+    let relative_cover_path = look_for_cover(parent_path, base_path);
 
-    let author = Author {
-        id: 0,
-        name: author_name.clone(),
-        picture_path: look_for_author_photo(parent_path, &author_name),
-    };
-    println!("Author: {}", author.picture_path);
+    if !is_author_exists(&author_name) {
+        let author = Author {
+            name: author_name.clone(),
+            relative_img_path: Some(look_for_author_photo(parent_path, &author_name, base_path)),
+        };
+        println!("Adding author: {:?}", author);
+        add_author(&author);
+    }
 
-    let author_id = db::get_or_create_author(conn, &author)?;
-    let lector_id = db::get_or_create_lector(conn, &lector)?;
-    let genre_id = db::get_or_create_genre(conn, &genre)?;
-    let cover_path = look_for_cover(parent_path);
-
-    let book = DBBook {
-        id: 0,
+    let book = Book {
         title,
-        duration,
-        year,
-        cover_path,
-        genre_id,
-        author_id,
-        lector_id,
+        author_name,
+        relative_cover_path: Some(relative_cover_path),
+        genre: Some(genre),
+        lector: Some(lector),
+        create_date: file_create_date,
+        read: Some(false),
+        score: Some(0),
     };
-
-    let book_id = db::get_or_create_book(conn, &book)?;
-    Ok(book_id)
+    println!("Adding book: {:?}", book);
+    add_book(&book)
 }

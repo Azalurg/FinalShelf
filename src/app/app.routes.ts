@@ -1,60 +1,64 @@
 import { Routes } from "@angular/router";
-import { DashboardComponent } from "./pages/dashboard/dashboard.component";
-import { BooksComponent } from "./pages/books/books.component";
-import { SettingsComponent } from "./pages/settings/settings.component";
-import { BookDetailsComponent } from "./pages/book-details/book-details.component";
-import { AuthorsComponent } from "./pages/authors/authors.component";
-import { AuthorDetailsComponent } from "./pages/author-details/author-details.component";
-import { LectorsComponent } from "./pages/lectors/lectors.component";
-import { SearchComponent } from "./pages/search/search.component";
-import { LectorsDetailsComponent } from "./pages/lectors-details/lectors-details.component";
-import { GenresComponent } from "./pages/genres/genres.component";
-import { GenresDetailsComponent } from "./pages/genres-details/genres-details.component";
-
+import { BookDetailsPageComponent } from "./features/books/pages/details/details.component";
+import { BooksListPageComponent } from "./features/books/pages/list/list.component";
+import { AuthorsListPageComponent } from "./features/authors/list/authors.component";
+import { AuthorDetailsPageComponent } from "./features/authors/details/author-details.component";
+import { LectorsListPageComponent } from "./features/lectors/list/lectors.component";
+import { LectorsDetailsPageComponent } from "./features/lectors/details/lectors-details.component";
+import { GenresListPageComponent } from "./features/genres/list/genres.component";
+import { GenresDetailsPageComponent } from "./features/genres/details/genres-details.component";
+import { SettingsPageComponent } from "./features/settings/settings.component";
+import { SearchPageComponent } from "./features/search/search.component";
+import { DashboardPageComponent } from "./features/dashboard/dashboard.component";
+import { ReadBooksListPageComponent } from "./features/books/pages/read-books-list/read-books-list.component";
 
 export const routes: Routes = [
   {
-    path: '',
-    component: DashboardComponent,
+    path: "",
+    component: DashboardPageComponent,
   },
   {
-    path: 'books/:id',
-    component: BookDetailsComponent,
+    path: "books/:title",
+    component: BookDetailsPageComponent,
   },
   {
-    path: 'books',
-    component: BooksComponent
+    path: "books",
+    component: BooksListPageComponent,
   },
   {
-    path: 'authors',
-    component: AuthorsComponent
+    path: "read",
+    component: ReadBooksListPageComponent,
   },
   {
-    path: 'authors/:id',
-    component: AuthorDetailsComponent
+    path: "authors",
+    component: AuthorsListPageComponent,
   },
   {
-    path: 'lectors',
-    component: LectorsComponent
+    path: "authors/:name",
+    component: AuthorDetailsPageComponent,
   },
   {
-    path: 'lectors/:id',
-    component: LectorsDetailsComponent
+    path: "lectors",
+    component: LectorsListPageComponent,
   },
   {
-    path: 'genres',
-    component: GenresComponent
+    path: "lectors/:name",
+    component: LectorsDetailsPageComponent,
   },
   {
-    path: 'genres/:id',
-    component: GenresDetailsComponent
+    path: "genres",
+    component: GenresListPageComponent,
   },
   {
-    path: 'settings',
-    component: SettingsComponent
+    path: "genres/:name",
+    component: GenresDetailsPageComponent,
   },
   {
-    path: 'search',
-    component: SearchComponent
-  }
-]
+    path: "settings",
+    component: SettingsPageComponent,
+  },
+  {
+    path: "search",
+    component: SearchPageComponent,
+  },
+];
