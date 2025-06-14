@@ -26,6 +26,7 @@ diesel::table! {
         create_date -> Nullable<Timestamp>,
         read -> Nullable<Bool>,
         score -> Nullable<Integer>,
+        relative_file_path -> Text,
     }
 }
 
@@ -47,4 +48,10 @@ diesel::joinable!(books -> authors (author_name));
 diesel::joinable!(tags_books -> books (book_title));
 diesel::joinable!(tags_books -> tags (tag_id));
 
-diesel::allow_tables_to_appear_in_same_query!(absolute_paths, authors, books, tags, tags_books,);
+diesel::allow_tables_to_appear_in_same_query!(
+    absolute_paths,
+    authors,
+    books,
+    tags,
+    tags_books,
+);

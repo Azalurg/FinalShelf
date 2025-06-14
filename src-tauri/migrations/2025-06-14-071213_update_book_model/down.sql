@@ -1,0 +1,1 @@
+ALTER TABLE books DROP COLUMN relative_file_path
