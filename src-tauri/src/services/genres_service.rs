@@ -38,6 +38,7 @@ pub fn get_genre(name: String) -> Option<GenreWithBooks> {
 
     let books = dsl::books
         .filter(dsl::genre.eq(name.clone()))
+        .select(Book::as_select())
         .load::<Book>(conn)
         .expect("Error loading books");
 

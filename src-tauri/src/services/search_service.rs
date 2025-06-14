@@ -1,7 +1,8 @@
 use crate::db::establish_connection;
 use crate::models::book::Book;
+use crate::schema::books;
 use crate::schema::books::dsl::*;
-use diesel::{QueryDsl, RunQueryDsl, SqliteConnection, TextExpressionMethods};
+use diesel::{QueryDsl, RunQueryDsl, SelectableHelper, SqliteConnection, TextExpressionMethods};
 use std::collections::HashSet;
 
 pub fn search(target: &str, by: &[String]) -> Vec<Book> {
@@ -25,16 +26,20 @@ fn search_by(conn: &mut SqliteConnection, target: &str, by: &str) -> Result<Vec<
     let pattern = format!("%{}%", target);
     match by {
         "title" => books
-            .filter(crate::schema::books::title.like(&pattern))
+            .filter(books::title.like(&pattern))
+            .select(Book::as_select()) // <-- Add this
             .load::<Book>(conn),
         "author_name" => books
-            .filter(crate::schema::books::author_name.like(&pattern))
+            .filter(books::author_name.like(&pattern))
+            .select(Book::as_select()) // <-- Add this
             .load::<Book>(conn),
         "genre_name" => books
-            .filter(crate::schema::books::genre.like(&pattern))
+            .filter(books::genre.like(&pattern))
+            .select(Book::as_select()) // <-- Add this
             .load::<Book>(conn),
         "lector_name" => books
-            .filter(crate::schema::books::lector.like(&pattern))
+            .filter(books::lector.like(&pattern))
+            .select(Book::as_select()) // <-- Add this
             .load::<Book>(conn),
         _ => Ok(Vec::new()),
     }

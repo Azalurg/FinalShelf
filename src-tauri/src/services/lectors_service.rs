@@ -38,6 +38,7 @@ pub fn get_lector(name: String) -> Option<LectorWithBooks> {
 
     let books = dsl::books
         .filter(dsl::lector.eq(name.clone()))
+        .select(Book::as_select())
         .load::<Book>(conn)
         .expect("Error loading books");
 
