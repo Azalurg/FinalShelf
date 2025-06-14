@@ -1,21 +1,31 @@
 <div class="app-page">
+  <h1 class="app-page-title">Dashboard</h1>
   <table class="details-info-table">
     <tbody>
       <tr>
         <td class="details-info-label">Books</td>
-        <td class="details-info-value">{{ dashboardData.books_amount }}</td>
+        <td class="details-info-value">
+          {{ dashboardData.books_count }} ({{ dashboardData.read_books_count }})
+        </td>
       </tr>
       <tr>
         <td class="details-info-label">Authors</td>
-        <td class="details-info-value">{{ dashboardData.authors_amount }}</td>
+        <td class="details-info-value">{{ dashboardData.authors_count }}</td>
       </tr>
       <tr>
+        <td class="details-info-label">AUthor with most books</td>
+        <td class="details-info-value">
+          {{ dashboardData.author_with_most_books }}
+        </td>
+      </tr>
+
+      <tr>
         <td class="details-info-label">Lector</td>
-        <td class="details-info-value">{{ dashboardData.lectors_amount }}</td>
+        <td class="details-info-value">{{ dashboardData.lectors_count }}</td>
       </tr>
       <tr>
         <td class="details-info-label">Genre</td>
-        <td class="details-info-value">{{ dashboardData.genres_amount }}</td>
+        <td class="details-info-value">{{ dashboardData.genres_count }}</td>
       </tr>
     </tbody>
   </table>

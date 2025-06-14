@@ -46,3 +46,9 @@ pub fn get_author(name: &str) -> Option<AuthorWithBooks> {
 
     Some(AuthorWithBooks { author, books })
 }
+
+pub fn get_authors_count() -> i64 {
+    let conn = &mut establish_connection();
+
+    dsl::authors.count().get_result(conn).expect("Error counting authors")
+}
