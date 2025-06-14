@@ -24,90 +24,58 @@ pub fn list_books(query_params: QueryParams) -> Result<BookListResponse, diesel:
     let limit = query_params.limit.unwrap_or(21).clamp(1, 100);
     let offset = (page - 1) * limit;
 
+    // Building the base query with filters
     let mut query = dsl::books.into_boxed();
     let mut count_query = dsl::books.into_boxed();
 
-    // Declare pattern variables outside the closures to extend their lifetime
     if let Some(ref author) = query_params.author_name {
-        let author_pattern = format!("%{}%", author);
-        query = query.filter(dsl::author_name.like(author_pattern.clone()));
-        count_query = count_query.filter(dsl::author_name.like(author_pattern));
+        query = query.filter(dsl::author_name.like(format!("%{}%", author)));
+        count_query = count_query.filter(dsl::author_name.like(format!("%{}%", author)));
     }
-
     if let Some(ref genre_filter) = query_params.genre {
-        let genre_pattern = format!("%{}%", genre_filter);
-        query = query.filter(dsl::genre.like(genre_pattern.clone()));
-        count_query = count_query.filter(dsl::genre.like(genre_pattern));
+        query = query.filter(dsl::genre.like(format!("%{}%", genre_filter)));
+        count_query = count_query.filter(dsl::genre.like(format!("%{}%", genre_filter)));
     }
-
     if let Some(ref title_filter) = query_params.title {
-        let title_pattern = format!("%{}%", title_filter);
-        query = query.filter(dsl::title.like(title_pattern.clone()));
-        count_query = count_query.filter(dsl::title.like(title_pattern));
+        query = query.filter(dsl::title.like(format!("%{}%", title_filter)));
+        count_query = count_query.filter(dsl::title.like(format!("%{}%", title_filter)));
     }
-
     if let Some(ref lector_filter) = query_params.lector {
-        let lector_pattern = format!("%{}%", lector_filter);
-        query = query.filter(dsl::lector.like(lector_pattern.clone()));
-        count_query = count_query.filter(dsl::lector.like(lector_pattern));
+        query = query.filter(dsl::lector.like(format!("%{}%", lector_filter)));
+        count_query = count_query.filter(dsl::lector.like(format!("%{}%", lector_filter)));
     }
-
     if let Some(read_filter) = query_params.read_status {
         query = query.filter(dsl::read.eq(read_filter));
         count_query = count_query.filter(dsl::read.eq(read_filter));
     }
 
     // Apply sorting
+    let mut data_query = query; // Use the filtered query as the base for data
     if let Some(ref sort_field) = query_params.sort_by {
         let order = query_params.sort_order.as_deref().unwrap_or("asc");
-
-        query = match sort_field.as_str() {
-            "title" => {
-                if order == "desc" {
-                    query.order(dsl::title.desc())
-                } else {
-                    query.order(dsl::title.asc())
-                }
-            },
-            "author_name" => {
-                if order == "desc" {
-                    query.order(dsl::author_name.desc())
-                } else {
-                    query.order(dsl::author_name.asc())
-                }
-            },
-            "create_date" => {
-                if order == "desc" {
-                    query.order(dsl::create_date.desc())
-                } else {
-                    query.order(dsl::create_date.asc())
-                }
-            },
-            "score" => {
-                if order == "desc" {
-                    query.order(dsl::score.desc())
-                } else {
-                    query.order(dsl::score.asc())
-                }
-            },
-            _ => query.order(dsl::author_name.asc()),
+        data_query = match (sort_field.as_str(), order) {
+            ("title", "desc") => data_query.order(dsl::title.desc()),
+            ("title", _) => data_query.order(dsl::title.asc()),
+            ("author", "desc") => data_query.order((dsl::author_name.desc(), dsl::title.asc())),
+            ("author", _) => data_query.order((dsl::author_name.asc(), dsl::title.asc())),
+            ("create_date", "desc") => data_query.order(dsl::create_date.desc()),
+            ("create_date", _) => data_query.order(dsl::create_date.asc()),
+            ("score", "desc") => data_query.order(dsl::score.desc()),
+            ("score", _) => data_query.order(dsl::score.asc()),
+            _ => data_query.order(dsl::author_name.asc()),
         };
     } else {
-        query = query.order(dsl::author_name.asc());
+        data_query = data_query.order(dsl::author_name.asc());
     }
 
-    // Get total count first
-    let total_count: i64 = count_query.select(count_star()).first(conn)?;
-
-    // Calculate total pages
-    let total_pages = (total_count + limit - 1) / limit;
-
-    // Get books with pagination
-    let books = query
+    let books = data_query
         .limit(limit)
         .offset(offset)
         .select(Book::as_select())
         .load::<Book>(conn)?;
+
+    let total_count = count_query.select(count_star()).first(conn)?;
+    let total_pages = (total_count + limit - 1) / limit;
 
     Ok(BookListResponse {
         books,
