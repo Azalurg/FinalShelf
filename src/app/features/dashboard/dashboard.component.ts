@@ -21,7 +21,7 @@ export class DashboardPageComponent {
 
   async fetchDashboardData() {
     try {
-      const dashboardData = await invoke<any>("tauri_get_dashboard_data");
+      const dashboardData = await invoke<any>("get_dashboard_data_command");
       this.dashboardData = dashboardData;
       console.log(this.dashboardData);
     } catch (error) {

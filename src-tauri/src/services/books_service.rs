@@ -112,7 +112,7 @@ pub fn get_books_by_author(author_name: &str) -> Vec<Book> {
 
     dsl::books
         .filter(dsl::author_name.eq(author_name))
-        .select(Book::as_select()) // <--- FIX
+        .select(Book::as_select())
         .load::<Book>(conn)
         .expect("Error loading books")
 }
@@ -122,7 +122,7 @@ pub fn get_books_by_genre(genre: &str) -> Vec<Book> {
 
     dsl::books
         .filter(dsl::genre.eq(genre))
-        .select(Book::as_select()) // <--- FIX
+        .select(Book::as_select())
         .load::<Book>(conn)
         .expect("Error loading books")
 }
@@ -132,7 +132,7 @@ pub fn get_books_by_lector(lector: &str) -> Vec<Book> {
 
     dsl::books
         .filter(dsl::lector.eq(lector))
-        .select(Book::as_select()) // <--- FIX
+        .select(Book::as_select())
         .load::<Book>(conn)
         .expect("Error loading books")
 }
@@ -142,7 +142,7 @@ pub fn get_read_books() -> Vec<Book> {
 
     dsl::books
         .filter(dsl::read.eq(true))
-        .select(Book::as_select()) // <--- FIX
+        .select(Book::as_select())
         .load::<Book>(conn)
         .expect("Error loading books")
 }
@@ -156,4 +156,31 @@ pub fn update_book(book: &Book) -> Option<Book> {
         .expect("Error updating book");
 
     get_book(&book.title)
+}
+
+pub fn get_books_count() -> i64 {
+    let conn = &mut establish_connection();
+
+    dsl::books.count().get_result(conn).expect("Error counting books")
+}
+
+pub fn get_read_books_count() -> i64 {
+    let conn = &mut establish_connection();
+
+    dsl::books
+        .filter(dsl::read.eq(true))
+        .count()
+        .get_result(conn)
+        .expect("Error counting read books")
+}
+
+pub fn get_author_name_with_most_books() -> Option<String> {
+    let conn: &mut SqliteConnection = &mut establish_connection();
+
+    dsl::books
+        .group_by(dsl::author_name)
+        .order(count_star().desc())
+        .select(dsl::author_name)
+        .first(conn)
+        .ok()
 }

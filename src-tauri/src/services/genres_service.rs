@@ -6,7 +6,7 @@ use crate::{
     },
     schema::books::dsl,
 };
-use diesel::dsl::count;
+use diesel::dsl::{count, count_distinct};
 use diesel::prelude::*;
 
 pub fn get_genres_list() -> Vec<Genre> {
@@ -53,4 +53,13 @@ pub fn get_genre(name: String) -> Option<GenreWithBooks> {
         books,
         books_amount,
     })
+}
+
+pub fn get_genres_count() -> i64 {
+    let conn = &mut establish_connection();
+
+    dsl::books
+        .select(count_distinct(dsl::genre))
+        .first(conn)
+        .expect("Error counting genres")
 }
