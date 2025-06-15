@@ -32,6 +32,8 @@ export class GenericListComponent {
     totalPages: 1,
     sortOptions: ["Author ^", "Author v", "Title ^", "Title v"],
   };
+  @Input() paginationEnabled = true;
+  @Input() sortEnabled = true;
 
   @Output() pageChange = new EventEmitter<number>();
   @Output() pageSizeChange = new EventEmitter<number>();

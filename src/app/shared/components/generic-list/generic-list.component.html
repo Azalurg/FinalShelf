@@ -1,7 +1,7 @@
 <!-- generic-list.component.html -->
 <div class="generic-list">
   <div class="gl-toolbar">
-    <div class="app-pagination">
+    <div class="app-pagination" *ngIf="paginationEnabled">
       <button (click)="prevPage()" [disabled]="config.page === 1">
         <img
           src="assets/icons/chevron-left-duo-svgrepo-com.svg"
@@ -21,7 +21,7 @@
       </button>
     </div>
 
-    <div class="app-sort">
+    <div class="app-sort" *ngIf="sortEnabled">
       <label for="sort">Sort:</label>
       <select id="sort" (change)="changeSortOrder($event)">
         <option *ngFor="let option of config.sortOptions" [value]="option">
