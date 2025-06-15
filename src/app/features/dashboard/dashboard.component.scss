@@ -1,0 +1,28 @@
+.content{
+    display: grid;
+    grid-template-areas: 
+    "new new new new new new new a a a"
+    "new new new new new new new a a a"
+    "new new new new new new new a a a"
+    "new new new new new new new a a a"
+    "new new new new new new new b b b"
+    "s s s s s s s b b b"
+    "s s s s s s s b b b"
+    "s s s s s s s b b b";
+}
+
+.stats{
+    grid-area: s;
+}
+
+.new_books{
+    grid-area: new;
+}
+
+.top_authors {
+    grid-area: a;
+}
+
+.top_books {
+    grid-area: b;
+}
