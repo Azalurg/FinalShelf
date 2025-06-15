@@ -178,7 +178,7 @@ pub fn get_books_by_date(limit: i64) -> Vec<Book> {
     let conn = &mut establish_connection();
 
     dsl::books
-        .order((dsl::create_date.asc(), dsl::title.asc()))
+        .order((dsl::create_date.desc(), dsl::author_name.asc(), dsl::title.asc()))
         .limit(limit)
         .select(Book::as_select())
         .load::<Book>(conn)
@@ -189,7 +189,7 @@ pub fn get_books_by_score(limit: i64) -> Vec<Book> {
     let conn = &mut establish_connection();
 
     dsl::books
-        .order((dsl::score.asc(), dsl::title.asc()))
+        .order((dsl::score.asc(), dsl::author_name.asc(), dsl::title.asc()))
         .limit(limit)
         .select(Book::as_select())
         .load::<Book>(conn)

@@ -16,6 +16,7 @@ pub struct Book {
     pub create_date: Option<NaiveDateTime>,
     pub read: Option<bool>,
     pub score: Option<i32>,
+    pub relative_file_path: String,
 }
 
 #[derive(Serialize)]
