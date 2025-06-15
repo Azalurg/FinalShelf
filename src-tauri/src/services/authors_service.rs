@@ -4,10 +4,16 @@ use crate::{
         author::{Author, AuthorWithBooks},
         query::QueryParams,
     },
-    schema::authors::{self, dsl},
+    schema::{
+        authors::{self, dsl},
+        books::{self},
+    },
 };
-
-use diesel::prelude::*;
+use diesel::{
+    dsl::{count, count_star},
+    prelude::*,
+    query_dsl::InternalJoinDsl,
+};
 
 pub fn list_authors(query_params: QueryParams) -> Vec<Author> {
     let conn = &mut establish_connection();
@@ -51,4 +57,17 @@ pub fn get_authors_count() -> i64 {
     let conn = &mut establish_connection();
 
     dsl::authors.count().get_result(conn).expect("Error counting authors")
+}
+
+pub fn get_top_authors(limit: i64) -> Vec<(Author, i64)> {
+    let conn = &mut establish_connection();
+
+    authors::table
+        .inner_join(books::table.on(authors::name.eq(books::author_name)))
+        .group_by(authors::name)
+        .select((authors::all_columns, count(books::title))) // Changed here
+        .order_by(count(books::title).desc()) // And here
+        .limit(limit)
+        .load::<(Author, i64)>(conn)
+        .expect("Error loading top authors")
 }
