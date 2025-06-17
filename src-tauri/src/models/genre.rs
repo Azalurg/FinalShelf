@@ -1,7 +1,4 @@
 use crate::models::book::Book;
-use crate::schema::*;
-use diesel::sqlite::Sqlite;
-use diesel::Queryable;
 use serde::{Deserialize, Serialize};
 
 use diesel::prelude::*;

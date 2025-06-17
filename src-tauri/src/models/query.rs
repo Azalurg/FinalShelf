@@ -11,31 +11,31 @@ pub struct QueryParams {
     pub read_status: Option<bool>,
 }
 
-impl QueryParams {
-    pub fn new(
-        page: Option<i64>,
-        limit: Option<i64>,
-        author_name: Option<String>,
-        genre: Option<String>,
-        title: Option<String>,
-        lector: Option<String>,
-        sort_by: Option<String>,
-        sort_order: Option<String>,
-        read_status: Option<bool>,
-    ) -> Self {
-        Self {
-            page,
-            limit,
-            author_name,
-            genre,
-            title,
-            lector,
-            sort_by,
-            sort_order,
-            read_status,
-        }
-    }
-}
+// impl QueryParams {
+//     pub fn new(
+//         page: Option<i64>,
+//         limit: Option<i64>,
+//         author_name: Option<String>,
+//         genre: Option<String>,
+//         title: Option<String>,
+//         lector: Option<String>,
+//         sort_by: Option<String>,
+//         sort_order: Option<String>,
+//         read_status: Option<bool>,
+//     ) -> Self {
+//         Self {
+//             page,
+//             limit,
+//             author_name,
+//             genre,
+//             title,
+//             lector,
+//             sort_by,
+//             sort_order,
+//             read_status,
+//         }
+//     }
+// }
 // pub fn validate(&self) -> Result<(), String> {
 //     // Sprawdź sortowanie
 //     if let Some(sort_order) = &self.sort_order {

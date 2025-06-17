@@ -6,7 +6,7 @@ use diesel::Queryable;
 use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
-#[table_name = "absolute_paths"]
+#[diesel(table_name = absolute_paths)]
 pub struct AbsolutePath {
     pub id: Option<i32>,
     pub absolute_path: String,
@@ -15,7 +15,7 @@ pub struct AbsolutePath {
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
-#[table_name = "absolute_paths"]
+#[diesel(table_name = absolute_paths)]
 pub struct NewAbsolutePath {
     pub absolute_path: String,
     pub add_date: NaiveDateTime,

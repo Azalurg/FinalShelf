@@ -9,11 +9,7 @@ use crate::{
         books::{self},
     },
 };
-use diesel::{
-    dsl::{count, count_star},
-    prelude::*,
-    query_dsl::InternalJoinDsl,
-};
+use diesel::{dsl::count, prelude::*};
 
 pub fn list_authors(query_params: QueryParams) -> Vec<Author> {
     let conn = &mut establish_connection();

@@ -5,14 +5,13 @@ use std::{
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
-use chrono::NaiveDateTime;
+use chrono::{DateTime, NaiveDateTime};
 use id3::{Tag, TagLike};
 use rusqlite::Result;
 use walkdir::WalkDir;
 
 use crate::{
     models::{author::Author, book::Book},
-    schema::books::relative_file_path,
     services::{
         absolute_paths_service::get_current_absolute_path,
         authors_service::{add_author, is_author_exists},
@@ -54,7 +53,8 @@ fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<Nai
     option_time?
         .duration_since(UNIX_EPOCH)
         .ok()
-        .map(|duration| NaiveDateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
+        .and_then(|duration| DateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
+        .map(|datetime_utc| datetime_utc.naive_utc())
 }
 
 pub fn quick_scan() -> Result<(), String> {
