@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, NgModule } from "@angular/core";
-import { RouteConfigLoadEnd } from "@angular/router";
+import { Component } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { AbsolutePath } from "../../models/absolute-paths";
 
@@ -27,7 +26,7 @@ export class SettingsPageComponent {
   async fetchAbsolutePaths(): Promise<void> {
     try {
       const paths = await invoke<AbsolutePath[]>(
-        "get_all_absolute_path_command",
+        "get_all_absolute_path_command"
       );
       this.absolutePaths = paths;
       if (paths.length > 0) {
@@ -79,7 +78,7 @@ export class SettingsPageComponent {
   async addPath(): Promise<void> {
     try {
       const absolutePath = prompt(
-        "Enter path to the directory with audiobooks files: ",
+        "Enter path to the directory with audiobooks files: "
       );
       await invoke("add_absolute_path_command", { absolutePath });
       this.fetchAbsolutePaths();

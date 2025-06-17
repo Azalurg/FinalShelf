@@ -174,13 +174,24 @@ pub fn get_read_books_count() -> i64 {
         .expect("Error counting read books")
 }
 
-pub fn get_author_name_with_most_books() -> Option<String> {
-    let conn: &mut SqliteConnection = &mut establish_connection();
+pub fn get_books_by_date(limit: i64) -> Vec<Book> {
+    let conn = &mut establish_connection();
 
     dsl::books
-        .group_by(dsl::author_name)
-        .order(count_star().desc())
-        .select(dsl::author_name)
-        .first(conn)
-        .ok()
+        .order((dsl::create_date.desc(), dsl::author_name.asc(), dsl::title.asc()))
+        .limit(limit)
+        .select(Book::as_select())
+        .load::<Book>(conn)
+        .expect("Error getting books by date")
+}
+
+pub fn get_books_by_score(limit: i64) -> Vec<Book> {
+    let conn = &mut establish_connection();
+
+    dsl::books
+        .order((dsl::score.asc(), dsl::author_name.asc(), dsl::title.asc()))
+        .limit(limit)
+        .select(Book::as_select())
+        .load::<Book>(conn)
+        .expect("Error getting books by score")
 }

@@ -12,7 +12,9 @@ pub async fn get_dashboard_data_command() -> Result<Dashboard, String> {
         genres_count: genres_service::get_genres_count(),
         lectors_count: lectors_service::get_lectors_count(),
         read_books_count: books_service::get_read_books_count(),
-        author_with_most_books: books_service::get_author_name_with_most_books(),
+        new_books: books_service::get_books_by_date(8),
+        top_authors: authors_service::get_top_authors(5),
+        top_books: books_service::get_books_by_score(5),
     };
     Ok(dashboard_data)
 }
