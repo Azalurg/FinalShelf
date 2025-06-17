@@ -35,7 +35,7 @@
     <a
       *ngFor="let item of items"
       class="gallery-item shadow"
-      [routerLink]="[listType === 'books' ? item.title : item.name]"
+      [routerLink]="[listType === 'books' ? '/books/' + item.title : '/authors/' + item.name]"
     >
       <img
         [src]="
