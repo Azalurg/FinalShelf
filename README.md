@@ -43,12 +43,12 @@ There will be something in the future ;-)
 
 ---
 
-- Przechowywanie lokacji w formie ścieżki względnej
+- ~~Przechowywanie lokacji w formie ścieżki względnej~~
 - Dodać plik przechowujący ustawienia aplikacji
 
 ---
 
-- wyodrębnić część wyścielającą książki tak aby dało się użyć tego samego kodu dla autorów
+- ~~wyodrębnić część wyścielającą książki tak aby dało się użyć tego samego kodu dla autorów~~
 - dodać widok listy dla książek / autorów
-- naprawić / usprawnić wyszukiwanie (nowy design)
-- fix toolbar navPaths
+- ~~naprawić~~ / usprawnić wyszukiwanie (nowy design)
+- ~~fix toolbar navPaths~~
