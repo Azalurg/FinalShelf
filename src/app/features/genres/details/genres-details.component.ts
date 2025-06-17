@@ -3,12 +3,12 @@ import { Component } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { GenreDetails } from "../../../models/genres";
-import { BookListComponent } from "../../books/components/book-list/book-list.component";
+import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
 
 @Component({
   selector: "app-genres-details",
   standalone: true,
-  imports: [CommonModule, RouterModule, BookListComponent],
+  imports: [CommonModule, RouterModule, GenericListComponent],
   templateUrl: "./genres-details.component.html",
   styleUrl: "./genres-details.component.scss",
 })

@@ -7,7 +7,8 @@
     </div>
   </div>
 
-  <app-book-list-component
-    [books]="genreDetails.books"
-  ></app-book-list-component>
+  <app-generic-list
+    [items]="genreDetails.books"
+    listType="books"
+  ></app-generic-list>
 </div>

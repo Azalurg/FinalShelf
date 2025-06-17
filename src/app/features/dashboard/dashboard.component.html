@@ -1,22 +1,73 @@
 <div class="app-page">
-  <table class="details-info-table">
-    <tbody>
-      <tr>
-        <td class="details-info-label">Books</td>
-        <td class="details-info-value">{{ dashboardData.books_amount }}</td>
-      </tr>
-      <tr>
-        <td class="details-info-label">Authors</td>
-        <td class="details-info-value">{{ dashboardData.authors_amount }}</td>
-      </tr>
-      <tr>
-        <td class="details-info-label">Lector</td>
-        <td class="details-info-value">{{ dashboardData.lectors_amount }}</td>
-      </tr>
-      <tr>
-        <td class="details-info-label">Genre</td>
-        <td class="details-info-value">{{ dashboardData.genres_amount }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="content">
+    <div class="container new_books">
+      <h1>New books</h1>
+      <app-generic-list
+        [items]="dashboardData.new_books"
+        listType="books"
+        [paginationEnabled]="false"
+        [sortEnabled]="false"
+      ></app-generic-list>
+    </div>
+    <div class="container stats">
+      <table class="details-info-table">
+        <tbody>
+          <tr>
+            <td class="details-info-label">Books</td>
+            <td class="details-info-value">
+              {{ dashboardData.books_count }} ({{
+                dashboardData.read_books_count
+              }})
+            </td>
+          </tr>
+          <tr>
+            <td class="details-info-label">Authors</td>
+            <td class="details-info-value">
+              {{ dashboardData.authors_count }}
+            </td>
+          </tr>
+          <tr>
+            <td class="details-info-label">Lector</td>
+            <td class="details-info-value">
+              {{ dashboardData.lectors_count }}
+            </td>
+          </tr>
+          <tr>
+            <td class="details-info-label">Genre</td>
+            <td class="details-info-value">{{ dashboardData.genres_count }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="container top_authors">
+      <h1>Top authors</h1>
+      <ul>
+        <li *ngFor="let author of dashboardData.top_authors">
+          <a [routerLink]="['/authors', author[0].name]" class="author_link">
+            <img
+              class="author_image"
+              src="{{ getAuthorSrc(author[0].relative_img_path) }}"
+              alt="image"
+            />
+            {{ author[0].name }} ({{ author[1] }})
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="container top_books">
+      <h1>Top books</h1>
+      <ul>
+        <li *ngFor="let book of dashboardData.top_books">
+          <a [routerLink]="['/books', book.title]" class="book_link">
+            <img
+              class="book_image"
+              src="{{ getBookSrc(book.relative_cover_path) }}"
+              alt="image"
+            />
+            {{ book.title }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>

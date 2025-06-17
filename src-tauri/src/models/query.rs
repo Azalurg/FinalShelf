@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct QueryParams {
     pub page: Option<i64>,
     pub limit: Option<i64>,
@@ -8,31 +8,34 @@ pub struct QueryParams {
     pub lector: Option<String>,
     pub sort_by: Option<String>,
     pub sort_order: Option<String>,
+    pub read_status: Option<bool>,
 }
 
-impl QueryParams {
-    pub fn new(
-        page: Option<i64>,
-        limit: Option<i64>,
-        author_name: Option<String>,
-        genre: Option<String>,
-        title: Option<String>,
-        lector: Option<String>,
-        sort_by: Option<String>,
-        sort_order: Option<String>,
-    ) -> Self {
-        Self {
-            page,
-            limit,
-            author_name,
-            genre,
-            title,
-            lector,
-            sort_by,
-            sort_order,
-        }
-    }
-}
+// impl QueryParams {
+//     pub fn new(
+//         page: Option<i64>,
+//         limit: Option<i64>,
+//         author_name: Option<String>,
+//         genre: Option<String>,
+//         title: Option<String>,
+//         lector: Option<String>,
+//         sort_by: Option<String>,
+//         sort_order: Option<String>,
+//         read_status: Option<bool>,
+//     ) -> Self {
+//         Self {
+//             page,
+//             limit,
+//             author_name,
+//             genre,
+//             title,
+//             lector,
+//             sort_by,
+//             sort_order,
+//             read_status,
+//         }
+//     }
+// }
 // pub fn validate(&self) -> Result<(), String> {
 //     // Sprawdź sortowanie
 //     if let Some(sort_order) = &self.sort_order {

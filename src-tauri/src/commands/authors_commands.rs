@@ -24,6 +24,7 @@ pub async fn get_authors_list_command(
         lector: None,
         sort_by,
         sort_order,
+        read_status: None,
     };
     list_authors(query_params)
 }

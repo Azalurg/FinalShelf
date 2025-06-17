@@ -2,9 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { CommonModule } from "@angular/common";
-import { convertImgPathBook } from "../../../../shared/utils/convertImgPath";
-import { getCurrentAbsolutePath } from "../../../../shared/utils/getCurrentAbsolutePath";
-import { Book } from "../../../../models/books";
+import { convertImgPathBook } from "../../../shared/utils/convertImgPath";
+import { getCurrentAbsolutePath } from "../../../shared/utils/getCurrentAbsolutePath";
+import { Book } from "../../../models/books";
 
 @Component({
   selector: "app-book-details",

@@ -1,0 +1,1 @@
+ALTER TABLE books ADD COLUMN relative_file_path VARCHAR(255) NOT NULL DEFAULT ""

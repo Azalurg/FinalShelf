@@ -6,7 +6,7 @@ use diesel::Queryable;
 use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
-#[table_name = "tags"]
+#[diesel(table_name = tags)]
 pub struct Tag {
     pub id: i32,
     pub name: String,
@@ -14,7 +14,7 @@ pub struct Tag {
 
 // TagsBooks table model
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
-#[table_name = "tags_books"]
+#[diesel(table_name = tags_books)]
 pub struct TagBook {
     pub tag_id: i32,
     pub book_title: String,

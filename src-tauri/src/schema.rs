@@ -26,6 +26,7 @@ diesel::table! {
         create_date -> Nullable<Timestamp>,
         read -> Nullable<Bool>,
         score -> Nullable<Integer>,
+        relative_file_path -> Text,
     }
 }
 

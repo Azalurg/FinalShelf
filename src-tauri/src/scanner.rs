@@ -5,7 +5,7 @@ use std::{
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
-use chrono::NaiveDateTime;
+use chrono::{DateTime, NaiveDateTime};
 use id3::{Tag, TagLike};
 use rusqlite::Result;
 use walkdir::WalkDir;
@@ -53,7 +53,8 @@ fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<Nai
     option_time?
         .duration_since(UNIX_EPOCH)
         .ok()
-        .map(|duration| NaiveDateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
+        .and_then(|duration| DateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
+        .map(|datetime_utc| datetime_utc.naive_utc())
 }
 
 pub fn quick_scan() -> Result<(), String> {
@@ -85,7 +86,7 @@ pub fn quick_scan() -> Result<(), String> {
                         .ok()
                         .and_then(|metadata| system_time_to_naive_date_time(metadata.created().ok()));
 
-                    process_metadata(&tag, parent_path, file_create_date, base_path);
+                    process_metadata(&tag, parent_path, file_create_date, base_path, mp3_path);
                 }
             }
         }
@@ -110,6 +111,7 @@ fn process_metadata(
     parent_path: &str,
     file_create_date: Option<NaiveDateTime>,
     base_path: &Path,
+    mp3_path: &Path,
 ) -> Option<Book> {
     let title = tag.album().unwrap_or(&format!("Unknown ({})", parent_path)).to_string();
 
@@ -121,6 +123,11 @@ fn process_metadata(
     let lector = tag.artist().unwrap_or("Unknown").to_string();
     let author_name = tag.album_artist().unwrap_or("Unknown").to_string();
     let relative_cover_path = look_for_cover(parent_path, base_path);
+    let file_path_str = mp3_path
+        .strip_prefix(base_path)
+        .unwrap_or(&mp3_path)
+        .to_string_lossy()
+        .to_string();
 
     if !is_author_exists(&author_name) {
         let author = Author {
@@ -140,6 +147,7 @@ fn process_metadata(
         create_date: file_create_date,
         read: Some(false),
         score: Some(0),
+        relative_file_path: file_path_str,
     };
     println!("Adding book: {:?}", book);
     add_book(&book)

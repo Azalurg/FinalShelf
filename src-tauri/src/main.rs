@@ -9,8 +9,8 @@ mod schema;
 mod services;
 
 use commands::{
-    authors_commands::*, books_commands::*, genres_commands::*, lectors_commands::*, search_commands::*,
-    settings_commands::*,
+    authors_commands::*, books_commands::*, dashboard_commands::*, genres_commands::*, lectors_commands::*,
+    search_commands::*, settings_commands::*,
 };
 
 fn main() {
@@ -45,7 +45,9 @@ fn main() {
             get_lector_command,
             // --- genres ---
             get_genres_list_command,
-            get_genre_command
+            get_genre_command,
+            // --- dashboard ---
+            get_dashboard_data_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

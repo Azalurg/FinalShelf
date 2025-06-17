@@ -5,12 +5,12 @@ import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentAbsolutePath } from "../../../shared/utils/getCurrentAbsolutePath";
 import { LectorDetails } from "../../../models/lectors";
-import { BookListComponent } from "../../books/components/book-list/book-list.component";
+import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
 
 @Component({
   selector: "app-lectors-details",
   standalone: true,
-  imports: [CommonModule, RouterModule, BookListComponent],
+  imports: [CommonModule, RouterModule, GenericListComponent],
   templateUrl: "./lectors-details.component.html",
   styleUrl: "./lectors-details.component.scss",
 })
@@ -43,7 +43,7 @@ export class LectorsDetailsPageComponent {
     try {
       const lectorDetailsData = await invoke<LectorDetails>(
         "get_lector_command",
-        { lectorName: lectorName },
+        { lectorName: lectorName }
       );
       this.lectorDetails = lectorDetailsData || [];
       console.log(this.lectorDetails);

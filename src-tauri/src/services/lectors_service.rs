@@ -6,7 +6,7 @@ use crate::{
     },
     schema::books::dsl,
 };
-use diesel::dsl::count;
+use diesel::dsl::{count, count_distinct};
 use diesel::prelude::*;
 
 pub fn get_lectors_list() -> Vec<Lector> {
@@ -38,6 +38,7 @@ pub fn get_lector(name: String) -> Option<LectorWithBooks> {
 
     let books = dsl::books
         .filter(dsl::lector.eq(name.clone()))
+        .select(Book::as_select())
         .load::<Book>(conn)
         .expect("Error loading books");
 
@@ -52,4 +53,13 @@ pub fn get_lector(name: String) -> Option<LectorWithBooks> {
         books,
         books_amount,
     })
+}
+
+pub fn get_lectors_count() -> i64 {
+    let conn = &mut establish_connection();
+
+    dsl::books
+        .select(count_distinct(dsl::lector))
+        .get_result(conn)
+        .expect("Error counting lectors")
 }
