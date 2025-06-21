@@ -15,7 +15,8 @@ use crate::{
     services::{
         absolute_paths_service::get_current_absolute_path,
         authors_service::{add_author, is_author_exists},
-        books_service::{add_book, is_book_exists},
+        // Added get_all_book_paths to the import
+        books_service::{add_book, get_all_book_paths, is_book_exists},
     },
 };
 
@@ -56,8 +57,6 @@ fn system_time_to_naive_date_time(
     let create_data_time = DateTime::<Utc>::from(create_time?);
     let edit_data_time = DateTime::<Utc>::from(edit_time?);
 
-    println!("Create time: {}, Edit time: {}", create_data_time, edit_data_time);
-
     if create_data_time > edit_data_time {
         Some(create_data_time.naive_utc())
     } else {
@@ -66,24 +65,46 @@ fn system_time_to_naive_date_time(
 }
 
 pub fn quick_scan() -> Result<(), String> {
-    let absolute_path = get_current_absolute_path();
+    let absolute_path_obj = get_current_absolute_path();
     let directory: String;
-    if let Some(absolute_path) = absolute_path {
+    if let Some(absolute_path) = absolute_path_obj {
         directory = absolute_path.absolute_path;
     } else {
         return Err("No path to scan".to_string());
     }
 
     println!("Quick scan in {}", directory);
-    let mut processed_dirs = HashSet::new();
     let start = Instant::now();
-
     let base_path = Path::new(&directory);
+
+    // Build the processed_dirs HashSet based on the absolute_path and file paths from the database.
+    let mut processed_dirs: HashSet<String> = match get_all_book_paths() {
+        Ok(relative_paths) => relative_paths
+            .into_iter()
+            .filter_map(|relative_path| {
+                // Get the parent directory of the relative path
+                Path::new(&relative_path).parent().map(|p| {
+                    // Construct the full absolute path and add it to the set
+                    base_path.join(p).to_string_lossy().to_string()
+                })
+            })
+            .collect(),
+        Err(e) => {
+            eprintln!(
+                "Could not pre-populate processed directories from DB: {}. Starting fresh.",
+                e
+            );
+            HashSet::new()
+        },
+    };
+
+    println!("Pre-populated processed directories: {:?}", processed_dirs);
 
     for entry in WalkDir::new(&directory).min_depth(1).into_iter().filter_map(Result::ok) {
         if let Some(mp3_path) = get_mp3_path(&entry) {
             if let Some(parent_path) = mp3_path.parent().and_then(Path::to_str) {
-                // Skip already processed directories
+                // Skip already processed directories.
+                // The set is now pre-populated with directories from the database.
                 if !processed_dirs.insert(parent_path.to_string()) {
                     continue;
                 }
