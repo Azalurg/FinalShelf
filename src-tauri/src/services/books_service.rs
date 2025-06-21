@@ -195,3 +195,12 @@ pub fn get_books_by_score(limit: i64) -> Vec<Book> {
         .load::<Book>(conn)
         .expect("Error getting books by score")
 }
+
+pub fn get_all_book_paths() -> Result<Vec<String>, diesel::result::Error> {
+    let conn = &mut establish_connection();
+
+    dsl::books
+        .select(dsl::relative_file_path)
+        .load::<String>(conn)
+        .map_err(|e| e.into())
+}
