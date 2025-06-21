@@ -5,7 +5,7 @@ use std::{
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
-use chrono::{DateTime, NaiveDateTime};
+use chrono::{Date, DateTime, NaiveDateTime, Utc};
 use id3::{Tag, TagLike};
 use rusqlite::Result;
 use walkdir::WalkDir;
@@ -49,12 +49,20 @@ fn look_for_author_photo(path: &str, name: &str, base_path: &Path) -> String {
     look_for_cover(directory, base_path)
 }
 
-fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<NaiveDateTime> {
-    option_time?
-        .duration_since(UNIX_EPOCH)
-        .ok()
-        .and_then(|duration| DateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
-        .map(|datetime_utc| datetime_utc.naive_utc())
+fn system_time_to_naive_date_time(
+    create_time: Option<SystemTime>,
+    edit_time: Option<SystemTime>,
+) -> Option<NaiveDateTime> {
+    let create_data_time = DateTime::<Utc>::from(create_time?);
+    let edit_data_time = DateTime::<Utc>::from(edit_time?);
+
+    println!("Create time: {}, Edit time: {}", create_data_time, edit_data_time);
+
+    if create_data_time > edit_data_time {
+        Some(create_data_time.naive_utc())
+    } else {
+        Some(edit_data_time.naive_utc())
+    }
 }
 
 pub fn quick_scan() -> Result<(), String> {
@@ -80,11 +88,11 @@ pub fn quick_scan() -> Result<(), String> {
                     continue;
                 }
 
-                // Process the MP3 file
+                // Process the metadata of the mp3 file
                 if let Ok(tag) = Tag::read_from_path(mp3_path) {
-                    let file_create_date = fs::metadata(mp3_path)
-                        .ok()
-                        .and_then(|metadata| system_time_to_naive_date_time(metadata.created().ok()));
+                    let file_create_date = fs::metadata(mp3_path).ok().and_then(|metadata| {
+                        system_time_to_naive_date_time(metadata.created().ok(), metadata.modified().ok())
+                    });
 
                     process_metadata(&tag, parent_path, file_create_date, base_path, mp3_path);
                 }
