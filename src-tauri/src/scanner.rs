@@ -148,6 +148,10 @@ fn process_metadata(
         read: Some(false),
         score: Some(0),
         relative_file_path: file_path_str,
+        duration_seconds: None,
+        duration_is_estimated: None,
+        file_count: None,
+        orphaned: None,
     };
     println!("Adding book: {:?}", book);
     add_book(&book)

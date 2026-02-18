@@ -7,6 +7,19 @@ interface Book {
   create_date: string;
   read: boolean;
   score: number;
+  relative_file_path: string;
+  duration_seconds: number | null;
+  duration_is_estimated: boolean | null;
+  file_count: number | null;
+  orphaned: boolean | null;
+}
+
+interface ScanReport {
+  books_added: number;
+  books_skipped: number;
+  books_newly_orphaned: number;
+  errors: number;
+  elapsed_ms: number;
 }
 
 // interface BookDetails extends Book {
@@ -27,4 +40,4 @@ interface BookListResponse {
   total_pages: number;
 }
 
-export { Book, BookListResponse };
+export { Book, BookListResponse, ScanReport };
