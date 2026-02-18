@@ -71,7 +71,7 @@ A user triggers a scan over a library that contains corrupt MP3 files, permissio
 
 **Why this priority**: Tied with P2 for duration because a single crash in a large library renders the entire feature unusable. Reliability is a hard requirement from the constitution (Principle V — no panics, no unwrap outside tests).
 
-**Independent Test**: Place a zero-byte file named `broken.mp3` alongside valid MP3s in a test directory. Run the scanner. Confirm that the valid books are added, the broken file is skipped with an error logged, and the function returns `Ok(())` (not an error or panic).
+**Independent Test**: Place a zero-byte file named `broken.mp3` alongside valid MP3s in a test directory. Run the scanner. Confirm that the valid books are added, the broken file is skipped with an error logged, and the function returns `Ok(ScanReport)` (not an error or panic).
 
 **Acceptance Scenarios**:
 
@@ -113,7 +113,6 @@ A user triggers a scan over a library that contains corrupt MP3 files, permissio
 ### Key Entities
 
 - **Book** (extended): Represents an audiobook in the database. Gains four new fields: `duration_seconds` (total listening time in whole seconds, nullable), `duration_is_estimated` (boolean; `true` when duration was calculated from file size/bitrate rather than read from a `TLEN` tag, nullable), `file_count` (number of MP3 chapter files, nullable), and `orphaned` (boolean; `true` when the book's resolved file path no longer exists on disk, `false` when confirmed present, `NULL` for rows created before this feature). All four default to `NULL` for existing rows post-migration.
-- **ScanResult** (new, in-memory only): An ephemeral value type returned by the per-directory scanning logic, carrying extracted metadata before it is committed to the database. Contains: `book: Book`, `errors: Vec<String>`. Never persisted directly — it is a transport type internal to `scanner.rs`.
 - **DirectoryMetadata** (new, in-memory only): Collected per directory during the parallel phase. Carries: `parent_path: String`, `mp3_paths: Vec<PathBuf>`, `first_tag: Option<Tag>`, `file_create_date: Option<NaiveDateTime>`. Passed to the sequential commit phase.
 
 ---
@@ -126,7 +125,7 @@ A user triggers a scan over a library that contains corrupt MP3 files, permissio
 - **SC-002**: Scanning a fresh synthetic library of 1,000 books (10,000 MP3 files, committed as a test fixture under `tests/fixtures/bench-library/`) completes in under 30 seconds on a modern laptop (≥ 4 cores, SSD) and is at least 2× faster than the pre-refactor binary measured on the same machine using the benchmark script at `tests/bench_scanner.sh`.
 - **SC-003**: Every newly scanned book record has non-null `duration_seconds` and `duration_is_estimated` values. `duration_seconds = 0` is acceptable only when all files are unreadable or empty (in which case `duration_is_estimated` is `true`). `duration_is_estimated` is `false` only when every file in the directory provided a valid, non-zero `TLEN` tag.
 - **SC-004**: Every newly scanned book record has a non-null `file_count` value of at least `1`.
-- **SC-005**: A scan over a library containing 5% corrupt or permission-denied files completes successfully (`Ok(())`) with a warning logged per bad file and all valid books correctly inserted.
+- **SC-005**: A scan over a library containing 5% corrupt or permission-denied files completes successfully (`Ok(ScanReport)`) with a warning logged per bad file and all valid books correctly inserted.
 - **SC-006**: Unit tests in `scanner.rs` under `#[cfg(test)]` achieve coverage of at least 80% of new functions (measured by line coverage with `cargo tarpaulin` or equivalent).
 - **SC-007**: `cargo clippy -- -D warnings` and `cargo fmt --check` both pass with zero errors on `scanner.rs` after the refactor.
 - **SC-008**: All existing book records in the database remain valid and unmodified after running the migration (`duration_seconds = NULL`, `duration_is_estimated = NULL`, `file_count = NULL`, `orphaned = NULL` for pre-existing rows).
@@ -149,6 +148,6 @@ A user triggers a scan over a library that contains corrupt MP3 files, permissio
 
 - UI display of `duration_seconds` or `file_count` (planned for Phase 2).
 - Support for non-MP3 audio formats (M4B, FLAC, Opus) — tracked separately as a future improvement.
-- New Tauri commands or changes to existing command signatures (including `force_rescan_command`, which is explicitly deferred to a follow-on feature).
+- New Tauri commands or new command input parameters. Note: the `quick_scan_command` return type changes from `Result<(), String>` to `Result<ScanReport, String>` — this **is in scope** and is documented in `contracts/quick-scan-command.md`. `force_rescan_command` is explicitly deferred to a follow-on feature.
 - A dedicated scan-progress event stream (real-time progress reporting to the UI).
 - Changes to the cover art or author photo discovery logic.

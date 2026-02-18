@@ -156,8 +156,8 @@ No constitution violations requiring justification. Additions that needed evalua
 2. Rewrite `quick_scan()` signature to `pub fn quick_scan() -> Result<ScanReport, String>`.
 3. Parallel phase: collect unique parent directories from `WalkDir`, then `par_iter()` over them calling a new `extract_directory_metadata(dir_path, base_path)` function that returns `Result<DirectoryMetadata, ScanError>`. Collect into `Vec<Result<...>>`.
 4. Serial phase: iterate results — for each `Ok(meta)`: skip if `is_book_exists`, build `Book` (new fields all `None`), call `add_book`, tally `books_added` / `books_skipped`. For each `Err(e)`: log warning, tally `errors`.
-5. Replace all `unwrap()` / `panic!()` with `?` / `match` / `if let` (FR-005).
-6. Replace all `println!` with `log::warn!` / `log::info!` (FR-006).
+5. Replace all `unwrap()` / `panic!()` with `?` / `match` / `if let` (FR-005). *(May be deferred to the Phase D / US4 pass for cleaner commits — both phases touch `scanner.rs`.)*
+6. Replace all `println!` with `log::warn!` / `log::info!` (FR-006). *(Same deferral note as step 5.)*
 7. Update `quick_scan_command` in `settings_commands.rs` to use `tokio::task::spawn_blocking(|| quick_scan()).await` and return `Result<ScanReport, String>`.
 8. **Gate**: `cargo test` passes, `cargo clippy -- -D warnings` passes, scan behavior preserved.
 
@@ -179,26 +179,34 @@ No constitution violations requiring justification. Additions that needed evalua
 
 ### Phase D — Orphan Detection (US4 + FR-011)
 
-**Scope**: Add the orphan-check phase after the main scan loop.
+**Scope**: Integrate orphan-check phase post main scan loop for efficient detection and bulk flagging.
 
-1. Add to `books_service.rs`:
-   - `update_book_orphaned(title: &str, flag: bool, conn: &mut SqliteConnection)` — uses `.set(dsl::orphaned.eq(Some(flag)))`.
-   - `get_all_books(conn: &mut SqliteConnection) -> Vec<Book>` — loads all book records.
-2. In `quick_scan()`, after the serial write phase:
-   - Load all existing book records via `get_all_books`.
-   - For each: resolve `absolute_root + "/" + relative_file_path`. Check `Path::exists()`.
-   - Collect `orphaned_titles` (path missing) and `present_titles` (path confirmed).
-   - Two bulk updates inside one `conn.transaction(...)`, each chunked at 999: `eq_any(orphaned_titles) → orphaned = true`, `eq_any(present_titles) → orphaned = false`.
-   - Log `warn!` for each newly orphaned title.
-   - Set `ScanReport.books_newly_orphaned`.
-3. Add `#[cfg(test)]` unit tests:
-   - `test_orphan_marks_missing_path` — mock book with non-existent path → `orphaned = true`, warning logged
-   - `test_orphan_clears_restored_path` — previously orphaned book, path now exists → `orphaned = false`
-4. **Gate**: SC-009 satisfied; `cargo test` passes; `cargo clippy` passes.
+1. Add to books_service.rs:
+
+- bulk_update_books_orphaned(orphaned_titles: &[&str], flag: bool, conn: &mut SqliteConnection) — filters with title.eq_any(orphaned_titles) then .set(dsl::orphaned.eq(flag)).
+- get_all_books(conn: &mut SqliteConnection) -> Vec<Book> — selects all records via books.load::<Book>(conn).
+
+2. In quick_scan(), after serial write phase:
+
+- Fetch all_books = get_all_books(conn)?.
+- Iterate: construct PathBuf::from(absolute_root).join(relative_file_path); partition into orphaned_titles: Vec<&str> (missing) and present_titles: Vec<&str> (exists).
+- Wrap in conn.transaction(|conn| { bulk_update_books_orphaned(&orphaned_titles, true, conn)?; bulk_update_books_orphaned(&present_titles, false, conn)?; Ok(()) })?;
+- Chunk titles at 999 per call if >999 (loop over chunks(999)).
+- For each new orphan: warn!("Orphaned book: {}", title);
+- Populate ScanReport.books_newly_orphaned = orphaned_titles.len() as u32.
+
+3. Add #[cfg(test)] unit tests (using mock conn, temp paths):
+
+- test_orphan_marks_missing_path — insert book with fake path; scan detects missing → bulk update sets orphaned=true; verify log.warn! and DB state.
+- test_orphan_clears_restored_path — insert orphaned book; create path → scan sets orphaned=false; verify update.
+
+4. Gate: SC-009 met; cargo test passes; cargo clippy clean
 
 ### Phase E — Benchmark Fixture & Validation (FR-012)
 
 **Scope**: Create the benchmark infrastructure; confirm SC-002.
+
+> ⚠️ **Ordering note**: Steps 1–3 (fixture creation, gen_fixtures binary, and baseline recording) MUST be completed **before Phase B** — the baseline must be measured against the unmodified serial scanner. In tasks.md these steps appear in Phase 1 (Setup) for this reason. Only step 4 (final benchmark validation against the post-refactor binary) belongs at the end of the implementation.
 
 1. Write `src-tauri/src/bin/gen_fixtures.rs` — generates 1,000 dirs × 10 minimal MP3s using `id3::Tag::write_to_path`. Each file: TALB, TPE2, TLEN=180000 (3 min), TRCK.
 2. Write `tests/bench_scanner.sh` — runs `quick_scan` against the fixture with a fresh DB, records wall-clock time, compares to `tests/bench_baseline.txt`, exits 1 on regression.

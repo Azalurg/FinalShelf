@@ -8,7 +8,7 @@
 
 ## Overview
 
-This feature extends the existing `Book` model with four new nullable fields and introduces two ephemeral in-memory types (`DirectoryMetadata`, `ScanResult`) that are internal to the scanner. A new `ScanReport` type carries scan completion telemetry to the command layer.
+This feature extends the existing `Book` model with four new nullable fields and introduces two ephemeral in-memory types (`DirectoryMetadata`, `ScanError`) that are internal to the scanner. A new `ScanReport` type carries scan completion telemetry to the command layer.
 
 All four new DB columns are added via a Diesel migration. All four default to `NULL`, preserving existing rows. The `schema.rs` file is regenerated automatically by Diesel after migration.
 
@@ -112,18 +112,6 @@ Produced by the parallel phase (one instance per audiobook directory). Passed to
 
 ---
 
-## 3. `ScanError` — In-Memory (Error Transport)
-
-**Location**: `src-tauri/src/scanner.rs` (private)  
-**Lifetime**: Ephemeral — lives only during one scan invocation; logged, not persisted.
-
-| Field | Rust type | Description |
-|-------|-----------|-------------|
-| `path` | `String` | File or directory path that caused the error |
-| `message` | `String` | Human-readable error description |
-
-Used as the `Err` variant in `Vec<Result<DirectoryMetadata, ScanError>>` from the parallel phase.
-
 ---
 
 ## 4. `ScanReport` — Scan Completion Summary (Serialized to Frontend)
@@ -137,9 +125,9 @@ Used as the `Err` variant in `Vec<Result<DirectoryMetadata, ScanError>>` from th
 | `books_skipped` | `usize` | `books_skipped` | Directories skipped (title already in DB) |
 | `books_newly_orphaned` | `usize` | `books_newly_orphaned` | Records newly set to `orphaned = true` |
 | `errors` | `usize` | `errors` | Files/directories that failed processing |
-| `elapsed_ms` | `u128` | `elapsed_ms` | Wall-clock time for the full scan |
+| `elapsed_ms` | `u64` | `elapsed_ms` | Wall-clock time for the full scan |
 
-**Angular interface** (`src/app/models/books.ts` or a new `src/app/models/scan.ts`):
+**Angular interface** (`src/app/models/books.ts`):
 ```typescript
 interface ScanReport {
   books_added: number;
@@ -179,7 +167,6 @@ books (existing + 4 new columns)
   └── orphaned                 BOOLEAN NULL
 
 DirectoryMetadata  ──(parallel phase)──►  Book insert
-ScanError          ──(parallel phase)──►  logged + counted
 ScanReport         ◄──(quick_scan return)──  command layer
 ```
 
