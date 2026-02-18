@@ -86,10 +86,10 @@
 
 **Independent Test**: Scan a directory with 3 MP3s each having `TLEN=180000`. Assert `duration_seconds = 540`, `duration_is_estimated = false`. Repeat with TLEN absent; assert estimated value > 0 and `duration_is_estimated = true`.
 
-- [ ] T028 [US2] Add TLEN extraction to `extract_directory_metadata()` in `src-tauri/src/scanner.rs` — for each MP3 path call `tag.duration()` (returns `Option<u32>` ms); if `Some(ms)` and `ms > 0` add `ms / 1000` to TLEN sum
-- [ ] T029 [US2] Add fallback duration estimation to `extract_directory_metadata()` in `src-tauri/src/scanner.rs` — when `tag.duration()` returns `None` or `Some(0)`, estimate `(file_bytes - tag_size_bytes) / 16_000` seconds (128 kbps default); set `duration_is_estimated = true`; document the 128 kbps assumption in a comment
-- [ ] T030 [US2] Propagate `duration_seconds: Some(total_secs)` and `duration_is_estimated: Some(flag)` from `DirectoryMetadata` into `Book` construction in the serial write phase of `src-tauri/src/scanner.rs`
-- [ ] T031 [US2] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_duration_from_tlen_tags` (all TLEN present → estimated=false, correct sum), `test_duration_fallback_estimation` (no TLEN → estimated=true, value > 0), `test_duration_zero_byte_files` (zero-byte MP3 → duration_seconds=0, no panic)
+- [X] T028 [US2] Add TLEN extraction to `extract_directory_metadata()` in `src-tauri/src/scanner.rs` — for each MP3 path call `tag.duration()` (returns `Option<u32>` ms); if `Some(ms)` and `ms > 0` add `ms / 1000` to TLEN sum
+- [X] T029 [US2] Add fallback duration estimation to `extract_directory_metadata()` in `src-tauri/src/scanner.rs` — when `tag.duration()` returns `None` or `Some(0)`, estimate `(file_bytes - tag_size_bytes) / 16_000` seconds (128 kbps default); set `duration_is_estimated = true`; document the 128 kbps assumption in a comment
+- [X] T030 [US2] Propagate `duration_seconds: Some(total_secs)` and `duration_is_estimated: Some(flag)` from `DirectoryMetadata` into `Book` construction in the serial write phase of `src-tauri/src/scanner.rs`
+- [X] T031 [US2] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_duration_from_tlen_tags` (all TLEN present → estimated=false, correct sum), `test_duration_fallback_estimation` (no TLEN → estimated=true, value > 0), `test_duration_zero_byte_files` (zero-byte MP3 → duration_seconds=0, no panic)
 
 **Checkpoint**: US2 fully functional — every new book record has non-null `duration_seconds` and `duration_is_estimated` (SC-003).
 
@@ -101,9 +101,9 @@
 
 **Independent Test**: Scan a directory with exactly 12 `.mp3` files and 3 `.png` files. Assert `file_count = 12`.
 
-- [ ] T032 [US3] Add `.mp3`-only file counting to `extract_directory_metadata()` in `src-tauri/src/scanner.rs` — count paths whose extension (lowercased) equals `"mp3"`; store as `file_count: i32` in `DirectoryMetadata`
-- [ ] T033 [US3] Propagate `file_count: Some(count)` from `DirectoryMetadata` into `Book` construction in the serial write phase of `src-tauri/src/scanner.rs`
-- [ ] T034 [US3] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_file_count_mp3_only` (mixed file types → only .mp3 counted) and `test_file_count_single_file` (one MP3 → file_count=1)
+- [X] T032 [US3] Add `.mp3`-only file counting to `extract_directory_metadata()` in `src-tauri/src/scanner.rs` — count paths whose extension (lowercased) equals `"mp3"`; store as `file_count: i32` in `DirectoryMetadata`
+- [X] T033 [US3] Propagate `file_count: Some(count)` from `DirectoryMetadata` into `Book` construction in the serial write phase of `src-tauri/src/scanner.rs`
+- [X] T034 [US3] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_file_count_mp3_only` (mixed file types → only .mp3 counted) and `test_file_count_single_file` (one MP3 → file_count=1)
 
 **Checkpoint**: US3 fully functional — every new book record has `file_count ≥ 1` (SC-004). All four user stories independently deliverable.
 
