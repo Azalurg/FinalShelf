@@ -31,12 +31,12 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete — the `Book` struct must compile with its new fields.
 
-- [ ] T006 Generate Diesel migration directory by running `diesel migration generate scanner_fields` in `src-tauri/`
-- [ ] T007 Write `src-tauri/migrations/<timestamp>_scanner_fields/up.sql` — four `ALTER TABLE books ADD COLUMN` statements: `duration_seconds INTEGER DEFAULT NULL`, `duration_is_estimated BOOLEAN DEFAULT NULL`, `file_count INTEGER DEFAULT NULL`, `orphaned BOOLEAN DEFAULT NULL`
-- [ ] T008 [P] Write `src-tauri/migrations/<timestamp>_scanner_fields/down.sql` — four `ALTER TABLE books DROP COLUMN` statements (depends on T006 for directory; parallel with T007)
-- [ ] T009 Run `diesel migration run` in `src-tauri/`; verify `src-tauri/src/schema.rs` auto-regenerates with the four new columns in the `books` table (depends on T007, T008)
-- [ ] T010 Add `duration_seconds: Option<i32>`, `duration_is_estimated: Option<bool>`, `file_count: Option<i32>`, `orphaned: Option<bool>` to `src-tauri/src/models/book.rs`; initialize all four to `None` in existing `Book { ... }` construction sites in `src-tauri/src/scanner.rs` to fix compile errors (depends on T009)
-- [ ] T011 [P] Update `src/app/models/books.ts` — add `duration_seconds: number | null`, `duration_is_estimated: boolean | null`, `file_count: number | null`, `orphaned: boolean | null`, `relative_file_path: string` to the `Book` interface; add `ScanReport` interface (Principle IV — parallel with T010, different file)
+- [X] T006 Generate Diesel migration directory by running `diesel migration generate scanner_fields` in `src-tauri/`
+- [X] T007 Write `src-tauri/migrations/<timestamp>_scanner_fields/up.sql` — four `ALTER TABLE books ADD COLUMN` statements: `duration_seconds INTEGER DEFAULT NULL`, `duration_is_estimated BOOLEAN DEFAULT NULL`, `file_count INTEGER DEFAULT NULL`, `orphaned BOOLEAN DEFAULT NULL`
+- [X] T008 [P] Write `src-tauri/migrations/<timestamp>_scanner_fields/down.sql` — four `ALTER TABLE books DROP COLUMN` statements (depends on T006 for directory; parallel with T007)
+- [X] T009 Run `diesel migration run` in `src-tauri/`; verify `src-tauri/src/schema.rs` auto-regenerates with the four new columns in the `books` table (depends on T007, T008)
+- [X] T010 Add `duration_seconds: Option<i32>`, `duration_is_estimated: Option<bool>`, `file_count: Option<i32>`, `orphaned: Option<bool>` to `src-tauri/src/models/book.rs`; initialize all four to `None` in existing `Book { ... }` construction sites in `src-tauri/src/scanner.rs` to fix compile errors (depends on T009)
+- [X] T011 [P] Update `src/app/models/books.ts` — add `duration_seconds: number | null`, `duration_is_estimated: boolean | null`, `file_count: number | null`, `orphaned: boolean | null`, `relative_file_path: string` to the `Book` interface; add `ScanReport` interface (Principle IV — parallel with T010, different file)
 
 **Checkpoint**: `cargo check` ✅ `tsc --noEmit` ✅ `cargo test` ✅ (existing tests pass with new `None` fields)
 
@@ -48,13 +48,13 @@
 
 **Independent Test**: Run a scan on a library that is already fully indexed. Confirm `books_added = 0` and the command returns in under 2 seconds regardless of library size (SC-001).
 
-- [ ] T012 [US1] Define `DirectoryMetadata`, `ScanError`, and `ScanReport` structs in `src-tauri/src/scanner.rs` (see data-model.md §2–4 for field definitions)
-- [ ] T013 [US1] Rewrite the `WalkDir` loop in `quick_scan()` in `src-tauri/src/scanner.rs` to collect a deduplicated `Vec<PathBuf>` of unique parent directories before any processing (replaces the current `HashSet<processed_dirs>` approach)
-- [ ] T014 [US1] Extract `extract_directory_metadata(dir: &Path, base_path: &Path) -> Result<DirectoryMetadata, ScanError>` function in `src-tauri/src/scanner.rs` — wraps existing `get_mp3_path`, `Tag::read_from_path`, cover/author-photo logic; new fields (`duration_seconds`, `file_count`) left as `None`/`0` placeholders for Phase 5–6
-- [ ] T015 [US1] Add `rayon::par_iter()` parallel phase to `quick_scan()` in `src-tauri/src/scanner.rs` — calls `extract_directory_metadata` per directory, collects `Vec<Result<DirectoryMetadata, ScanError>>`
-- [ ] T016 [US1] Implement serial write phase in `quick_scan()` in `src-tauri/src/scanner.rs` — for each `Ok(meta)`: call `is_book_exists`, build `Book` (new fields all `None`), call `add_book`, tally `books_added` / `books_skipped`; for each `Err(e)`: tally `errors`; change return type to `Result<ScanReport, String>`
-- [ ] T017 [US1] Update `quick_scan_command` in `src-tauri/src/commands/settings_commands.rs` — wrap call with `tokio::task::spawn_blocking(|| quick_scan()).await`, change return type to `Result<ScanReport, String>`
-- [ ] T018 [US1] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_no_op_scan_returns_zero_added` (existing book skipped), `test_scan_adds_only_new_directories` (new dirs inserted, existing untouched), and `test_relative_path_strips_absolute_root` (assert stored `relative_file_path` does not start with the absolute root prefix — Principle VI)
+- [X] T012 [US1] Define `DirectoryMetadata`, `ScanError`, and `ScanReport` structs in `src-tauri/src/scanner.rs` (see data-model.md §2–4 for field definitions)
+- [X] T013 [US1] Rewrite the `WalkDir` loop in `quick_scan()` in `src-tauri/src/scanner.rs` to collect a deduplicated `Vec<PathBuf>` of unique parent directories before any processing (replaces the current `HashSet<processed_dirs>` approach)
+- [X] T014 [US1] Extract `extract_directory_metadata(dir: &Path, base_path: &Path) -> Result<DirectoryMetadata, ScanError>` function in `src-tauri/src/scanner.rs` — wraps existing `get_mp3_path`, `Tag::read_from_path`, cover/author-photo logic; new fields (`duration_seconds`, `file_count`) left as `None`/`0` placeholders for Phase 5–6
+- [X] T015 [US1] Add `rayon::par_iter()` parallel phase to `quick_scan()` in `src-tauri/src/scanner.rs` — calls `extract_directory_metadata` per directory, collects `Vec<Result<DirectoryMetadata, ScanError>>`
+- [X] T016 [US1] Implement serial write phase in `quick_scan()` in `src-tauri/src/scanner.rs` — for each `Ok(meta)`: call `is_book_exists`, build `Book` (new fields all `None`), call `add_book`, tally `books_added` / `books_skipped`; for each `Err(e)`: tally `errors`; change return type to `Result<ScanReport, String>`
+- [X] T017 [US1] Update `quick_scan_command` in `src-tauri/src/commands/settings_commands.rs` — wrap call with `tokio::task::spawn_blocking(|| quick_scan()).await`, change return type to `Result<ScanReport, String>`
+- [X] T018 [US1] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_no_op_scan_returns_zero_added` (existing book skipped), `test_scan_adds_only_new_directories` (new dirs inserted, existing untouched), and `test_relative_path_strips_absolute_root` (assert stored `relative_file_path` does not start with the absolute root prefix — Principle VI)
 
 **Checkpoint**: US1 fully functional — incremental scan works, `ScanReport` returned, no regression on existing functionality.
 

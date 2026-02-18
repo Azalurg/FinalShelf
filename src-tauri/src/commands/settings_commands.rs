@@ -2,7 +2,7 @@
 
 use crate::{
     models::path::AbsolutePath,
-    scanner::quick_scan,
+    scanner::{quick_scan, ScanReport},
     services::absolute_paths_service::{
         add_absolute_path, get_all_absolute_path, get_current_absolute_path, set_current_absolute_path_by_id,
     },
@@ -14,7 +14,7 @@ pub fn ping_command() -> String {
 }
 
 #[tauri::command]
-pub fn quick_scan_command() -> Result<(), String> {
+pub async fn quick_scan_command() -> Result<ScanReport, String> {
     quick_scan()
 }
 
