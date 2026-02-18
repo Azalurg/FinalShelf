@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "Book",
+  "title": "Book",
+  "description": "Audiobook record returned by get_book_command and get_books_list_command. Extends the pre-feature model with four new nullable fields added by the scanner-optimization feature.",
+  "type": "object",
+  "required": [
+    "title",
+    "author_name",
+    "relative_file_path"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Album title from ID3 TALB tag. Primary key."
+    },
+    "relative_cover_path": {
+      "type": ["string", "null"],
+      "description": "Path to cover image, relative to the active absolute root. Null if no cover found."
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Author name from ID3 TPE2 (album artist) tag."
+    },
+    "genre": {
+      "type": ["string", "null"],
+      "description": "Genre from ID3 TCON tag."
+    },
+    "lector": {
+      "type": ["string", "null"],
+      "description": "Lector/narrator from ID3 TPE1 (artist) tag."
+    },
+    "create_date": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Creation timestamp from the first MP3 file's filesystem metadata."
+    },
+    "read": {
+      "type": ["boolean", "null"],
+      "description": "User-set read flag. Null for books never marked by the user."
+    },
+    "score": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 10,
+      "description": "User rating 1-10. Null for books never rated."
+    },
+    "relative_file_path": {
+      "type": "string",
+      "description": "Path to the first MP3 file in the book directory, relative to the active absolute root."
+    },
+    "duration_seconds": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "NEW (scanner-optimization). Total listening duration in whole seconds. Null for rows created before this feature. 0 only when all files were unreadable."
+    },
+    "duration_is_estimated": {
+      "type": ["boolean", "null"],
+      "description": "NEW (scanner-optimization). False = duration read from TLEN tags for every file. True = at least one file used file-size/bitrate estimation. Null for rows created before this feature."
+    },
+    "file_count": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "NEW (scanner-optimization). Number of .mp3 files in the book directory. Null for rows created before this feature."
+    },
+    "orphaned": {
+      "type": ["boolean", "null"],
+      "description": "NEW (scanner-optimization). True = the book's resolved file path no longer exists on disk. False = path confirmed present on last scan. Null = orphan check never run (pre-feature rows)."
+    }
+  },
+  "additionalProperties": false
+}

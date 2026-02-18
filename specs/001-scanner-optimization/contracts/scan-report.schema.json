@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ScanReport",
+  "title": "ScanReport",
+  "description": "Returned by quick_scan_command on completion. Summarises the results of one full scan cycle including orphan detection.",
+  "type": "object",
+  "required": [
+    "books_added",
+    "books_skipped",
+    "books_newly_orphaned",
+    "errors",
+    "elapsed_ms"
+  ],
+  "properties": {
+    "books_added": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of new book records inserted into the database during this scan."
+    },
+    "books_skipped": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of directories skipped because a record with the same album title already exists in the database."
+    },
+    "books_newly_orphaned": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of existing book records whose resolved file path no longer exists on disk. These records have been set to orphaned=true."
+    },
+    "errors": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of files or directories that could not be processed (corrupt tags, permission denied, etc.). A warning was logged for each."
+    },
+    "elapsed_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Wall-clock time for the complete scan cycle (traversal + parallel metadata extraction + DB writes + orphan check), in milliseconds."
+    }
+  },
+  "additionalProperties": false
+}
