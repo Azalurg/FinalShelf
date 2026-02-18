@@ -116,24 +116,31 @@ npm run lint            # ESLint + angular-eslint
 
 ---
 
-## 7. Generate the Benchmark Fixture
+## 7. Generate the Benchmark Fixture (Required Before Benchmarking)
 
-The benchmark fixture (`tests/fixtures/bench-library/`) contains 1,000 simulated book directories, each with 10 minimal valid MP3 files. It must be generated once and committed to the repo.
+The benchmark fixture is **generated locally and NOT committed to git** (10,000 files would bloat the repository). The `gen_fixtures` binary creates reproducible test data.
 
 ```bash
+# Generate the fixture (one-time setup or after cleaning)
 cd src-tauri
-# Run the fixture generator binary (to be created as part of implementation)
-cargo run --bin gen_fixtures -- --output ../tests/fixtures/bench-library --books 1000 --files-per-book 10
-# Expected output: "Generated 10000 fixture files in tests/fixtures/bench-library/"
-# Approximate disk size: ~2 MB
+cargo run --features dev-fixtures --bin gen_fixtures
+
+# Expected output:
+#   Generating fixtures at: /home/.../tests/fixtures/bench-library
+#   100/1000 books generated...
+#   ...
+#   Done. Generated 1,000 × 10 = 10,000 MP3 stubs
 ```
 
 Verify the fixture:
 
 ```bash
+cd ..
 find tests/fixtures/bench-library -name "*.mp3" | wc -l
 # Expected: 10000
 ```
+
+**Note**: The fixture directory is excluded from git via `.gitignore`. Only the generator source (`gen_fixtures.rs`) and the recorded baseline timing (`tests/bench_baseline.txt`) are committed.
 
 ---
 

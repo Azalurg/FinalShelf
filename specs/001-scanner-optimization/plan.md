@@ -212,7 +212,7 @@ No constitution violations requiring justification. Additions that needed evalua
 2. Write `tests/bench_scanner.sh` — runs `quick_scan` against the fixture with a fresh DB, records wall-clock time, compares to `tests/bench_baseline.txt`, exits 1 on regression.
 3. Record pre-refactor baseline on the `main` branch binary: `bash tests/bench_scanner.sh --record-baseline` → writes `tests/bench_baseline.txt`.
 4. After Phases B–D complete: run benchmark; validate ≤ 30 s and ≥ 2× speedup.
-5. Commit `tests/fixtures/bench-library/` and `tests/bench_baseline.txt` to the branch.
+5. Commit the generator binary (`gen_fixtures.rs`), the benchmark script (`bench_scanner.sh`), and the baseline timing (`tests/bench_baseline.txt`) to the branch. The generated fixture directory (`tests/fixtures/bench-library/`) is excluded via `.gitignore` — it is regenerated on-demand by running `cargo run --features dev-fixtures --bin gen_fixtures`.
 6. **Gate**: SC-002 satisfied — benchmark passes.
 
 ---

@@ -24,7 +24,21 @@ tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
 chrono = { version = "0.4.39", features = ["serde"] }
 uuid = { version = "1", features = ["v4"] }
+rayon = "1"
+log = "0.4"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
+# Dev-only binaries (gen_fixtures, bench_runner) — excluded from release builds
+dev-fixtures = []
+
+[[bin]]
+name = "gen_fixtures"
+path = "src/bin/gen_fixtures.rs"
+required-features = ["dev-fixtures"]
+
+[[bin]]
+name = "bench_runner"
+path = "src/bin/bench_runner.rs"
+required-features = ["dev-fixtures"]

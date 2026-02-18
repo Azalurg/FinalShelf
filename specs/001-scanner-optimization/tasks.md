@@ -15,11 +15,11 @@
 
 **Purpose**: Install new dependencies and create the benchmark infrastructure *before* the scanner is refactored. The pre-refactor baseline must be recorded here, before any Phase 3 changes alter scanner performance.
 
-- [ ] T001 [P] Add `rayon` and `log` to `[dependencies]` in `src-tauri/Cargo.toml`
-- [ ] T002 [P] Create `src-tauri/src/bin/gen_fixtures.rs` — binary that writes 1,000 dirs × 10 minimal ID3v2 MP3 files using `id3::Tag::write_to_path` (fields: TALB, TPE2, TLEN=180000, TRCK); add `required-features = ["dev-fixtures"]` to the `[[bin]]` entry in `Cargo.toml` so the binary is excluded from default/release builds
-- [ ] T003 [P] Write `tests/bench_scanner.sh` — measures wall-clock time of `quick_scan` against `tests/fixtures/bench-library/`, compares to `tests/bench_baseline.txt`, exits 1 on regression
-- [ ] T004 Run `cargo run --bin gen_fixtures` to populate `tests/fixtures/bench-library/` (depends on T002)
-- [ ] T005 Record pre-refactor baseline: run `bash tests/bench_scanner.sh --record-baseline` → writes `tests/bench_baseline.txt` (depends on T003, T004)
+- [X] T001 [P] Add `rayon` and `log` to `[dependencies]` in `src-tauri/Cargo.toml`
+- [X] T002 [P] Create `src-tauri/src/bin/gen_fixtures.rs` — binary that writes 1,000 dirs × 10 minimal ID3v2 MP3 files using `id3::Tag::write_to_path` (fields: TALB, TPE2, TLEN=180000, TRCK); add `required-features = ["dev-fixtures"]` to the `[[bin]]` entry in `Cargo.toml` so the binary is excluded from default/release builds
+- [X] T003 [P] Write `tests/bench_scanner.sh` — measures wall-clock time of `quick_scan` against `tests/fixtures/bench-library/`, compares to `tests/bench_baseline.txt`, exits 1 on regression
+- [X] T004 Run `cargo run --bin gen_fixtures` to populate `tests/fixtures/bench-library/` (depends on T002)
+- [X] T005 Record pre-refactor baseline: run `bash tests/bench_scanner.sh --record-baseline` → writes `tests/bench_baseline.txt` (depends on T003, T004)
 
 **Checkpoint**: Benchmark infrastructure in place; baseline captured on the unmodified scanner. Safe to begin model changes.
 
