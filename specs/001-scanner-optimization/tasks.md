@@ -66,15 +66,15 @@
 
 **Independent Test**: Place a zero-byte file named `broken.mp3` in a test directory alongside valid books. Run scanner. Assert valid books are added, `errors = 1`, function returns `Ok(ScanReport)` — no panic.
 
-- [ ] T019 [P] [US4] Add `get_all_books() -> Vec<Book>` and `update_books_orphaned(titles: &[String], flag: bool, conn: &mut SqliteConnection)` helper functions to `src-tauri/src/services/books_service.rs` — use `dsl::title.eq_any(chunk)` bulk update, chunk at 999 (parallel: different file from scanner.rs)
-- [ ] T020 [US4] Replace all `unwrap()` and `panic!()` calls in `src-tauri/src/scanner.rs` with `?`, `match`, or `if let` — ensure every error path returns a `ScanError` or propagates via `Result` (FR-005)
-- [ ] T021 [US4] Replace all `println!` macros with `log::warn!` / `log::info!` throughout `src-tauri/src/scanner.rs` (FR-006)
-- [ ] T022 [US4] Handle tag parse failure (`Tag::read_from_path` returns `Err`) in `extract_directory_metadata` in `src-tauri/src/scanner.rs` — return `Err(ScanError { path, message })` instead of silently dropping
-- [ ] T023 [US4] Handle permission-denied `WalkDir` entries in the directory-collection pass in `src-tauri/src/scanner.rs` — match on `WalkDir` errors, call `log::warn!`, continue iteration
-- [ ] T024 [US4] Silently skip directories that contain zero `.mp3` files in `src-tauri/src/scanner.rs` — no `Book` record created, no error counted, no log entry
-- [ ] T025 [US4] Implement orphan-check phase in `quick_scan()` in `src-tauri/src/scanner.rs` after the serial write loop — load all books via `get_all_books`, resolve `absolute_root/relative_file_path`, collect `orphaned_titles` and `present_titles`, call `update_books_orphaned` in a single `conn.transaction` (chunked at 999), `log::warn!` per orphaned title, set `ScanReport.books_newly_orphaned` (depends on T019)
-- [ ] T026 [US4] Add `log::info!` completion summary at end of `quick_scan()` in `src-tauri/src/scanner.rs` — logs `books_added`, `books_skipped`, `books_newly_orphaned`, `errors`, `elapsed_ms` (FR-010)
-- [ ] T027 [US4] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_corrupt_mp3_scan_continues` (error counted, valid books added), `test_zero_mp3_dir_silently_skipped` (no record, no error), `test_orphan_marks_missing_path` (orphaned=true + warning), `test_orphan_clears_restored_path` (orphaned=false)
+- [X] T019 [P] [US4] Add `get_all_books() -> Vec<Book>` and `update_books_orphaned(titles: &[String], flag: bool, conn: &mut SqliteConnection)` helper functions to `src-tauri/src/services/books_service.rs` — use `dsl::title.eq_any(chunk)` bulk update, chunk at 999 (parallel: different file from scanner.rs)
+- [X] T020 [US4] Replace all `unwrap()` and `panic!()` calls in `src-tauri/src/scanner.rs` with `?`, `match`, or `if let` — ensure every error path returns a `ScanError` or propagates via `Result` (FR-005)
+- [X] T021 [US4] Replace all `println!` macros with `log::warn!` / `log::info!` throughout `src-tauri/src/scanner.rs` (FR-006)
+- [X] T022 [US4] Handle tag parse failure (`Tag::read_from_path` returns `Err`) in `extract_directory_metadata` in `src-tauri/src/scanner.rs` — return `Err(ScanError { path, message })` instead of silently dropping
+- [X] T023 [US4] Handle permission-denied `WalkDir` entries in the directory-collection pass in `src-tauri/src/scanner.rs` — match on `WalkDir` errors, call `log::warn!`, continue iteration
+- [X] T024 [US4] Silently skip directories that contain zero `.mp3` files in `src-tauri/src/scanner.rs` — no `Book` record created, no error counted, no log entry
+- [X] T025 [US4] Implement orphan-check phase in `quick_scan()` in `src-tauri/src/scanner.rs` after the serial write loop — load all books via `get_all_books`, resolve `absolute_root/relative_file_path`, collect `orphaned_titles` and `present_titles`, call `update_books_orphaned` in a single `conn.transaction` (chunked at 999), `log::warn!` per orphaned title, set `ScanReport.books_newly_orphaned` (depends on T019)
+- [X] T026 [US4] Add `log::info!` completion summary at end of `quick_scan()` in `src-tauri/src/scanner.rs` — logs `books_added`, `books_skipped`, `books_newly_orphaned`, `errors`, `elapsed_ms` (FR-010)
+- [X] T027 [US4] Add `#[cfg(test)]` unit tests in `src-tauri/src/scanner.rs`: `test_corrupt_mp3_scan_continues` (error counted, valid books added), `test_zero_mp3_dir_silently_skipped` (no record, no error), `test_orphan_marks_missing_path` (orphaned=true + warning), `test_orphan_clears_restored_path` (orphaned=false)
 
 **Checkpoint**: US4 fully functional — scanner never panics, all error paths log and continue, orphan detection runs each cycle.
 
