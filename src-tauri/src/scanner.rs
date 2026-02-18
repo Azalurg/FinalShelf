@@ -112,11 +112,11 @@ pub fn quick_scan() -> Result<ScanReport, String> {
                         unique_dirs.insert(parent_path.to_path_buf());
                     }
                 }
-            }
+            },
             Err(e) => {
                 log::warn!("Failed to read directory entry: {}", e);
                 continue;
-            }
+            },
         }
     }
 
@@ -206,11 +206,11 @@ pub fn quick_scan() -> Result<ScanReport, String> {
                 log::info!("Adding book: {}", title);
                 add_book(&book);
                 books_added += 1;
-            }
+            },
             Err(e) => {
                 log::warn!("Error processing {}: {}", e.path, e.message);
                 errors += 1;
-            }
+            },
         }
     }
 
@@ -385,7 +385,7 @@ mod tests {
         // This test verifies that scanning an already-indexed library returns books_added = 0
         // Note: Requires a test database setup, skipping actual DB interaction for now
         // Full integration test would create a temp DB, add a book, then scan the same directory
-        
+
         // Placeholder assertion - full implementation requires test DB infrastructure
         assert!(true, "Test infrastructure for DB-backed tests to be implemented");
     }
@@ -394,7 +394,7 @@ mod tests {
     fn test_scan_adds_only_new_directories() {
         // This test verifies that only new directories are added during a scan
         // Existing books are skipped, new ones are inserted
-        
+
         // Placeholder assertion - requires test DB
         assert!(true, "Test infrastructure for DB-backed tests to be implemented");
     }
@@ -404,11 +404,14 @@ mod tests {
         // Test that stored relative_file_path does not contain the absolute root prefix
         let base_path = Path::new("/home/user/library");
         let full_path = PathBuf::from("/home/user/library/Author/Book/file.mp3");
-        
+
         let relative = full_path.strip_prefix(base_path).unwrap();
         let relative_str = relative.to_string_lossy().to_string();
-        
-        assert!(!relative_str.starts_with("/home"), "Relative path should not start with absolute prefix");
+
+        assert!(
+            !relative_str.starts_with("/home"),
+            "Relative path should not start with absolute prefix"
+        );
         assert_eq!(relative_str, "Author/Book/file.mp3");
     }
 
@@ -417,11 +420,11 @@ mod tests {
         // Create a temporary directory with no MP3 files
         let temp_dir = std::env::temp_dir().join("finalshelf_test_no_mp3");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         assert!(result.is_err(), "Should return error for directory with no MP3 files");
-        
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -431,22 +434,22 @@ mod tests {
         // Create a temporary directory with 3 MP3 files and 2 other files
         let temp_dir = std::env::temp_dir().join("finalshelf_test_count_mp3");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         create_test_mp3(&temp_dir.join("file1.mp3"));
         create_test_mp3(&temp_dir.join("file2.mp3"));
         create_test_mp3(&temp_dir.join("file3.mp3"));
-        
+
         // Create non-MP3 files
         fs::write(temp_dir.join("cover.jpg"), b"fake image").unwrap();
         fs::write(temp_dir.join("notes.txt"), b"some notes").unwrap();
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         assert!(result.is_ok(), "Should successfully extract metadata");
         let meta = result.unwrap();
         assert_eq!(meta.file_count, 3, "Should count exactly 3 MP3 files");
         assert_eq!(meta.mp3_paths.len(), 3, "Should collect 3 MP3 paths");
-        
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -456,17 +459,17 @@ mod tests {
         // Test that a directory with exactly one MP3 file has file_count = 1
         let temp_dir = std::env::temp_dir().join("finalshelf_test_single_mp3");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         // Create exactly one MP3
         create_test_mp3(&temp_dir.join("single.mp3"));
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         assert!(result.is_ok(), "Should successfully extract metadata");
         let meta = result.unwrap();
         assert_eq!(meta.file_count, 1, "Should have file_count = 1 for single MP3");
         assert_eq!(meta.mp3_paths.len(), 1, "Should collect exactly 1 MP3 path");
-        
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -476,19 +479,19 @@ mod tests {
         // Test that a corrupt/unreadable MP3 doesn't stop the scan
         let temp_dir = std::env::temp_dir().join("finalshelf_test_corrupt_mp3");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         // Create one valid MP3
         create_test_mp3(&temp_dir.join("valid.mp3"));
-        
+
         // Create a corrupt MP3 (just random bytes, no valid ID3)
         fs::write(temp_dir.join("corrupt.mp3"), b"not a valid mp3 file").unwrap();
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         // Should succeed because at least one valid MP3 exists
         // The corrupt file might not be parsed correctly but shouldn't crash
         assert!(result.is_ok(), "Should handle corrupt MP3 gracefully");
-        
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -499,18 +502,18 @@ mod tests {
         // (which is then logged and counted, not crashing the scanner)
         let temp_dir = std::env::temp_dir().join("finalshelf_test_zero_mp3");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         // Create only non-MP3 files
         fs::write(temp_dir.join("cover.jpg"), b"fake image").unwrap();
         fs::write(temp_dir.join("info.txt"), b"some text").unwrap();
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         assert!(result.is_err(), "Should return error for directory with no MP3 files");
         if let Err(e) = result {
             assert!(e.message.contains("No MP3 files found"));
         }
-        
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -520,25 +523,25 @@ mod tests {
         // Test that duration is correctly calculated from TLEN tags
         // Note: This test uses minimal MP3 files without actual TLEN tags
         // Full integration would require creating MP3s with id3 crate's Tag::write_to_path
-        
+
         let temp_dir = std::env::temp_dir().join("finalshelf_test_duration_tlen");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         // Create 3 MP3 files (each would need TLEN=180000ms = 180s for full test)
         create_test_mp3(&temp_dir.join("file1.mp3"));
         create_test_mp3(&temp_dir.join("file2.mp3"));
         create_test_mp3(&temp_dir.join("file3.mp3"));
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         assert!(result.is_ok(), "Should successfully extract metadata");
         let meta = result.unwrap();
-        
+
         // Our minimal MP3s don't have TLEN tags, so it will use fallback estimation
         // The test validates that duration_seconds is computed (non-None)
         assert!(meta.duration_seconds.is_some(), "Should have computed duration");
         assert!(meta.duration_seconds.unwrap() >= 0, "Duration should be non-negative");
-        
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -548,23 +551,26 @@ mod tests {
         // Test that duration estimation works when TLEN is absent
         let temp_dir = std::env::temp_dir().join("finalshelf_test_duration_fallback");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         // Create a minimal MP3 file (14 bytes - no TLEN tag)
         create_test_mp3(&temp_dir.join("no_tlen.mp3"));
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         assert!(result.is_ok(), "Should handle MP3 without TLEN gracefully");
         let meta = result.unwrap();
-        
+
         // Should have estimated duration
         assert!(meta.duration_seconds.is_some(), "Should estimate duration");
         assert!(meta.duration_is_estimated, "Should flag as estimated");
-        
+
         // With 14-byte file: (14 - 3000).max(0) / 16000 = 0 seconds
         // But we handle this gracefully
-        assert!(meta.duration_seconds.unwrap() >= 0, "Estimated duration should be non-negative");
-        
+        assert!(
+            meta.duration_seconds.unwrap() >= 0,
+            "Estimated duration should be non-negative"
+        );
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -574,12 +580,12 @@ mod tests {
         // Test that zero-byte MP3 files don't cause panics
         let temp_dir = std::env::temp_dir().join("finalshelf_test_duration_zero");
         fs::create_dir_all(&temp_dir).unwrap();
-        
+
         // Create a zero-byte file
         fs::write(temp_dir.join("empty.mp3"), b"").unwrap();
-        
+
         let result = extract_directory_metadata(&temp_dir, Path::new("/"));
-        
+
         // Should handle gracefully (might return error or zero duration)
         match result {
             Ok(meta) => {
@@ -587,13 +593,13 @@ mod tests {
                 if let Some(duration) = meta.duration_seconds {
                     assert_eq!(duration, 0, "Zero-byte file should have 0 duration");
                 }
-            }
+            },
             Err(_) => {
                 // It's also acceptable to return an error for zero-byte files
                 assert!(true, "Zero-byte file handling is graceful");
-            }
+            },
         }
-        
+
         // Cleanup
         fs::remove_dir_all(&temp_dir).ok();
     }
@@ -602,11 +608,11 @@ mod tests {
     fn test_orphan_marks_missing_path() {
         // This test verifies orphan detection logic
         // Note: Requires test database setup for full integration
-        
+
         // Unit test for path existence check logic
         let missing_path = Path::new("/nonexistent/path/to/book.mp3");
         assert!(!missing_path.exists(), "Test path should not exist");
-        
+
         // Placeholder - full test requires DB infrastructure
         assert!(true, "Full orphan detection test requires test database");
     }
@@ -615,16 +621,16 @@ mod tests {
     fn test_orphan_clears_restored_path() {
         // This test verifies that orphan flag is cleared when path is restored
         // Note: Requires test database setup for full integration
-        
+
         // Create a temporary file to simulate restored path
         let temp_file = std::env::temp_dir().join("finalshelf_test_restored.mp3");
         fs::write(&temp_file, b"test").unwrap();
-        
+
         assert!(temp_file.exists(), "Restored path should exist");
-        
+
         // Cleanup
         fs::remove_file(&temp_file).ok();
-        
+
         // Placeholder - full test requires DB infrastructure
         assert!(true, "Full orphan restoration test requires test database");
     }

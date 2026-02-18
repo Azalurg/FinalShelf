@@ -4,6 +4,7 @@ version = "0.3.0"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
+default-run = "finalshelf"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -32,6 +33,10 @@ log = "0.4"
 custom-protocol = ["tauri/custom-protocol"]
 # Dev-only binaries (gen_fixtures, bench_runner) — excluded from release builds
 dev-fixtures = []
+
+[[bin]]
+name = "finalshelf"
+path = "src/main.rs"
 
 [[bin]]
 name = "gen_fixtures"

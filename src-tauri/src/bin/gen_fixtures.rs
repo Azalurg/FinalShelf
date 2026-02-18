@@ -29,8 +29,7 @@ fn main() {
         .expect("CARGO_MANIFEST_DIR has no parent directory")
         .join("tests/fixtures/bench-library");
 
-    std::fs::create_dir_all(&base)
-        .unwrap_or_else(|e| panic!("Failed to create bench-library at {:?}: {}", base, e));
+    std::fs::create_dir_all(&base).unwrap_or_else(|e| panic!("Failed to create bench-library at {:?}: {}", base, e));
 
     println!("Generating fixtures at: {}", base.display());
 
@@ -43,8 +42,7 @@ fn main() {
             let file_path = book_dir.join(format!("track_{:02}.mp3", track_i + 1));
 
             // Create an empty stub file first; write_to_path will prepend the ID3 tag.
-            std::fs::write(&file_path, b"")
-                .unwrap_or_else(|e| panic!("Failed to create stub {:?}: {}", file_path, e));
+            std::fs::write(&file_path, b"").unwrap_or_else(|e| panic!("Failed to create stub {:?}: {}", file_path, e));
 
             let mut tag = Tag::new();
             // TALB — album title (book identifier)

@@ -117,6 +117,7 @@ pub fn get_books_by_author(author_name: &str) -> Vec<Book> {
         .expect("Error loading books")
 }
 
+#[allow(dead_code)]
 pub fn get_books_by_genre(genre: &str) -> Vec<Book> {
     let conn = &mut establish_connection();
 
@@ -127,6 +128,7 @@ pub fn get_books_by_genre(genre: &str) -> Vec<Book> {
         .expect("Error loading books")
 }
 
+#[allow(dead_code)]
 pub fn get_books_by_lector(lector: &str) -> Vec<Book> {
     let conn = &mut establish_connection();
 
@@ -210,7 +212,7 @@ pub fn get_all_books() -> Vec<Book> {
 pub fn update_books_orphaned(titles: &[String], flag: bool, conn: &mut SqliteConnection) {
     // Chunk at 999 to stay within SQLite's SQLITE_MAX_VARIABLE_NUMBER limit
     const CHUNK_SIZE: usize = 999;
-    
+
     for chunk in titles.chunks(CHUNK_SIZE) {
         diesel::update(dsl::books.filter(dsl::title.eq_any(chunk)))
             .set(dsl::orphaned.eq(flag))

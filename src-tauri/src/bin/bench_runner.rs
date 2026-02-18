@@ -34,7 +34,7 @@ fn main() {
         None => {
             eprintln!("Usage: bench_runner <scan_directory>");
             std::process::exit(1);
-        }
+        },
     };
 
     if !std::path::Path::new(&dir).exists() {

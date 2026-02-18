@@ -1,0 +1,6 @@
+finalshelf.sql
+finalshelf.sql-wal
+finalshelf.sql-shm
+finalshelf.sql-journal
+tests/fixtures/
+target/
