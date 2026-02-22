@@ -219,4 +219,11 @@ pub fn update_books_orphaned(titles: &[String], flag: bool, conn: &mut SqliteCon
             .execute(conn)
             .expect("Error updating orphaned flag");
     }
+pub fn get_all_book_paths() -> Result<Vec<String>, diesel::result::Error> {
+    let conn = &mut establish_connection();
+
+    dsl::books
+        .select(dsl::relative_file_path)
+        .load::<String>(conn)
+        .map_err(|e| e.into())
 }

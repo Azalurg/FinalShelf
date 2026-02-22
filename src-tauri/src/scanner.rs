@@ -5,7 +5,7 @@ use std::{
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 
-use chrono::{DateTime, NaiveDateTime};
+use chrono::{Date, DateTime, NaiveDateTime, Utc};
 use id3::{Tag, TagLike};
 use rayon::prelude::*;
 use rusqlite::Result;
@@ -18,7 +18,7 @@ use crate::{
     services::{
         absolute_paths_service::get_current_absolute_path,
         authors_service::{add_author, is_author_exists},
-        books_service::{add_book, get_all_books, is_book_exists, update_books_orphaned},
+        books_service::{add_book, get_all_books, is_book_exists, update_books_orphaned, get_all_book_paths},
     },
 };
 
@@ -81,18 +81,24 @@ fn look_for_author_photo(path: &str, name: &str, base_path: &Path) -> String {
     look_for_cover(directory, base_path)
 }
 
-fn system_time_to_naive_date_time(option_time: Option<SystemTime>) -> Option<NaiveDateTime> {
-    option_time?
-        .duration_since(UNIX_EPOCH)
-        .ok()
-        .and_then(|duration| DateTime::from_timestamp(duration.as_secs() as i64, duration.subsec_nanos()))
-        .map(|datetime_utc| datetime_utc.naive_utc())
+fn system_time_to_naive_date_time(
+    create_time: Option<SystemTime>,
+    edit_time: Option<SystemTime>,
+) -> Option<NaiveDateTime> {
+    let create_data_time = DateTime::<Utc>::from(create_time?);
+    let edit_data_time = DateTime::<Utc>::from(edit_time?);
+
+    if create_data_time > edit_data_time {
+        Some(create_data_time.naive_utc())
+    } else {
+        Some(edit_data_time.naive_utc())
+    }
 }
 
 pub fn quick_scan() -> Result<ScanReport, String> {
     let absolute_path = get_current_absolute_path();
     let directory: String;
-    if let Some(absolute_path) = absolute_path {
+    if let Some(absolute_path) = absolute_path_obj {
         directory = absolute_path.absolute_path;
     } else {
         return Err("No path to scan".to_string());

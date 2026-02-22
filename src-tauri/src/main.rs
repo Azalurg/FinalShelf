@@ -14,6 +14,8 @@ use commands::{
 };
 
 fn main() {
+    println!("Starting Tauri application...");
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
