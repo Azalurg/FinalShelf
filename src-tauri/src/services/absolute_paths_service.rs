@@ -79,7 +79,7 @@ pub fn add_absolute_path(absolute_path: String) -> Result<(), String> {
 
     let new_absolute_path = NewAbsolutePath {
         absolute_path,
-        add_date: now.clone(),
+        add_date: now,
         last_use_date: Some(now),
     };
 

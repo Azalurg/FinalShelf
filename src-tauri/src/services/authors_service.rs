@@ -11,7 +11,7 @@ use crate::{
 };
 use diesel::{dsl::count, prelude::*};
 
-pub fn list_authors(query_params: QueryParams) -> Vec<Author> {
+pub fn list_authors(_query_params: QueryParams) -> Vec<Author> {
     let conn = &mut establish_connection();
 
     let query = dsl::authors.order_by(dsl::name.desc());

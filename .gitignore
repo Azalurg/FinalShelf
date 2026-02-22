@@ -43,3 +43,6 @@ Thumbs.db
 
 # Environment
 .env
+
+# Test fixtures (generated, not committed)
+tests/fixtures/

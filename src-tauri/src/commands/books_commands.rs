@@ -9,6 +9,7 @@ use crate::{
 };
 
 #[tauri::command]
+#[allow(clippy::too_many_arguments)]
 pub async fn get_books_list_command(
     page: Option<i64>,
     limit: Option<i64>,
