@@ -353,8 +353,8 @@ fn persist_batch(candidates: Vec<BookCandidate>) -> ScanResult {
 
         println!("Adding book: {:?}", book);
         match add_book(&book) {
-            Some(_) => added += 1,
-            None => errors.push(format!("Failed to insert: {}", candidate.title)),
+            Ok(_) => added += 1,
+            Err(e) => errors.push(format!("Failed to insert {}: {}", candidate.title, e)),
         }
     }
 
