@@ -43,13 +43,13 @@
       <h1>Top authors</h1>
       <ul>
         <li *ngFor="let author of dashboardData.top_authors">
-          <a [routerLink]="['/authors', author[0].name]" class="author_link">
+          <a [routerLink]="['/authors', author.name]" class="author_link">
             <img
               class="author_image"
-              src="{{ getAuthorSrc(author[0].relative_img_path) }}"
+              src="{{ getAuthorSrc(author.relative_img_path) }}"
               alt="image"
             />
-            {{ author[0].name }} ({{ author[1] }})
+            {{ author.name }} ({{ author.books_count }})
           </a>
         </li>
       </ul>

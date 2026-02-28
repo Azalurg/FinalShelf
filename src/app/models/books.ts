@@ -20,12 +20,14 @@ interface Book {
 //     lector_name: string,
 // }
 
-interface BookListResponse {
-  books: Book[];
+interface ListResponse<T> {
+  items: T[];
   total_count: number;
   page: number;
   limit: number;
   total_pages: number;
 }
 
-export { Book, BookListResponse };
+type BookListResponse = ListResponse<Book>;
+
+export { Book, BookListResponse, ListResponse };

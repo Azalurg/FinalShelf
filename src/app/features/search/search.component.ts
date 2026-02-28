@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
-import { Book } from "../../models/books";
+import { Book, BookListResponse } from "../../models/books";
 import { Subscription } from "rxjs";
 import { GenericListComponent } from "../../shared/components/generic-list/generic-list.component";
 
@@ -38,12 +38,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       return;
     }
     try {
-      const books = await invoke<Book[]>("search_command", {
+      const response = await invoke<BookListResponse>("search_command", {
         target: this.searchQuery,
-        by: ["title"],
+        by: ["title", "author", "genre", "lector"],
+        limit: 100,
       });
-      this.books = books;
-      console.log(this.books);
+      this.books = response.items;
     } catch (error) {
       console.error(error);
       this.books = [];

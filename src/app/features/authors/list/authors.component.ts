@@ -29,8 +29,11 @@ export class AuthorsListPageComponent {
 
   async fetchAuthors() {
     try {
-      const authors = await invoke<Author[]>("get_authors_list_command", {});
-      this.authors = authors;
+      const response = await invoke<{ items: Author[] }>(
+        "get_authors_list_command",
+        { params: { limit: 100, sort_by: "name", sort_order: "asc" } }
+      );
+      this.authors = response.items;
     } catch (error) {
       console.error(error);
     }

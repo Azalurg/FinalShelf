@@ -19,8 +19,11 @@ export class LectorsListPageComponent {
 
   async fetchLectors() {
     try {
-      const lectors = await invoke<Lector[]>("get_lectors_list_command");
-      this.lectors = lectors;
+      const response = await invoke<{ items: Lector[] }>(
+        "get_lectors_list_command",
+        { params: { limit: 100, sort_by: "name", sort_order: "asc" } }
+      );
+      this.lectors = response.items;
     } catch (error) {
       console.error(error);
     }

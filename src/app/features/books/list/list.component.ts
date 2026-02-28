@@ -38,15 +38,12 @@ export class BooksListPageComponent {
       const response = await invoke<BookListResponse>(
         "get_books_list_command",
         {
-          page: this.currentPage,
-          limit: this.pageSize,
-          sortBy: this.getSortField(),
-          sortOrder: this.getSortOrder(),
-          // Add filters as needed
-          authorName: null,
-          genre: null,
-          title: null,
-          readStatus: null,
+          params: {
+            page: this.currentPage,
+            limit: this.pageSize,
+            sort_by: this.getSortField(),
+            sort_order: this.getSortOrder(),
+          },
         }
       );
       console.log(
@@ -59,7 +56,7 @@ export class BooksListPageComponent {
         "sortOrder:",
         this.getSortOrder()
       );
-      this.books = response.books;
+      this.books = response.items;
       this.totalPages = response.total_pages;
       this.totalCount = response.total_count;
     } catch (error) {

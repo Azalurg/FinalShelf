@@ -19,8 +19,11 @@ export class GenresListPageComponent {
 
   async fetchGenres() {
     try {
-      const genres = await invoke<Genre[]>("get_genres_list_command");
-      this.genres = genres;
+      const response = await invoke<{ items: Genre[] }>(
+        "get_genres_list_command",
+        { params: { limit: 100, sort_by: "name", sort_order: "asc" } }
+      );
+      this.genres = response.items;
     } catch (error) {
       console.error(error);
     }
