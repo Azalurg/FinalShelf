@@ -27,6 +27,7 @@ diesel::table! {
         read -> Nullable<Bool>,
         score -> Nullable<Integer>,
         relative_file_path -> Text,
+        duration_seconds -> Nullable<Integer>,
     }
 }
 

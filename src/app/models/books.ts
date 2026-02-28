@@ -7,6 +7,7 @@ interface Book {
   create_date: string;
   read: boolean;
   score: number;
+  duration_seconds: number | null;
 }
 
 // interface BookDetails extends Book {

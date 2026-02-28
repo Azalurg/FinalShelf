@@ -27,6 +27,7 @@ fn main() {
             // --- settings ---
             ping_command,
             quick_scan_command,
+            full_scan_command,
             kill_command,
             add_absolute_path_command,
             get_all_absolute_path_command,

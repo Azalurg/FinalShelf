@@ -117,6 +117,7 @@ pub fn get_books_by_author(author_name: &str) -> Vec<Book> {
         .expect("Error loading books")
 }
 
+#[allow(dead_code)]
 pub fn get_books_by_genre(genre: &str) -> Vec<Book> {
     let conn = &mut establish_connection();
 
@@ -127,6 +128,7 @@ pub fn get_books_by_genre(genre: &str) -> Vec<Book> {
         .expect("Error loading books")
 }
 
+#[allow(dead_code)]
 pub fn get_books_by_lector(lector: &str) -> Vec<Book> {
     let conn = &mut establish_connection();
 

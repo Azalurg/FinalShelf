@@ -39,10 +39,24 @@ export class SettingsPageComponent {
 
   async quickScan(): Promise<void> {
     try {
-      await invoke("quick_scan_command");
-      alert("Scan completed successfully!");
+      const result = await invoke<any>("quick_scan_command");
+      alert(
+        `Quick scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
+      );
     } catch (error) {
       console.error("Error - quick_scan_command", error);
+      alert("Error");
+    }
+  }
+
+  async fullScan(): Promise<void> {
+    try {
+      const result = await invoke<any>("full_scan_command");
+      alert(
+        `Full scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
+      );
+    } catch (error) {
+      console.error("Error - full_scan_command", error);
       alert("Error");
     }
   }

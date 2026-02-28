@@ -17,6 +17,7 @@ pub struct Book {
     pub read: Option<bool>,
     pub score: Option<i32>,
     pub relative_file_path: String,
+    pub duration_seconds: Option<i32>,
 }
 
 #[derive(Serialize)]
