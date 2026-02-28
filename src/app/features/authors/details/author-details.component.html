@@ -1,4 +1,4 @@
-<div class="app-page">
+<div class="app-page" *ngIf="authorDetails">
   <div class="details-container">
     <img
       class="details-img"
@@ -19,15 +19,10 @@
     </div>
   </div>
 
-  <div class="gallery">
-    <a
-      *ngFor="let book of authorDetails.books"
-      class="gallery-item shadow"
-      [routerLink]="['/books', book.title]"
-    >
-      <img src="{{ getSrcBook(book.relative_cover_path) }}" alt="image" />
-      <div class="gallery-text gallery-tex-first">{{ book.title }}</div>
-      <div class="gallery-text gallery-text-second">{{ book.author_name }}</div>
-    </a>
-  </div>
+  <app-generic-list
+    [items]="authorDetails.books"
+    listType="books"
+    [paginationEnabled]="false"
+    [sortEnabled]="false"
+  ></app-generic-list>
 </div>

@@ -1,11 +1,8 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { CommonModule } from "@angular/common";
 import { Book, BookListResponse } from "../../../models/books";
 import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
-
-// Helper type for clarity, though you can also do this inline.
-type SortOptionKey = keyof typeof BooksListPageComponent.prototype.sortObject;
 
 @Component({
   selector: "app-books",
@@ -14,7 +11,7 @@ type SortOptionKey = keyof typeof BooksListPageComponent.prototype.sortObject;
   templateUrl: "./list.component.html",
   styleUrl: "./list.component.scss",
 })
-export class BooksListPageComponent {
+export class BooksListPageComponent implements OnInit {
   books: Book[] = [];
   currentPage = 1;
   pageSize = 21;
@@ -46,16 +43,6 @@ export class BooksListPageComponent {
           },
         }
       );
-      console.log(
-        "page:",
-        this.currentPage,
-        "limit:",
-        this.pageSize,
-        "sortBy:",
-        this.getSortField(),
-        "sortOrder:",
-        this.getSortOrder()
-      );
       this.books = response.items;
       this.totalPages = response.total_pages;
       this.totalCount = response.total_count;
@@ -82,7 +69,6 @@ export class BooksListPageComponent {
 
   private getSortField(): string {
     const sort = this.sortObject[this.sortIndex];
-    console.log(this.sortIndex);
     return sort[0];
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { RouterModule } from "@angular/router";
 import { Author } from "../../../models/authors";
@@ -13,21 +13,21 @@ import { getCurrentAbsolutePath } from "../../../shared/utils/getCurrentAbsolute
   templateUrl: "./authors.component.html",
   styleUrl: "./authors.component.scss",
 })
-export class AuthorsListPageComponent {
+export class AuthorsListPageComponent implements OnInit {
   authors: Author[] = [];
-  absolute_path = "";
+  absolutePath = "";
 
-  getSrc = (path: string) => convertImgPathAuthor(path, this.absolute_path);
+  getSrc = (path: string) => convertImgPathAuthor(path, this.absolutePath);
 
   ngOnInit(): void {
     this.fetchAuthors();
 
     getCurrentAbsolutePath().then((path) => {
-      this.absolute_path = path;
+      this.absolutePath = path;
     });
   }
 
-  async fetchAuthors() {
+  async fetchAuthors(): Promise<void> {
     try {
       const response = await invoke<{ items: Author[] }>(
         "get_authors_list_command",
@@ -35,7 +35,7 @@ export class AuthorsListPageComponent {
       );
       this.authors = response.items;
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch authors:", error);
     }
   }
 }

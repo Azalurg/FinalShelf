@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { GenreDetails } from "../../../models/genres";
@@ -12,8 +12,8 @@ import { GenericListComponent } from "../../../shared/components/generic-list/ge
   templateUrl: "./genres-details.component.html",
   styleUrl: "./genres-details.component.scss",
 })
-export class GenresDetailsPageComponent {
-  genreDetails: GenreDetails | any;
+export class GenresDetailsPageComponent implements OnInit {
+  genreDetails: GenreDetails | null = null;
 
   constructor(private route: ActivatedRoute) {}
 
@@ -26,15 +26,13 @@ export class GenresDetailsPageComponent {
     });
   }
 
-  async fetchGenreDetails(genreName: string) {
+  async fetchGenreDetails(genreName: string): Promise<void> {
     try {
-      const genreDetailsData = await invoke<GenreDetails>("get_genre_command", {
+      this.genreDetails = await invoke<GenreDetails>("get_genre_command", {
         genreName,
       });
-      this.genreDetails = genreDetailsData;
-      console.log(this.genreDetails);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch genre details:", error);
     }
   }
 }

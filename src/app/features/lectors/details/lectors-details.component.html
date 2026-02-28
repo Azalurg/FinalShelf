@@ -1,11 +1,16 @@
-<div class="app-page">
+<div class="app-page" *ngIf="lectorDetails">
   <div class="details-container">
     <div class="details-info">
       <h1 class="details-title">
-        {{ lectorDetails?.name }} ({{ lectorDetails?.books_amount }})
+        {{ lectorDetails.name }} ({{ lectorDetails.books_amount }})
       </h1>
     </div>
   </div>
 
-  <app-generic-list [items]="lectorDetails?.books"></app-generic-list>
+  <app-generic-list
+    [items]="lectorDetails.books"
+    listType="books"
+    [paginationEnabled]="false"
+    [sortEnabled]="false"
+  ></app-generic-list>
 </div>

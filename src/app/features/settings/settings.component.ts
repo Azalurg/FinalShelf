@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { AbsolutePath } from "../../models/absolute-paths";
 
@@ -10,7 +10,7 @@ import { AbsolutePath } from "../../models/absolute-paths";
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
-export class SettingsPageComponent {
+export class SettingsPageComponent implements OnInit {
   darkMode = false;
   selectedTheme = "default";
   themes = ["default", "dark", "light", "lsd", "night-city"];
@@ -72,21 +72,16 @@ export class SettingsPageComponent {
   }
 
   async ping(): Promise<void> {
-    console.log("Ping");
     try {
       await invoke("ping_command");
-      console.log("Pong");
     } catch (error) {
-      console.log("Error");
+      console.error("Ping failed:", error);
     }
   }
 
   async updatePath(event: Event): Promise<void> {
-    console.log("Trying to update path");
-
     const selectElement = event.target as HTMLSelectElement;
-    const absolutePathId = parseInt(selectElement.value, 10); // Parse the value as an integer
-    console.log("Selected path ID: ", absolutePathId);
+    const absolutePathId = parseInt(selectElement.value, 10);
 
     try {
       await invoke("set_current_absolute_path_by_id_command", {

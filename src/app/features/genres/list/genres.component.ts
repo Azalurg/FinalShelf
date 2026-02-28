@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { Genre } from "../../../models/genres";
@@ -11,13 +11,14 @@ import { Genre } from "../../../models/genres";
   templateUrl: "./genres.component.html",
   styleUrl: "./genres.component.scss",
 })
-export class GenresListPageComponent {
+export class GenresListPageComponent implements OnInit {
   genres: Genre[] = [];
+
   ngOnInit(): void {
     this.fetchGenres();
   }
 
-  async fetchGenres() {
+  async fetchGenres(): Promise<void> {
     try {
       const response = await invoke<{ items: Genre[] }>(
         "get_genres_list_command",
@@ -25,7 +26,7 @@ export class GenresListPageComponent {
       );
       this.genres = response.items;
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch genres:", error);
     }
   }
 }

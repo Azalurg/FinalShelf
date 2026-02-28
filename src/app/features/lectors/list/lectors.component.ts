@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { Lector } from "../../../models/lectors";
@@ -11,13 +11,14 @@ import { Lector } from "../../../models/lectors";
   templateUrl: "./lectors.component.html",
   styleUrl: "./lectors.component.scss",
 })
-export class LectorsListPageComponent {
+export class LectorsListPageComponent implements OnInit {
   lectors: Lector[] = [];
+
   ngOnInit(): void {
     this.fetchLectors();
   }
 
-  async fetchLectors() {
+  async fetchLectors(): Promise<void> {
     try {
       const response = await invoke<{ items: Lector[] }>(
         "get_lectors_list_command",
@@ -25,7 +26,7 @@ export class LectorsListPageComponent {
       );
       this.lectors = response.items;
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch lectors:", error);
     }
   }
 }

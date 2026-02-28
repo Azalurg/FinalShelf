@@ -1,4 +1,4 @@
-<div class="app-page">
+<div class="app-page" *ngIf="genreDetails">
   <div class="details-container">
     <div class="details-info">
       <h1 class="details-title">
@@ -10,5 +10,7 @@
   <app-generic-list
     [items]="genreDetails.books"
     listType="books"
+    [paginationEnabled]="false"
+    [sortEnabled]="false"
   ></app-generic-list>
 </div>
