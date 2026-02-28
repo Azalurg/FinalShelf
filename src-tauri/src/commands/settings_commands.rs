@@ -14,6 +14,11 @@ pub fn ping_command() -> String {
 }
 
 #[tauri::command]
+pub fn get_version_command() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
+#[tauri::command]
 pub fn quick_scan_command() -> Result<ScanResult, String> {
     scan(false)
 }

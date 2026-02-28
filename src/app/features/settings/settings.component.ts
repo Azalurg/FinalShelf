@@ -16,9 +16,19 @@ export class SettingsPageComponent {
   themes = ["default", "dark", "light", "lsd", "night-city"];
   absolutePaths: AbsolutePath[] = [];
   selectedPath: AbsolutePath | null = null;
+  appVersion = "";
 
   ngOnInit(): void {
     this.fetchAbsolutePaths();
+    this.fetchVersion();
+  }
+
+  async fetchVersion(): Promise<void> {
+    try {
+      this.appVersion = await invoke<string>("get_version_command");
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   // ----------------- Functions -----------------

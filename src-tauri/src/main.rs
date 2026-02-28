@@ -26,6 +26,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             // --- settings ---
             ping_command,
+            get_version_command,
             quick_scan_command,
             full_scan_command,
             kill_command,
