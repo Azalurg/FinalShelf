@@ -1,3 +1,5 @@
+import { Book } from "./books";
+
 interface Genre {
   name: string;
   books_amount: number;
@@ -5,7 +7,7 @@ interface Genre {
 
 interface GenreDetails {
   name: string;
-  books: string[];
+  books: Book[];
   books_amount: number;
 }
 

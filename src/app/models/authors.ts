@@ -5,9 +5,15 @@ interface Author {
   relative_img_path: string;
 }
 
+interface AuthorListItem {
+  name: string;
+  relative_img_path: string;
+  books_count: number;
+}
+
 interface AuthorDetails {
   author: Author;
   books: Book[];
 }
 
-export { Author, AuthorDetails };
+export { Author, AuthorListItem, AuthorDetails };

@@ -10,16 +10,6 @@ interface Book {
   duration_seconds: number | null;
 }
 
-// interface BookDetails extends Book {
-//     duration: number,
-//     year: number,
-//     genre_id: number,
-//     genre_name: string,
-//     author_picture_path: string,
-//     lector_id: number,
-//     lector_name: string,
-// }
-
 interface ListResponse<T> {
   items: T[];
   total_count: number;
