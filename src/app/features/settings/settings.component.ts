@@ -9,6 +9,8 @@ interface ScanResult {
   errors: unknown[];
 }
 
+const THEME_STORAGE_KEY = "finalshelf-theme";
+
 @Component({
   selector: "app-settings",
   standalone: true,
@@ -27,6 +29,15 @@ export class SettingsPageComponent implements OnInit {
   ngOnInit(): void {
     this.fetchAbsolutePaths();
     this.fetchVersion();
+    this.loadSavedTheme();
+  }
+
+  loadSavedTheme(): void {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme && this.themes.includes(savedTheme)) {
+      this.selectedTheme = savedTheme;
+      this.applyTheme(savedTheme);
+    }
   }
 
   async fetchVersion(): Promise<void> {
@@ -116,9 +127,14 @@ export class SettingsPageComponent implements OnInit {
 
   updateTheme(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    const value = selectElement.value;
+    const theme = selectElement.value;
+    this.selectedTheme = theme;
+    this.applyTheme(theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }
 
+  private applyTheme(theme: string): void {
     document.body.classList.remove(...this.themes);
-    document.body.classList.add(value);
+    document.body.classList.add(theme);
   }
 }
