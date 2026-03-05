@@ -14,8 +14,29 @@
     </div>
     <div>
       <h2>Database</h2>
-      <button (click)="quickScan()">Quick scan</button>
-      <button (click)="fullScan()">Full scan</button>
+      <div class="scan-actions">
+        <button (click)="quickScan()" [disabled]="isScanning">
+          {{ isScanning ? 'Scanning...' : 'Quick scan' }}
+        </button>
+        <button (click)="fullScan()" [disabled]="isScanning">
+          {{ isScanning ? 'Scanning...' : 'Full scan' }}
+        </button>
+      </div>
+      <div class="scan-progress" *ngIf="scanProgress">
+        <div class="progress-info">
+          <span class="progress-phase">{{ scanProgress.phase | titlecase }}</span>
+          <span class="progress-counts" *ngIf="scanProgress.total > 0">
+            {{ scanProgress.current }} / {{ scanProgress.total }}
+          </span>
+        </div>
+        <div class="progress-bar-container" *ngIf="scanProgress.total > 0">
+          <div
+            class="progress-bar"
+            [style.width.%]="(scanProgress.current / scanProgress.total) * 100"
+          ></div>
+        </div>
+        <div class="progress-message">{{ scanProgress.message }}</div>
+      </div>
     </div>
     <div>
       <h2>Theme selection</h2>

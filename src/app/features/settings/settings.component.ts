@@ -1,12 +1,20 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
+import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { AbsolutePath } from "../../models/absolute-paths";
 
 interface ScanResult {
   added: number;
   skipped: number;
   errors: unknown[];
+}
+
+interface ScanProgress {
+  phase: string;
+  current: number;
+  total: number;
+  message: string;
 }
 
 const THEME_STORAGE_KEY = "finalshelf-theme";
@@ -18,7 +26,7 @@ const THEME_STORAGE_KEY = "finalshelf-theme";
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
-export class SettingsPageComponent implements OnInit {
+export class SettingsPageComponent implements OnInit, OnDestroy {
   darkMode = false;
   selectedTheme = "default";
   themes = ["default", "dark", "light", "lsd", "night-city"];
@@ -26,10 +34,34 @@ export class SettingsPageComponent implements OnInit {
   selectedPath: AbsolutePath | null = null;
   appVersion = "";
 
+  // Scan progress state
+  isScanning = false;
+  scanProgress: ScanProgress | null = null;
+  private unlistenScanProgress: UnlistenFn | null = null;
+
   ngOnInit(): void {
     this.fetchAbsolutePaths();
     this.fetchVersion();
     this.loadSavedTheme();
+    this.setupScanProgressListener();
+  }
+
+  ngOnDestroy(): void {
+    if (this.unlistenScanProgress) {
+      this.unlistenScanProgress();
+    }
+  }
+
+  private async setupScanProgressListener(): Promise<void> {
+    this.unlistenScanProgress = await listen<ScanProgress>(
+      "scan-progress",
+      (event) => {
+        this.scanProgress = event.payload;
+        if (event.payload.phase === "complete") {
+          this.isScanning = false;
+        }
+      }
+    );
   }
 
   loadSavedTheme(): void {
@@ -65,6 +97,16 @@ export class SettingsPageComponent implements OnInit {
   }
 
   async quickScan(): Promise<void> {
+    if (this.isScanning) return;
+
+    this.isScanning = true;
+    this.scanProgress = {
+      phase: "starting",
+      current: 0,
+      total: 0,
+      message: "Starting quick scan...",
+    };
+
     try {
       const result = await invoke<ScanResult>("quick_scan_command");
       alert(
@@ -72,11 +114,24 @@ export class SettingsPageComponent implements OnInit {
       );
     } catch (error) {
       console.error("Error - quick_scan_command", error);
-      alert("Error");
+      alert("Error: " + error);
+    } finally {
+      this.isScanning = false;
+      this.scanProgress = null;
     }
   }
 
   async fullScan(): Promise<void> {
+    if (this.isScanning) return;
+
+    this.isScanning = true;
+    this.scanProgress = {
+      phase: "starting",
+      current: 0,
+      total: 0,
+      message: "Starting full scan...",
+    };
+
     try {
       const result = await invoke<ScanResult>("full_scan_command");
       alert(
@@ -84,7 +139,10 @@ export class SettingsPageComponent implements OnInit {
       );
     } catch (error) {
       console.error("Error - full_scan_command", error);
-      alert("Error");
+      alert("Error: " + error);
+    } finally {
+      this.isScanning = false;
+      this.scanProgress = null;
     }
   }
 
