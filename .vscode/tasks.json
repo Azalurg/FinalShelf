@@ -1,0 +1,70 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Dev: Angular",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "start"
+            ],
+            "isBackground": true,
+            "group": "build"
+        },
+        {
+            "label": "Dev: Tauri",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "tauri",
+                "dev"
+            ],
+            "isBackground": true,
+            "group": "build"
+        },
+        {
+            "label": "Lint: Frontend",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "lint"
+            ],
+            "group": "test"
+        },
+        {
+            "label": "Check: Rust",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "check",
+                "--manifest-path",
+                "src-tauri/Cargo.toml"
+            ],
+            "group": "test"
+        },
+        {
+            "label": "Clippy: Rust",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "clippy",
+                "--manifest-path",
+                "src-tauri/Cargo.toml"
+            ],
+            "group": "test"
+        },
+        {
+            "label": "Format: Rust",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "fmt",
+                "--manifest-path",
+                "src-tauri/Cargo.toml"
+            ],
+            "group": "build"
+        }
+    ]
+}
