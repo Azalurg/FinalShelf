@@ -19,12 +19,16 @@ pub fn search_command(
     by: Vec<String>,
     page: Option<i64>,
     limit: Option<i64>,
+    sort_by: Option<String>,
+    sort_order: Option<String>,
 ) -> Result<ListResponse<Book>, String> {
     let params = ListParams {
         search: Some(target),
         search_fields: if by.is_empty() { None } else { Some(by) },
         page,
         limit,
+        sort_by,
+        sort_order,
         ..Default::default()
     };
     params.validate()?;
