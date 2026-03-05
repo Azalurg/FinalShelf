@@ -15,6 +15,7 @@ import { Book } from "../../../models/books";
 export class BookDetailsPageComponent implements OnInit {
   bookDetails: Book | null = null;
   absolutePath = "";
+  hoverScore = 0;
 
   getSrc = (path: string) => convertImgPathBook(path, this.absolutePath);
 
@@ -50,6 +51,17 @@ export class BookDetailsPageComponent implements OnInit {
         await invoke("update_book_command", { book: this.bookDetails });
       } catch (error) {
         console.error("Failed to update book:", error);
+      }
+    }
+  }
+
+  async setScore(score: number): Promise<void> {
+    if (this.bookDetails) {
+      this.bookDetails.score = score;
+      try {
+        await invoke("update_book_command", { book: this.bookDetails });
+      } catch (error) {
+        console.error("Failed to update book score:", error);
       }
     }
   }
