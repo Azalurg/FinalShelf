@@ -13,10 +13,10 @@ import { Book } from "../../../models/books";
   templateUrl: "./details.component.html",
 })
 export class BookDetailsPageComponent implements OnInit {
-  bookDetails: Book | any;
-  absolute_path = "";
+  bookDetails: Book | null = null;
+  absolutePath = "";
 
-  getSrc = (path: string) => convertImgPathBook(path, this.absolute_path);
+  getSrc = (path: string) => convertImgPathBook(path, this.absolutePath);
 
   constructor(private route: ActivatedRoute) {}
 
@@ -29,31 +29,37 @@ export class BookDetailsPageComponent implements OnInit {
     });
 
     getCurrentAbsolutePath().then((path) => {
-      this.absolute_path = path;
+      this.absolutePath = path;
     });
   }
 
-  async fetchBookDetails(bookTitle: string) {
+  async fetchBookDetails(bookTitle: string): Promise<void> {
     try {
-      const bookDetails = await invoke<Book>("get_book_command", {
+      this.bookDetails = await invoke<Book>("get_book_command", {
         title: bookTitle,
       });
-      this.bookDetails = bookDetails;
-      console.log(this.bookDetails);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch book details:", error);
     }
   }
 
-  async markAsRead() {
+  async markAsRead(): Promise<void> {
     if (this.bookDetails) {
       this.bookDetails.read = !this.bookDetails.read;
       try {
         await invoke("update_book_command", { book: this.bookDetails });
-        console.log("Book updated successfully");
       } catch (error) {
-        console.error("Error updating book:", error);
+        console.error("Failed to update book:", error);
       }
     }
+  }
+
+  formatDuration(totalSeconds: number): string {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
   }
 }

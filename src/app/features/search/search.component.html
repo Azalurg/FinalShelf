@@ -1,5 +1,33 @@
 <div class="app-page">
   <h1>Search</h1>
 
-  <app-generic-list [items]="books"></app-generic-list>
+  <div class="search-controls">
+    <div class="search-fields">
+      <span class="label">Search in:</span>
+      <button
+        *ngFor="let field of searchFields"
+        [class.active]="field.enabled"
+        (click)="toggleField(field)"
+      >
+        {{ field.label }}
+      </button>
+    </div>
+    <div class="search-info" *ngIf="searchQuery">
+      <span>{{ totalCount }} results for "{{ searchQuery }}"</span>
+    </div>
+  </div>
+
+  <app-generic-list
+    [items]="books"
+    listType="books"
+    [config]="{
+      page: currentPage,
+      pageSize: pageSize,
+      totalPages: totalPages,
+      sortOptions: sortOptions,
+    }"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (sortChange)="onSortChange($event)"
+  ></app-generic-list>
 </div>

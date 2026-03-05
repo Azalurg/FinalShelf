@@ -7,7 +7,7 @@ import { filter, Subscription } from "rxjs";
 @Component({
   selector: "app-topbar",
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // Dodaj FormsModule
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: "./topbar.component.html",
   styleUrl: "./topbar.component.scss",
 })

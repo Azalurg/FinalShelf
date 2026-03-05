@@ -1,9 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
-import { convertImgPathBook } from "../../../shared/utils/convertImgPath";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
-import { getCurrentAbsolutePath } from "../../../shared/utils/getCurrentAbsolutePath";
 import { LectorDetails } from "../../../models/lectors";
 import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
 
@@ -14,12 +12,8 @@ import { GenericListComponent } from "../../../shared/components/generic-list/ge
   templateUrl: "./lectors-details.component.html",
   styleUrl: "./lectors-details.component.scss",
 })
-export class LectorsDetailsPageComponent {
-  lectorDetails: LectorDetails | any;
-  absolute_path = "";
-
-  getSrcBook = (path: string, absolute_path: string) =>
-    convertImgPathBook(path, absolute_path);
+export class LectorsDetailsPageComponent implements OnInit {
+  lectorDetails: LectorDetails | null = null;
 
   constructor(private route: ActivatedRoute) {}
 
@@ -28,27 +22,18 @@ export class LectorsDetailsPageComponent {
       const lectorName = params.get("name");
       if (lectorName) {
         this.fetchLectorDetails(lectorName);
-      } else {
-        console.error("No lector name provided");
       }
-
-      getCurrentAbsolutePath().then((path) => {
-        this.absolute_path = path;
-      });
     });
   }
 
-  async fetchLectorDetails(lectorName: string) {
-    console.log("fetching lector details");
+  async fetchLectorDetails(lectorName: string): Promise<void> {
     try {
-      const lectorDetailsData = await invoke<LectorDetails>(
+      this.lectorDetails = await invoke<LectorDetails>(
         "get_lector_command",
-        { lectorName: lectorName }
+        { lectorName },
       );
-      this.lectorDetails = lectorDetailsData || [];
-      console.log(this.lectorDetails);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch lector details:", error);
     }
   }
 }

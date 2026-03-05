@@ -1,10 +1,35 @@
 <div class="app-page">
   <h1>Lectors</h1>
+
+  <div class="list-toolbar">
+    <div class="toolbar-pagination">
+      <button (click)="prevPage()" [disabled]="currentPage === 1">
+        <img src="assets/icons/chevron-left-duo-svgrepo-com.svg" alt="Previous" />
+      </button>
+      <select [ngModel]="pageSize" (change)="changePageSize($event)">
+        <option *ngFor="let size of [9, 21, 40, 66, 99]" [value]="size">{{ size }}</option>
+      </select>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+        <img src="assets/icons/chevron-right-duo-svgrepo-com.svg" alt="Next" />
+      </button>
+    </div>
+    <div class="toolbar-sort">
+      <label for="sort">Sort:</label>
+      <select id="sort" (change)="onSortChange($event)">
+        <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+  </div>
+
   <div class="app-grid">
     <div *ngFor="let lector of lectors" class="grid-item">
       <a [routerLink]="['/lectors', lector.name]"
         >{{ lector.name }} ({{ lector.books_amount }})</a
       >
     </div>
+  </div>
+
+  <div *ngIf="!lectors.length" class="empty">
+    <p>No lectors found</p>
   </div>
 </div>

@@ -14,6 +14,8 @@ use commands::{
 };
 
 fn main() {
+    println!("Starting Tauri application...");
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
@@ -24,7 +26,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             // --- settings ---
             ping_command,
+            get_version_command,
             quick_scan_command,
+            full_scan_command,
             kill_command,
             add_absolute_path_command,
             get_all_absolute_path_command,
@@ -35,7 +39,6 @@ fn main() {
             // --- books ---
             get_books_list_command,
             get_book_command,
-            get_all_read_books_command,
             update_book_command,
             // --- authors ---
             get_authors_list_command,

@@ -1,14 +1,18 @@
 use crate::{
-    models::genre::{Genre, GenreWithBooks},
-    services::genres_service::{get_genre, get_genres_list},
+    models::{
+        genre::{Genre, GenreWithBooks},
+        query::{ListParams, ListResponse},
+    },
+    services::genres_service,
 };
 
 #[tauri::command]
-pub fn get_genres_list_command() -> Vec<Genre> {
-    get_genres_list()
+pub async fn get_genres_list_command(params: ListParams) -> Result<ListResponse<Genre>, String> {
+    params.validate()?;
+    genres_service::list_genres(&params)
 }
 
 #[tauri::command]
-pub fn get_genre_command(genre_name: String) -> Option<GenreWithBooks> {
-    get_genre(genre_name)
+pub async fn get_genre_command(genre_name: String) -> Result<GenreWithBooks, String> {
+    genres_service::get_genre(&genre_name)
 }

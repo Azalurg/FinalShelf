@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::author::Author;
+use super::author::AuthorListItem;
 use super::book::Book;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -11,6 +11,6 @@ pub struct Dashboard {
     pub genres_count: i64,
     pub lectors_count: i64,
     pub new_books: Vec<Book>,
-    pub top_authors: Vec<(Author, i64)>,
+    pub top_authors: Vec<AuthorListItem>,
     pub top_books: Vec<Book>,
 }

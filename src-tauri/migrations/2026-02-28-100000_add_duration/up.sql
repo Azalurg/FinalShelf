@@ -1,0 +1,1 @@
+ALTER TABLE books ADD COLUMN duration_seconds INTEGER DEFAULT NULL;

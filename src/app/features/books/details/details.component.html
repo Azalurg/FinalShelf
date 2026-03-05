@@ -51,6 +51,16 @@
             >
           </td>
         </tr>
+        <tr *ngIf="bookDetails.duration_seconds">
+          <td class="details-info-label">Duration</td>
+          <td class="details-info-value">
+            {{ formatDuration(bookDetails.duration_seconds) }}
+          </td>
+        </tr>
+        <tr>
+          <td class="details-info-label">Score</td>
+          <td class="details-info-value">{{ bookDetails.score || '—' }}</td>
+        </tr>
       </tbody>
     </table>
   </div>

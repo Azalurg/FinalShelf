@@ -1,92 +1,80 @@
-// import { Component } from "@angular/core";
-// import { invoke } from "@tauri-apps/api/core";
-// import { CommonModule } from "@angular/common";
-// import { BookListComponent } from "../../components/book-list/book-list.component";
-// import { Book } from "../../../../models/books";
+import { Component, OnInit } from "@angular/core";
+import { invoke } from "@tauri-apps/api/core";
+import { CommonModule } from "@angular/common";
+import { Book, BookListResponse } from "../../../models/books";
+import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
 
-// @Component({
-//   selector: "app-read-books-list",
-//   standalone: true,
-//   imports: [CommonModule, BookListComponent],
-//   templateUrl: "../list/list.component.html",
-//   styleUrl: "../list/list.component.scss",
-// })
-// export class ReadBooksListPageComponent {
-//   books: Book[] = [];
-//   page = 0;
-//   limit = 21;
-//   sortBy = "title";
-//   sortOrder = "asc";
+@Component({
+  selector: "app-read-books-list",
+  standalone: true,
+  imports: [CommonModule, GenericListComponent],
+  templateUrl: "./read-books-list.component.html",
+  styleUrl: "./read-books-list.component.scss",
+})
+export class ReadBooksListPageComponent implements OnInit {
+  books: Book[] = [];
+  currentPage = 1;
+  pageSize = 21;
+  totalPages = 1;
+  totalCount = 0;
+  sortObject = {
+    "Author ^": ["author", "asc"],
+    "Author v": ["author", "desc"],
+    "Title ^": ["title", "asc"],
+    "Title v": ["title", "desc"],
+    "Score ^": ["score", "asc"],
+    "Score v": ["score", "desc"],
+  } as const;
+  sortOptions = Object.keys(this.sortObject);
+  sortIndex: keyof typeof this.sortObject = "Title ^";
 
-//   ngOnInit(): void {
-//     this.fetchBooks();
-//   }
+  ngOnInit(): void {
+    this.fetchBooks();
+  }
 
-//   async fetchBooks(): Promise<void> {
-//     try {
-//       const books = await invoke<Book[]>("get_all_read_books_command", {
-//         page: this.page + 1,
-//         limit: this.limit,
-//         sortBy: this.sortBy,
-//         sortOrder: this.sortOrder,
-//       });
-//       this.books = books;
-//       console.log(this.books);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   }
+  async fetchBooks(): Promise<void> {
+    try {
+      const response = await invoke<BookListResponse>(
+        "get_books_list_command",
+        {
+          params: {
+            page: this.currentPage,
+            limit: this.pageSize,
+            sort_by: this.getSortField(),
+            sort_order: this.getSortOrder(),
+            read_status: true,
+          },
+        }
+      );
+      this.books = response.items;
+      this.totalPages = response.total_pages;
+      this.totalCount = response.total_count;
+    } catch (error) {
+      console.error("Failed to fetch read books:", error);
+    }
+  }
 
-//   async nextPage(): Promise<void> {
-//     this.page++;
-//     await this.fetchBooks();
-//     if (this.books.length === 0) {
-//       this.page--;
-//       await this.fetchBooks();
-//     }
-//   }
+  onPageChange(newPage: number): void {
+    this.currentPage = newPage;
+    this.fetchBooks();
+  }
 
-//   prevPage(): void {
-//     if (this.page > 0) {
-//       this.page--;
-//       this.fetchBooks();
-//     }
-//   }
+  onPageSizeChange(newSize: number): void {
+    this.pageSize = newSize;
+    this.currentPage = 1;
+    this.fetchBooks();
+  }
 
-//   async changePageSize(event: Event): Promise<void> {
-//     const selectElement = event.target as HTMLSelectElement;
-//     const newPageSize = parseInt(selectElement.value, 10);
+  onSortChange(sortIndex: string): void {
+    this.sortIndex = sortIndex as keyof typeof this.sortObject;
+    this.fetchBooks();
+  }
 
-//     this.limit = newPageSize;
-//     this.page = 0; // Reset to the first page whenever the page size changes
-//     await this.fetchBooks();
-//   }
+  private getSortField(): string {
+    return this.sortObject[this.sortIndex][0];
+  }
 
-//   async changeSortOrder(event: Event): Promise<void> {
-//     const selectElement = event.target as HTMLSelectElement;
-//     const value = parseInt(selectElement.value, 0);
-//     if (value === 0) {
-//       this.sortBy = "author_name";
-//       this.sortOrder = "asc";
-//     }
-//     if (value === 1) {
-//       this.sortBy = "title";
-//       this.sortOrder = "asc";
-//     }
-//     if (value === 2) {
-//       this.sortBy = "title";
-//       this.sortOrder = "desc";
-//     }
-//     if (value === 3) {
-//       this.sortBy = "author_name";
-//       this.sortOrder = "asc";
-//     }
-//     if (value === 4) {
-//       this.sortBy = "author_name";
-//       this.sortOrder = "desc";
-//     }
-//     await this.fetchBooks();
-//   }
-// }
-
-// // https://github.com/sprout2000/tauview/blob/main/src/Grid.tsx
+  private getSortOrder(): string {
+    return this.sortObject[this.sortIndex][1];
+  }
+}

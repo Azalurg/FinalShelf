@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { AbsolutePath } from "../../models/absolute-paths";
 
@@ -10,15 +10,25 @@ import { AbsolutePath } from "../../models/absolute-paths";
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
-export class SettingsPageComponent {
+export class SettingsPageComponent implements OnInit {
   darkMode = false;
   selectedTheme = "default";
   themes = ["default", "dark", "light", "lsd", "night-city"];
   absolutePaths: AbsolutePath[] = [];
   selectedPath: AbsolutePath | null = null;
+  appVersion = "";
 
   ngOnInit(): void {
     this.fetchAbsolutePaths();
+    this.fetchVersion();
+  }
+
+  async fetchVersion(): Promise<void> {
+    try {
+      this.appVersion = await invoke<string>("get_version_command");
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   // ----------------- Functions -----------------
@@ -39,30 +49,39 @@ export class SettingsPageComponent {
 
   async quickScan(): Promise<void> {
     try {
-      await invoke("quick_scan_command");
-      alert("Scan completed successfully!");
+      const result = await invoke<any>("quick_scan_command");
+      alert(
+        `Quick scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
+      );
     } catch (error) {
       console.error("Error - quick_scan_command", error);
       alert("Error");
     }
   }
 
+  async fullScan(): Promise<void> {
+    try {
+      const result = await invoke<any>("full_scan_command");
+      alert(
+        `Full scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
+      );
+    } catch (error) {
+      console.error("Error - full_scan_command", error);
+      alert("Error");
+    }
+  }
+
   async ping(): Promise<void> {
-    console.log("Ping");
     try {
       await invoke("ping_command");
-      console.log("Pong");
     } catch (error) {
-      console.log("Error");
+      console.error("Ping failed:", error);
     }
   }
 
   async updatePath(event: Event): Promise<void> {
-    console.log("Trying to update path");
-
     const selectElement = event.target as HTMLSelectElement;
-    const absolutePathId = parseInt(selectElement.value, 10); // Parse the value as an integer
-    console.log("Selected path ID: ", absolutePathId);
+    const absolutePathId = parseInt(selectElement.value, 10);
 
     try {
       await invoke("set_current_absolute_path_by_id_command", {

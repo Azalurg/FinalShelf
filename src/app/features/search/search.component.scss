@@ -1,0 +1,43 @@
+.search-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-fields {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .label {
+    color: var(--foreground-alt);
+    font-size: 0.85rem;
+  }
+
+  button {
+    background-color: var(--shadow-3);
+    border: none;
+    color: var(--foreground-alt);
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.34rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+
+    &:hover {
+      background-color: var(--shadow-2);
+    }
+
+    &.active {
+      background-color: var(--accent);
+      color: var(--foreground);
+    }
+  }
+}
+
+.search-info {
+  color: var(--foreground-alt);
+  font-size: 0.85rem;
+}

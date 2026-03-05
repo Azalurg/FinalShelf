@@ -1,8 +1,7 @@
-// generic-list.component.ts
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { getCurrentAbsolutePath } from "../../utils/getCurrentAbsolutePath";
 import {
   convertImgPathAuthor,
@@ -19,11 +18,11 @@ interface ListConfig {
 @Component({
   selector: "app-generic-list",
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: "./generic-list.component.html",
   styleUrls: ["./generic-list.component.scss"],
 })
-export class GenericListComponent {
+export class GenericListComponent implements OnInit {
   @Input() items: any[] = [];
   @Input() listType: "books" | "authors" = "books";
   @Input() config: ListConfig = {
@@ -39,24 +38,20 @@ export class GenericListComponent {
   @Output() pageSizeChange = new EventEmitter<number>();
   @Output() sortChange = new EventEmitter<string>();
 
-  getSrc: (path: string) => string = (path) => path;
-  absolute_path = "";
-  isLoaded = true;
+  getSrc: (path: string) => string = () => "";
+  absolutePath = "";
+  isLoaded = false;
 
-  constructor() {
+  ngOnInit(): void {
     getCurrentAbsolutePath().then((path) => {
-      this.absolute_path = path;
-      this.isLoaded = true; // Mark as loaded once the path is available
-    });
-    if (this.listType === "books") {
-      this.getSrc = (path: string) =>
-        convertImgPathBook(path, this.absolute_path);
-    }
+      this.absolutePath = path;
+      this.isLoaded = true;
 
-    if (this.listType === "authors") {
-      this.getSrc = (path: string) =>
-        convertImgPathAuthor(path, this.absolute_path);
-    }
+      this.getSrc =
+        this.listType === "authors"
+          ? (p: string) => convertImgPathAuthor(p, this.absolutePath)
+          : (p: string) => convertImgPathBook(p, this.absolutePath);
+    });
   }
 
   prevPage(): void {

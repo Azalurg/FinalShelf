@@ -7,24 +7,17 @@ interface Book {
   create_date: string;
   read: boolean;
   score: number;
+  duration_seconds: number | null;
 }
 
-// interface BookDetails extends Book {
-//     duration: number,
-//     year: number,
-//     genre_id: number,
-//     genre_name: string,
-//     author_picture_path: string,
-//     lector_id: number,
-//     lector_name: string,
-// }
-
-interface BookListResponse {
-  books: Book[];
+interface ListResponse<T> {
+  items: T[];
   total_count: number;
   page: number;
   limit: number;
   total_pages: number;
 }
 
-export { Book, BookListResponse };
+type BookListResponse = ListResponse<Book>;
+
+export { Book, BookListResponse, ListResponse };

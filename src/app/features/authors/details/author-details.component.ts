@@ -1,28 +1,25 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { AuthorDetails } from "../../../models/authors";
-import {
-  convertImgPathAuthor,
-  convertImgPathBook,
-} from "../../../shared/utils/convertImgPath";
+import { convertImgPathAuthor } from "../../../shared/utils/convertImgPath";
 import { getCurrentAbsolutePath } from "../../../shared/utils/getCurrentAbsolutePath";
+import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
 
 @Component({
   selector: "app-author-details",
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, GenericListComponent],
   templateUrl: "./author-details.component.html",
   styleUrl: "./author-details.component.scss",
 })
-export class AuthorDetailsPageComponent {
-  authorDetails: AuthorDetails | any;
-  absolute_path = "";
+export class AuthorDetailsPageComponent implements OnInit {
+  authorDetails: AuthorDetails | null = null;
+  absolutePath = "";
 
   getSrcAuthor = (path: string) =>
-    convertImgPathAuthor(path, this.absolute_path);
-  getSrcBook = (path: string) => convertImgPathBook(path, this.absolute_path);
+    convertImgPathAuthor(path, this.absolutePath);
 
   constructor(private route: ActivatedRoute) {}
 
@@ -32,23 +29,21 @@ export class AuthorDetailsPageComponent {
       if (authorName) {
         this.fetchAuthorDetails(authorName);
       }
+    });
 
-      getCurrentAbsolutePath().then((path) => {
-        this.absolute_path = path;
-      });
+    getCurrentAbsolutePath().then((path) => {
+      this.absolutePath = path;
     });
   }
 
-  async fetchAuthorDetails(authorName: string) {
+  async fetchAuthorDetails(authorName: string): Promise<void> {
     try {
-      const authorDetailsData = await invoke<AuthorDetails>(
+      this.authorDetails = await invoke<AuthorDetails>(
         "get_author_command",
         { name: authorName },
       );
-      this.authorDetails = authorDetailsData;
-      console.log(this.authorDetails);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch author details:", error);
     }
   }
 }

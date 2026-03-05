@@ -17,13 +17,5 @@ pub struct Book {
     pub read: Option<bool>,
     pub score: Option<i32>,
     pub relative_file_path: String,
-}
-
-#[derive(Serialize)]
-pub struct BookListResponse {
-    pub books: Vec<Book>,
-    pub total_count: i64,
-    pub page: i64,
-    pub limit: i64,
-    pub total_pages: i64,
+    pub duration_seconds: Option<i32>,
 }

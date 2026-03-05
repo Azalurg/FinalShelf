@@ -18,3 +18,10 @@ pub struct AuthorWithBooks {
     pub author: Author,
     pub books: Vec<Book>,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AuthorListItem {
+    pub name: String,
+    pub relative_img_path: Option<String>,
+    pub books_count: i64,
+}

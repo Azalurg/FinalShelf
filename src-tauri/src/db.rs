@@ -10,7 +10,7 @@ const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
 
-    let database_url: String = env::var("DATABASE_URL").unwrap_or("./finalshelf.sql".to_string());
+    let database_url: String = env::var("DATABASE_URL").unwrap_or("../finalshelf.sql".to_string());
 
     SqliteConnection::establish(&database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
