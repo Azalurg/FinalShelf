@@ -22,7 +22,10 @@ pub fn get_all_absolute_path() -> Vec<AbsolutePath> {
     let query = crate::schema::absolute_paths::dsl::absolute_paths
         .order_by(crate::schema::absolute_paths::dsl::last_use_date.desc());
 
-    query.load::<AbsolutePath>(conn).expect("Error loading absolute paths")
+    query.load::<AbsolutePath>(conn).unwrap_or_else(|e| {
+        eprintln!("Error loading absolute paths: {}", e);
+        Vec::new()
+    })
 }
 
 fn check_if_absolute_path_in_db_by_name(absolute_path: &str) -> bool {

@@ -104,10 +104,12 @@ pub fn get_author(name: &str) -> Result<AuthorWithBooks, String> {
 
 pub fn add_author(new_author: &Author) {
     let conn = &mut establish_connection();
-    diesel::insert_into(authors::table)
+    if let Err(e) = diesel::insert_into(authors::table)
         .values(new_author)
         .execute(conn)
-        .expect("Error saving new author");
+    {
+        eprintln!("Error saving new author '{}': {}", new_author.name, e);
+    }
 }
 
 pub fn is_author_exists(name: &str) -> bool {

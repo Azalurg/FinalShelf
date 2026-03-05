@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { AbsolutePath } from "../../models/absolute-paths";
+import { NotificationService } from "../../shared/services/notification.service";
 
 interface ScanResult {
   added: number;
@@ -38,6 +39,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   isScanning = false;
   scanProgress: ScanProgress | null = null;
   private unlistenScanProgress: UnlistenFn | null = null;
+
+  constructor(private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.fetchAbsolutePaths();
@@ -93,6 +96,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error(error);
+      this.notificationService.error("Failed to load library paths");
     }
   }
 
@@ -109,12 +113,12 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
     try {
       const result = await invoke<ScanResult>("quick_scan_command");
-      alert(
+      this.notificationService.success(
         `Quick scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
       );
     } catch (error) {
       console.error("Error - quick_scan_command", error);
-      alert("Error: " + error);
+      this.notificationService.error(`Scan failed: ${error}`);
     } finally {
       this.isScanning = false;
       this.scanProgress = null;
@@ -134,12 +138,12 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
     try {
       const result = await invoke<ScanResult>("full_scan_command");
-      alert(
+      this.notificationService.success(
         `Full scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
       );
     } catch (error) {
       console.error("Error - full_scan_command", error);
-      alert("Error: " + error);
+      this.notificationService.error(`Scan failed: ${error}`);
     } finally {
       this.isScanning = false;
       this.scanProgress = null;
@@ -149,8 +153,10 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   async ping(): Promise<void> {
     try {
       await invoke("ping_command");
+      this.notificationService.info("Pong!");
     } catch (error) {
       console.error("Ping failed:", error);
+      this.notificationService.error("Ping failed");
     }
   }
 
@@ -161,25 +167,27 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     try {
       await invoke("set_current_absolute_path_by_id_command", {
         absolutePathId,
-      }); // Pass the ID as an integer
-      alert("Path updated successfully!");
+      });
+      this.notificationService.success("Library path updated successfully");
     } catch (error) {
       console.error("Error - update_path", error);
-      alert("Error");
+      this.notificationService.error("Failed to update library path");
     }
   }
 
   async addPath(): Promise<void> {
+    const absolutePath = prompt(
+      "Enter path to the directory with audiobooks files: "
+    );
+    if (!absolutePath) return;
+
     try {
-      const absolutePath = prompt(
-        "Enter path to the directory with audiobooks files: "
-      );
       await invoke("add_absolute_path_command", { absolutePath });
       this.fetchAbsolutePaths();
-      alert("Add new absolute path! (ok)");
+      this.notificationService.success("Library path added successfully");
     } catch (error) {
       console.error("Error - add_absolute_path_command", error);
-      alert(error);
+      this.notificationService.error(`Failed to add path: ${error}`);
     }
   }
 
