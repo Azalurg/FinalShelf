@@ -76,7 +76,7 @@ export class SidebarComponent {
   async exit(): Promise<void> {
     try {
       await invoke("kill_command");
-    } catch (error) {
+    } catch {
       alert("Error");
     }
   }

@@ -22,7 +22,7 @@ interface SearchField {
 })
 export class SearchPageComponent implements OnInit, OnDestroy {
   books: Book[] = [];
-  searchQuery: string = "";
+  searchQuery = "";
   totalCount = 0;
   currentPage = 1;
   pageSize = 21;

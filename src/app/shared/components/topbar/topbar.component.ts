@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Router, RouterModule, NavigationEnd } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { filter, Subscription } from "rxjs";
@@ -11,12 +11,12 @@ import { filter, Subscription } from "rxjs";
   templateUrl: "./topbar.component.html",
   styleUrl: "./topbar.component.scss",
 })
-export class TopbarComponent implements OnDestroy {
+export class TopbarComponent implements OnInit, OnDestroy {
   navPaths: { name: string; url: string }[] = [];
   currentTime = "";
   searchTerm = "";
 
-  private intervalId: any;
+  private intervalId: ReturnType<typeof setInterval> | null = null;
   private routerSubscription: Subscription;
 
   constructor(private router: Router) {

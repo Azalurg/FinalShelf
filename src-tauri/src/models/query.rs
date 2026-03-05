@@ -64,13 +64,10 @@ impl ListParams {
     /// Build a sanitized SQL LIKE pattern from the `search` field.
     /// Returns `None` if search is empty/blank.
     pub fn search_pattern(&self) -> Option<String> {
-        self.search
-            .as_ref()
-            .filter(|s| !s.trim().is_empty())
-            .map(|s| {
-                let sanitized = s.replace('%', "").replace('_', "");
-                format!("%{}%", sanitized)
-            })
+        self.search.as_ref().filter(|s| !s.trim().is_empty()).map(|s| {
+            let sanitized = s.replace(['%', '_'], "");
+            format!("%{}%", sanitized)
+        })
     }
 
     /// Check if a specific field should be included in the search.
@@ -86,10 +83,7 @@ impl ListParams {
     pub fn validate(&self) -> Result<(), String> {
         if let Some(ref order) = self.sort_order {
             if order != "asc" && order != "desc" {
-                return Err(format!(
-                    "Invalid sort_order: '{}'. Must be 'asc' or 'desc'.",
-                    order
-                ));
+                return Err(format!("Invalid sort_order: '{}'. Must be 'asc' or 'desc'.", order));
             }
         }
         if let Some(page) = self.page {

@@ -3,6 +3,12 @@ import { Component, OnInit } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { AbsolutePath } from "../../models/absolute-paths";
 
+interface ScanResult {
+  added: number;
+  skipped: number;
+  errors: unknown[];
+}
+
 @Component({
   selector: "app-settings",
   standalone: true,
@@ -49,7 +55,7 @@ export class SettingsPageComponent implements OnInit {
 
   async quickScan(): Promise<void> {
     try {
-      const result = await invoke<any>("quick_scan_command");
+      const result = await invoke<ScanResult>("quick_scan_command");
       alert(
         `Quick scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
       );
@@ -61,7 +67,7 @@ export class SettingsPageComponent implements OnInit {
 
   async fullScan(): Promise<void> {
     try {
-      const result = await invoke<any>("full_scan_command");
+      const result = await invoke<ScanResult>("full_scan_command");
       alert(
         `Full scan complete: ${result.added} added, ${result.skipped} skipped, ${result.errors.length} errors`
       );
