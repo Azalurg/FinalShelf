@@ -17,7 +17,8 @@
 | [M5: Tags & Custom Labels](#milestone-5-tags--custom-labels) | 2 | 7 | 1–2 weeks |
 | [M6: Advanced Statistics & Data Export](#milestone-6-advanced-statistics--data-export) | 3 | 9 | 2–3 weeks |
 | [M7: Infrastructure & Quality](#milestone-7-infrastructure--quality) | 3 | 9 | 2–3 weeks |
-| **Total** | **21** | **68** | **12–19 weeks** |
+| [M8: Testing & PR Quality Gate](#milestone-8-testing--pr-quality-gate) | 3 | 9 | 1–2 weeks |
+| **Total** | **24** | **77** | **13–21 weeks** |
 
 ---
 
@@ -1071,6 +1072,132 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 ---
 
+## Milestone 8: Testing & PR Quality Gate
+
+Create a baseline automated test set and enforce PR checks via GitHub Actions before merge.
+
+> **Estimated time:** 1–2 weeks
+
+---
+
+### Story 8.1: Establish baseline automated test set — M {#story-8-1}
+
+**As a** developer **I want** a reliable baseline set of frontend and backend tests **so that** regressions are caught early.
+
+**Acceptance criteria:**
+- Frontend test suite includes meaningful tests for at least 3 key components/services
+- Rust test suite includes unit tests for at least 3 service/model behaviors
+- Test commands are documented and run locally with consistent results
+
+#### Task 8.1.1: Add frontend unit tests for critical flows {#task-8-1-1}
+
+**Type:** Test
+
+**Description:** Add Angular unit tests for critical areas (e.g., books list filtering behavior, settings theme persistence, score editing interaction). Use existing Karma/Jasmine setup.
+
+**Files/components:**
+- `src/app/features/books/list/list.component.spec.ts` (new or extended)
+- `src/app/features/settings/settings.component.spec.ts` (new or extended)
+- `src/app/features/books/details/details.component.spec.ts` (new or extended)
+
+**Dependencies:** None
+
+**DoD:** `npm test -- --watch=false --browsers=ChromeHeadless` passes with added coverage for key user flows.
+
+#### Task 8.1.2: Add Rust unit tests for service logic {#task-8-1-2}
+
+**Type:** Test
+
+**Description:** Add focused unit tests for list/query sanitization and service-level logic where pure functions are available. Prefer deterministic tests without filesystem side effects.
+
+**Files/components:**
+- `src-tauri/src/models/query.rs` (test module)
+- `src-tauri/src/services/books_service.rs` (test module)
+- `src-tauri/src/services/absolute_paths_service.rs` (test module)
+
+**Dependencies:** None
+
+**DoD:** `cargo test --manifest-path src-tauri/Cargo.toml` passes and validates key logic paths.
+
+---
+
+### Story 8.2: Add GitHub Actions workflow for required PR checks — M {#story-8-2}
+
+**As a** maintainer **I want** CI checks to run automatically on pull requests **so that** only validated changes can be merged.
+
+**Acceptance criteria:**
+- GitHub Actions runs on pull requests and pushes to main development branches
+- Workflow runs frontend lint/tests and Rust check/tests
+- Workflow fails the PR when any check fails
+
+#### Task 8.2.1: Create CI workflow for lint + test + build checks {#task-8-2-1}
+
+**Type:** DevOps
+
+**Description:** Add a workflow that sets up Node and Rust toolchains, installs dependencies, and runs: frontend lint, frontend tests, Rust check, Rust tests, Rust clippy.
+
+**Files/components:**
+- `.github/workflows/ci.yml` (new)
+
+**Dependencies:** [Task 8.1.1](#task-8-1-1), [Task 8.1.2](#task-8-1-2)
+
+**DoD:** CI workflow completes successfully on PR with all required jobs green.
+
+#### Task 8.2.2: Configure PR trigger scope and branch protection guidance {#task-8-2-2}
+
+**Type:** DevOps
+
+**Description:** Configure workflow triggers for `pull_request` and key branches. Document required status checks and recommended branch protection settings.
+
+**Files/components:**
+- `.github/workflows/ci.yml`
+- `README.md` or `docs/DOCUMENTATION.md`
+
+**Dependencies:** [Task 8.2.1](#task-8-2-1)
+
+**DoD:** PRs cannot be merged without passing CI checks (enforced via branch protection configuration).
+
+---
+
+### Story 8.3: Enforce version bump policy for every PR — S {#story-8-3}
+
+**As a** maintainer **I want** each PR to include explicit version management **so that** releases and change tracking remain consistent.
+
+**Acceptance criteria:**
+- Every PR includes a version bump decision (`small`, `mid`, `big`, or `custom`) using `bump.sh`
+- CI validates that version files are updated when required by PR scope
+- Team guidelines document when to use each bump type
+
+#### Task 8.3.1: Document version bump policy in contributor guidance {#task-8-3-1}
+
+**Type:** Docs
+
+**Description:** Add contribution guidance that each PR must run `./bump.sh <type>` and include updated version files (`package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`) unless explicitly exempted.
+
+**Files/components:**
+- `.github/copilot-instructions.md`
+- `README.md` (optional contributor section)
+
+**Dependencies:** None
+
+**DoD:** Policy is clear and visible to contributors and AI agents.
+
+#### Task 8.3.2: Add CI guard for version bump consistency {#task-8-3-2}
+
+**Type:** DevOps
+
+**Description:** Add a CI step/script that validates version consistency between app manifests and fails the workflow when versions diverge or are not bumped according to policy.
+
+**Files/components:**
+- `.github/workflows/ci.yml`
+- `bump.sh` (if additional validation helper is needed)
+
+**Dependencies:** [Task 8.2.1](#task-8-2-1)
+
+**DoD:** PR CI fails when version files are inconsistent or policy is not satisfied.
+
+---
+
 ## Risks and External Dependencies
 
 | # | Risk | Severity | Mitigation |
@@ -1082,7 +1209,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 | R5 | **`panic!()` as exit** — `kill_command` uses `panic!()` which may corrupt in-flight DB writes and produces error output. | Medium | [Task 1.1.1](#task-1-1-1) replaces with graceful exit. |
 | R6 | **Theme not persisted** — Theme resets on every app restart, degrading UX. | Low | [Task 2.1.1](#task-2-1-1) saves to `localStorage`. |
 | R7 | **`author_name` VARCHAR(36)** — Sized for UUIDs; PostgreSQL/MySQL strict mode would truncate long names. SQLite ignores length limits but this is a portability concern. | Low | Address during [Story 7.2](#story-7-2) PK migration by widening to `TEXT`. |
-| R8 | **No test coverage** — Karma/Jasmine are configured but no meaningful tests exist for either frontend or backend. | Medium | Add testing tasks per story as the codebase grows; prioritize service-layer tests. |
+| R8 | **No test coverage** — Karma/Jasmine are configured but no meaningful tests exist for either frontend or backend. | Medium | Implement [Milestone 8](#milestone-8-testing--pr-quality-gate) to establish baseline tests and PR quality gates. |
 | R9 | **Angular 17 + Node.js compatibility** — Build warnings about odd-numbered Node.js versions (v25.x). Production should target an LTS version (v22.x). | Low | Pin Node.js version in `.nvmrc` or `package.json` `engines`. |
 | R10 | **Unused `uuid` crate** — `uuid` is declared as a dependency but never used. Minor bloat. | Low | Remove from `Cargo.toml` during any cleanup pass. |
 
