@@ -1,5 +1,83 @@
 <div class="app-page">
-  <h1>Books</h1>
+  <div class="page-header">
+    <h1>Books</h1>
+    <div class="page-header-actions">
+      <button
+        class="filter-toggle-btn"
+        [class.active]="hasActiveFilters"
+        (click)="toggleFilters()"
+      >
+        <img src="assets/icons/layers-svgrepo-com.svg" alt="Filter" />
+        <span *ngIf="hasActiveFilters" class="filter-badge"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-panel" *ngIf="showFilters">
+    <div class="filter-group">
+      <label for="author-filter">Author</label>
+      <select
+        id="author-filter"
+        [(ngModel)]="filters.author_name"
+        (change)="onFilterChange()"
+      >
+        <option [ngValue]="null">All Authors</option>
+        <option *ngFor="let author of authors" [ngValue]="author.name">
+          {{ author.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="genre-filter">Genre</label>
+      <select
+        id="genre-filter"
+        [(ngModel)]="filters.genre"
+        (change)="onFilterChange()"
+      >
+        <option [ngValue]="null">All Genres</option>
+        <option *ngFor="let genre of genres" [ngValue]="genre.name">
+          {{ genre.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="lector-filter">Lector</label>
+      <select
+        id="lector-filter"
+        [(ngModel)]="filters.lector"
+        (change)="onFilterChange()"
+      >
+        <option [ngValue]="null">All Lectors</option>
+        <option *ngFor="let lector of lectors" [ngValue]="lector.name">
+          {{ lector.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="read-filter">Read Status</label>
+      <select
+        id="read-filter"
+        [(ngModel)]="filters.read_status"
+        (change)="onFilterChange()"
+      >
+        <option [ngValue]="null">All</option>
+        <option [ngValue]="true">Read</option>
+        <option [ngValue]="false">Unread</option>
+      </select>
+    </div>
+
+    <button
+      class="clear-filters-btn"
+      (click)="clearFilters()"
+      [disabled]="!hasActiveFilters"
+    >
+      Clear Filters
+    </button>
+  </div>
+
   <app-generic-list
     [items]="books"
     listType="books"

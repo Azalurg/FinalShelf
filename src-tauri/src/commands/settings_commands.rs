@@ -1,8 +1,10 @@
 // Kill, Change background, Add path, change path, remove path
 
+use tauri::{Emitter, Window};
+
 use crate::{
     models::path::AbsolutePath,
-    scanner::{scan, ScanResult},
+    scanner::{scan_with_progress, ScanProgress, ScanResult},
     services::absolute_paths_service::{
         add_absolute_path, get_all_absolute_path, get_current_absolute_path, set_current_absolute_path_by_id,
     },
@@ -19,18 +21,22 @@ pub fn get_version_command() -> String {
 }
 
 #[tauri::command]
-pub fn quick_scan_command() -> Result<ScanResult, String> {
-    scan(false)
+pub fn quick_scan_command(window: Window) -> Result<ScanResult, String> {
+    scan_with_progress(false, |progress: ScanProgress| {
+        let _ = window.emit("scan-progress", progress);
+    })
 }
 
 #[tauri::command]
-pub fn full_scan_command() -> Result<ScanResult, String> {
-    scan(true)
+pub fn full_scan_command(window: Window) -> Result<ScanResult, String> {
+    scan_with_progress(true, |progress: ScanProgress| {
+        let _ = window.emit("scan-progress", progress);
+    })
 }
 
 #[tauri::command]
 pub fn kill_command() -> Result<(), String> {
-    panic!("\n--- Killed by user ---\n");
+    std::process::exit(0);
 }
 
 #[tauri::command]
@@ -39,7 +45,7 @@ pub fn add_absolute_path_command(absolute_path: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn get_all_absolute_path_command() -> Vec<AbsolutePath> {
+pub fn get_all_absolute_path_command() -> Result<Vec<AbsolutePath>, String> {
     get_all_absolute_path()
 }
 

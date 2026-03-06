@@ -59,7 +59,35 @@
         </tr>
         <tr>
           <td class="details-info-label">Score</td>
-          <td class="details-info-value">{{ bookDetails.score || '—' }}</td>
+          <td class="details-info-value">
+            <div class="star-rating">
+              <button
+                *ngFor="let star of stars"
+                type="button"
+                class="star-btn"
+                [attr.aria-label]="'Rate ' + star + ' out of 5'"
+                (click)="setScore(star)"
+                (mouseenter)="hoverScore = star"
+                (mouseleave)="hoverScore = 0"
+              >
+                <img
+                  src="assets/icons/star-svgrepo-com.svg"
+                  alt="Star"
+                  [class.active]="hoverScore >= star || (hoverScore === 0 && bookDetails.score >= star)"
+                />
+              </button>
+              <button
+                type="button"
+                class="clear-score-btn"
+                *ngIf="bookDetails.score > 0"
+                (click)="setScore(0)"
+                aria-label="Clear rating"
+                title="Clear rating"
+              >
+                <img src="assets/icons/close-circle-svgrepo-com.svg" alt="Clear" />
+              </button>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>

@@ -37,6 +37,16 @@ Run the smallest relevant checks for touched areas first, then broader checks:
 
 If a command fails due to pre-existing issues, report clearly what is unrelated.
 
+## PR Version Management
+
+- For every PR, you must manage versioning with the bump script before merge.
+- Run `./bump.sh <small|mid|big|custom>` based on scope and include updated version files in the PR.
+- Ensure version values stay synchronized across:
+	- `package.json`
+	- `src-tauri/Cargo.toml`
+	- `src-tauri/tauri.conf.json`
+- If a PR intentionally skips a bump, explicitly document the reason in the PR description.
+
 ## Common development commands
 
 - Frontend dev server: `npm start`

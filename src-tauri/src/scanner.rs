@@ -39,11 +39,23 @@ pub struct ScanResult {
     pub errors: Vec<String>,
 }
 
-/// Run a library scan.
+#[derive(serde::Serialize, Clone, Debug)]
+pub struct ScanProgress {
+    pub phase: String,
+    pub current: i64,
+    pub total: i64,
+    pub message: String,
+}
+
+/// Run a library scan with optional progress callback.
 ///
 /// - `full = false` (quick scan): skips directories already present in the DB.
 /// - `full = true`  (full scan):  examines every directory, adds missing books.
-pub fn scan(full: bool) -> Result<ScanResult, String> {
+/// - `on_progress` is called during scanning to report progress.
+pub fn scan_with_progress<F>(full: bool, mut on_progress: F) -> Result<ScanResult, String>
+where
+    F: FnMut(ScanProgress),
+{
     let absolute_path_obj = get_current_absolute_path()
         .ok_or_else(|| "No library path configured. Add a path in Settings first.".to_string())?;
 
@@ -58,25 +70,64 @@ pub fn scan(full: bool) -> Result<ScanResult, String> {
     let start = Instant::now();
 
     // -- Phase 1: Discovery ---------------------------------------------------
+    on_progress(ScanProgress {
+        phase: "discovery".to_string(),
+        current: 0,
+        total: 0,
+        message: "Discovering directories...".to_string(),
+    });
+
     let skip = build_skip_set(full, base_path);
     let book_dirs = discover_book_dirs(base_path, &skip);
+    let total_dirs = book_dirs.len() as i64;
+
+    on_progress(ScanProgress {
+        phase: "discovery".to_string(),
+        current: total_dirs,
+        total: total_dirs,
+        message: format!("Discovered {} new book directories", total_dirs),
+    });
+
     println!("Discovered {} new book directories", book_dirs.len());
 
     // -- Phase 2: Extraction --------------------------------------------------
-    let candidates: Vec<BookCandidate> = book_dirs
-        .iter()
-        .filter_map(|dir| match extract_metadata(dir, base_path) {
-            Ok(candidate) => Some(candidate),
+    let mut candidates: Vec<BookCandidate> = Vec::new();
+    for (idx, dir) in book_dirs.iter().enumerate() {
+        on_progress(ScanProgress {
+            phase: "extraction".to_string(),
+            current: idx as i64 + 1,
+            total: total_dirs,
+            message: format!("Extracting metadata from: {}", dir.file_name().unwrap_or_default().to_string_lossy()),
+        });
+
+        match extract_metadata(dir, base_path) {
+            Ok(candidate) => candidates.push(candidate),
             Err(e) => {
                 eprintln!("Skipping {:?}: {}", dir, e);
-                None
             }
-        })
-        .collect();
+        }
+    }
     println!("Extracted metadata for {} books", candidates.len());
 
     // -- Phase 3: Persist -----------------------------------------------------
-    let result = persist_batch(candidates);
+    on_progress(ScanProgress {
+        phase: "persist".to_string(),
+        current: 0,
+        total: candidates.len() as i64,
+        message: "Saving to database...".to_string(),
+    });
+
+    let result = persist_batch_with_progress(candidates, &mut on_progress);
+
+    on_progress(ScanProgress {
+        phase: "complete".to_string(),
+        current: result.added,
+        total: result.added + result.skipped,
+        message: format!(
+            "Scan complete: {} added, {} skipped, {} errors",
+            result.added, result.skipped, result.errors.len()
+        ),
+    });
 
     println!(
         "Scan complete: {} added, {} skipped, {} errors. Elapsed: {:?}",
@@ -316,12 +367,23 @@ fn get_file_date(path: &Path) -> Option<NaiveDateTime> {
 // Phase 3 – Persist
 // ---------------------------------------------------------------------------
 
-fn persist_batch(candidates: Vec<BookCandidate>) -> ScanResult {
+fn persist_batch_with_progress<F>(candidates: Vec<BookCandidate>, on_progress: &mut F) -> ScanResult
+where
+    F: FnMut(ScanProgress),
+{
     let mut added: i64 = 0;
     let mut skipped: i64 = 0;
     let mut errors: Vec<String> = Vec::new();
+    let total = candidates.len() as i64;
 
-    for candidate in candidates {
+    for (idx, candidate) in candidates.into_iter().enumerate() {
+        on_progress(ScanProgress {
+            phase: "persist".to_string(),
+            current: idx as i64 + 1,
+            total,
+            message: format!("Saving: {}", candidate.title),
+        });
+
         // Skip books that are already in the database
         if is_book_exists(&candidate.title) {
             skipped += 1;
@@ -335,7 +397,11 @@ fn persist_batch(candidates: Vec<BookCandidate>) -> ScanResult {
                 relative_img_path: candidate.author_img_path,
             };
             println!("Adding author: {:?}", author);
-            add_author(&author);
+            if let Err(e) = add_author(&author) {
+                errors.push(format!("Failed to insert author '{}': {}", author.name, e));
+                skipped += 1;
+                continue;
+            }
         }
 
         let book = Book {

@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
+import { NotificationService } from "../../services/notification.service";
 
 interface MenuItem {
   path: string[];
@@ -18,6 +19,7 @@ interface MenuItem {
   styleUrl: "./sidebar.component.scss",
 })
 export class SidebarComponent {
+  constructor(private notificationService: NotificationService) {}
   menuItems: MenuItem[] = [
     {
       path: ["/"],
@@ -76,8 +78,9 @@ export class SidebarComponent {
   async exit(): Promise<void> {
     try {
       await invoke("kill_command");
-    } catch {
-      alert("Error");
+    } catch (error) {
+      console.error("Exit failed:", error);
+      this.notificationService.error("Failed to exit application");
     }
   }
 }
