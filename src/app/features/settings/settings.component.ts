@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { AbsolutePath } from "../../models/absolute-paths";
 import { NotificationService } from "../../shared/services/notification.service";
+import { AVAILABLE_THEMES, THEME_STORAGE_KEY } from "../../shared/constants/theme.constants";
 
 interface ScanResult {
   added: number;
@@ -18,8 +19,6 @@ interface ScanProgress {
   message: string;
 }
 
-const THEME_STORAGE_KEY = "finalshelf-theme";
-
 @Component({
   selector: "app-settings",
   standalone: true,
@@ -30,7 +29,7 @@ const THEME_STORAGE_KEY = "finalshelf-theme";
 export class SettingsPageComponent implements OnInit, OnDestroy {
   darkMode = false;
   selectedTheme = "default";
-  themes = ["default", "dark", "light", "lsd", "night-city"];
+  themes = AVAILABLE_THEMES;
   absolutePaths: AbsolutePath[] = [];
   selectedPath: AbsolutePath | null = null;
   appVersion = "";

@@ -4,9 +4,7 @@ import { RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "./shared/components/sidebar/sidebar.component";
 import { TopbarComponent } from "./shared/components/topbar/topbar.component";
 import { NotificationContainerComponent } from "./shared/components/notification-container/notification-container.component";
-
-const THEME_STORAGE_KEY = "finalshelf-theme";
-const AVAILABLE_THEMES = ["default", "dark", "light", "lsd", "night-city"];
+import { AVAILABLE_THEMES, THEME_STORAGE_KEY } from "./shared/constants/theme.constants";
 
 @Component({
   selector: "app-root",

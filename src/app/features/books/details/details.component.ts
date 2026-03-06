@@ -16,6 +16,7 @@ export class BookDetailsPageComponent implements OnInit {
   bookDetails: Book | null = null;
   absolutePath = "";
   hoverScore = 0;
+  stars = [1, 2, 3, 4, 5];
 
   getSrc = (path: string) => convertImgPathBook(path, this.absolutePath);
 
@@ -57,11 +58,13 @@ export class BookDetailsPageComponent implements OnInit {
 
   async setScore(score: number): Promise<void> {
     if (this.bookDetails) {
+      const previousScore = this.bookDetails.score;
       this.bookDetails.score = score;
       try {
         await invoke("update_book_command", { book: this.bookDetails });
       } catch (error) {
         console.error("Failed to update book score:", error);
+        this.bookDetails.score = previousScore;
       }
     }
   }
