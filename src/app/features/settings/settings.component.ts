@@ -46,7 +46,10 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     this.fetchAbsolutePaths();
     this.fetchVersion();
     this.loadSavedTheme();
-    this.setupScanProgressListener();
+    this.setupScanProgressListener().catch((error) => {
+      console.error("Failed to set up scan progress listener:", error);
+      this.notificationService.warning("Scan progress updates may not be available");
+    });
   }
 
   ngOnDestroy(): void {
@@ -118,7 +121,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       );
     } catch (error) {
       console.error("Error - quick_scan_command", error);
-      this.notificationService.error(`Scan failed: ${error}`);
+      this.notificationService.error(`Scan failed: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       this.isScanning = false;
       this.scanProgress = null;
@@ -143,7 +146,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       );
     } catch (error) {
       console.error("Error - full_scan_command", error);
-      this.notificationService.error(`Scan failed: ${error}`);
+      this.notificationService.error(`Scan failed: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       this.isScanning = false;
       this.scanProgress = null;
@@ -187,7 +190,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       this.notificationService.success("Library path added successfully");
     } catch (error) {
       console.error("Error - add_absolute_path_command", error);
-      this.notificationService.error(`Failed to add path: ${error}`);
+      this.notificationService.error(`Failed to add path: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

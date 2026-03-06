@@ -45,7 +45,7 @@ pub fn add_absolute_path_command(absolute_path: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn get_all_absolute_path_command() -> Vec<AbsolutePath> {
+pub fn get_all_absolute_path_command() -> Result<Vec<AbsolutePath>, String> {
     get_all_absolute_path()
 }
 
