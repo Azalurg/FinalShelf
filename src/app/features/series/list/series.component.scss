@@ -1,0 +1,22 @@
+.series-item {
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .series-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .series-author {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .series-count {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+  }
+}

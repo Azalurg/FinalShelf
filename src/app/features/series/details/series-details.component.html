@@ -1,0 +1,32 @@
+<div class="app-page" *ngIf="seriesDetails">
+  <div class="details-container">
+    <div class="details-info">
+      <h1 class="details-title">{{ seriesDetails.series.name }}</h1>
+      <p class="series-author">
+        by <a [routerLink]="['/authors', seriesDetails.series.author_name]">{{ seriesDetails.series.author_name }}</a>
+      </p>
+      <p class="series-description" *ngIf="seriesDetails.series.description">
+        {{ seriesDetails.series.description }}
+      </p>
+      <p class="series-book-count">{{ seriesDetails.books.length }} books in this series</p>
+    </div>
+  </div>
+
+  <div class="series-books-ordered">
+    <h2>Books in Order</h2>
+    <div class="ordered-list">
+      <div *ngFor="let book of getBooksInOrder(); let i = index" class="ordered-item">
+        <span class="order-number">{{ book.series_order || (i + 1) }}</span>
+        <a [routerLink]="['/books', book.title]" class="book-title">{{ book.title }}</a>
+      </div>
+    </div>
+  </div>
+
+  <h2>All Books</h2>
+  <app-generic-list
+    [items]="seriesDetails.books"
+    listType="books"
+    [paginationEnabled]="false"
+    [sortEnabled]="false"
+  ></app-generic-list>
+</div>

@@ -1,0 +1,64 @@
+.series-author {
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.series-description {
+  margin: 1rem 0;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.series-book-count {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.series-books-ordered {
+  margin: 2rem 0;
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  .ordered-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ordered-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-surface);
+    border-radius: 4px;
+
+    .order-number {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--color-accent);
+      min-width: 2rem;
+      text-align: center;
+    }
+
+    .book-title {
+      color: var(--color-text);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+}
