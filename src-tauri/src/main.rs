@@ -10,7 +10,7 @@ mod services;
 
 use commands::{
     authors_commands::*, books_commands::*, dashboard_commands::*, genres_commands::*, lectors_commands::*,
-    search_commands::*, settings_commands::*,
+    search_commands::*, series_commands::*, settings_commands::*,
 };
 
 fn main() {
@@ -49,6 +49,14 @@ fn main() {
             // --- genres ---
             get_genres_list_command,
             get_genre_command,
+            // --- series ---
+            get_series_list_command,
+            get_series_command,
+            create_series_command,
+            update_series_command,
+            delete_series_command,
+            assign_book_to_series_command,
+            get_series_by_author_command,
             // --- dashboard ---
             get_dashboard_data_command,
         ])

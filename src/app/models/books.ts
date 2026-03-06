@@ -8,6 +8,8 @@ interface Book {
   read: boolean;
   score: number;
   duration_seconds: number | null;
+  series_id: number | null;
+  series_order: number | null;
 }
 
 interface ListResponse<T> {

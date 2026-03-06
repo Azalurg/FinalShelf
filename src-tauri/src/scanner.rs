@@ -415,6 +415,8 @@ where
             score: Some(0),
             relative_file_path: candidate.relative_file_path,
             duration_seconds: Some(candidate.duration_seconds),
+            series_id: None,
+            series_order: None,
         };
 
         println!("Adding book: {:?}", book);

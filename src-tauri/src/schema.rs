@@ -28,6 +28,17 @@ diesel::table! {
         score -> Nullable<Integer>,
         relative_file_path -> Text,
         duration_seconds -> Nullable<Integer>,
+        series_id -> Nullable<Integer>,
+        series_order -> Nullable<Integer>,
+    }
+}
+
+diesel::table! {
+    series (id) {
+        id -> Integer,
+        name -> Text,
+        author_name -> Text,
+        description -> Nullable<Text>,
     }
 }
 
@@ -46,7 +57,9 @@ diesel::table! {
 }
 
 diesel::joinable!(books -> authors (author_name));
+diesel::joinable!(books -> series (series_id));
+diesel::joinable!(series -> authors (author_name));
 diesel::joinable!(tags_books -> books (book_title));
 diesel::joinable!(tags_books -> tags (tag_id));
 
-diesel::allow_tables_to_appear_in_same_query!(absolute_paths, authors, books, tags, tags_books,);
+diesel::allow_tables_to_appear_in_same_query!(absolute_paths, authors, books, series, tags, tags_books,);
