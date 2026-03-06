@@ -17,7 +17,7 @@ use crate::{
         absolute_paths_service::get_current_absolute_path,
         authors_service::{add_author, is_author_exists},
         books_service::{add_book, get_all_book_paths, is_book_exists},
-        series_service::{create_series, get_series_by_author, assign_book_to_series},
+        series_service::{create_series, get_series_by_author},
     },
 };
 
@@ -160,10 +160,12 @@ struct BookCandidate {
     detected_series_order: Option<i32>,
 }
 
-/// Detected series information from title or directory sructure.
+/// Detected series information from title or directory structure.
+#[allow(dead_code)]
 struct SeriesDetection {
     series_name: String,
     series_order: Option<i32>,
+    /// The cleaned title with series prefix removed. Reserved for future use.
     cleaned_title: String,
 }
 
@@ -594,15 +596,7 @@ where
 
         println!("Adding book: {:?}", book);
         match add_book(&book) {
-            Ok(_) => {
-                added += 1;
-                // If series was detected but not set during book creation, assign it now
-                if series_id.is_some() {
-                    if let Err(e) = assign_book_to_series(&candidate.title, series_id, candidate.detected_series_order) {
-                        eprintln!("Failed to assign book to series: {}", e);
-                    }
-                }
-            }
+            Ok(_) => added += 1,
             Err(e) => errors.push(format!("Failed to insert {}: {}", candidate.title, e)),
         }
     }

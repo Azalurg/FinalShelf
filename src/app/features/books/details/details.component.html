@@ -65,7 +65,7 @@
                 <a class="details-link" [routerLink]="['/series', currentSeries.id]">
                   {{ currentSeries.name }}
                 </a>
-                <span *ngIf="bookDetails.series_order"> (#{{ bookDetails.series_order }})</span>
+                <span *ngIf="bookDetails.series_order !== null"> (#{{ bookDetails.series_order }})</span>
               </span>
               <span *ngIf="!currentSeries" class="no-series">Not in series</span>
               <button type="button" class="edit-series-btn" (click)="toggleSeriesEditor()" aria-label="Edit series">

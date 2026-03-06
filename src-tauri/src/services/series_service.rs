@@ -162,13 +162,17 @@ pub fn delete_series(id: i32) -> Result<(), String> {
 }
 
 /// Assign a book to a series with a specific order.
+/// Note: If series_id is None, series_order will be set to None to maintain consistency.
 pub fn assign_book_to_series(book_title: &str, series_id: Option<i32>, series_order: Option<i32>) -> Result<(), String> {
     let conn = &mut establish_connection();
+
+    // Ensure series_order is None when series_id is None to prevent inconsistent state
+    let effective_series_order = if series_id.is_some() { series_order } else { None };
 
     diesel::update(books::table.find(book_title))
         .set((
             books::series_id.eq(series_id),
-            books::series_order.eq(series_order),
+            books::series_order.eq(effective_series_order),
         ))
         .execute(conn)
         .map_err(|e| format!("Failed to assign book to series: {}", e))?;

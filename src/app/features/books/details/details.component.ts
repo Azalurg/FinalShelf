@@ -45,6 +45,10 @@ export class BookDetailsPageComponent implements OnInit {
   }
 
   async fetchBookDetails(bookTitle: string): Promise<void> {
+    // Reset state to avoid stale data when navigating between books
+    this.currentSeries = null;
+    this.showSeriesEditor = false;
+    
     try {
       this.bookDetails = await invoke<Book>("get_book_command", {
         title: bookTitle,
@@ -120,20 +124,24 @@ export class BookDetailsPageComponent implements OnInit {
   async assignToSeries(): Promise<void> {
     if (!this.bookDetails) return;
     
+    // Ensure series_order is null when series_id is null
+    const seriesId = this.selectedSeriesId ?? null;
+    const seriesOrder = seriesId ? this.newSeriesOrder : null;
+    
     try {
       await invoke("assign_book_to_series_command", {
         bookTitle: this.bookDetails.title,
-        seriesId: this.selectedSeriesId,
-        seriesOrder: this.newSeriesOrder,
+        seriesId: seriesId,
+        seriesOrder: seriesOrder,
       });
       
       // Update local state
-      this.bookDetails.series_id = this.selectedSeriesId;
-      this.bookDetails.series_order = this.newSeriesOrder;
+      this.bookDetails.series_id = seriesId;
+      this.bookDetails.series_order = seriesOrder;
       
       // Refresh series info
-      if (this.selectedSeriesId) {
-        await this.fetchCurrentSeries(this.selectedSeriesId);
+      if (seriesId) {
+        await this.fetchCurrentSeries(seriesId);
       } else {
         this.currentSeries = null;
       }

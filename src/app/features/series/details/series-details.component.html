@@ -16,7 +16,7 @@
     <h2>Books in Order</h2>
     <div class="ordered-list">
       <div *ngFor="let book of getBooksInOrder(); let i = index" class="ordered-item">
-        <span class="order-number">{{ book.series_order || (i + 1) }}</span>
+        <span class="order-number">{{ book.series_order ?? (i + 1) }}</span>
         <a [routerLink]="['/books', book.title]" class="book-title">{{ book.title }}</a>
       </div>
     </div>
