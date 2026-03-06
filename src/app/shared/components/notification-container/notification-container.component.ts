@@ -19,6 +19,7 @@ import { NotificationService } from "../../services/notification.service";
         <span class="notification-message">{{ notification.message }}</span>
         <button
           class="notification-close"
+          type="button"
           (click)="dismiss(notification.id)"
         >
           &times;

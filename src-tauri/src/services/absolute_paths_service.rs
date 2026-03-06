@@ -16,15 +16,15 @@ pub fn get_current_absolute_path() -> Option<AbsolutePath> {
     query.first::<AbsolutePath>(conn).ok()
 }
 
-pub fn get_all_absolute_path() -> Vec<AbsolutePath> {
+pub fn get_all_absolute_path() -> Result<Vec<AbsolutePath>, String> {
     let conn = &mut establish_connection();
 
     let query = crate::schema::absolute_paths::dsl::absolute_paths
         .order_by(crate::schema::absolute_paths::dsl::last_use_date.desc());
 
-    query.load::<AbsolutePath>(conn).unwrap_or_else(|e| {
+    query.load::<AbsolutePath>(conn).map_err(|e| {
         eprintln!("Error loading absolute paths: {}", e);
-        Vec::new()
+        format!("Failed to load library paths: {}", e)
     })
 }
 

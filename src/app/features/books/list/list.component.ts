@@ -2,9 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Book, BookListResponse } from "../../../models/books";
+import { Book, BookListResponse, ListResponse } from "../../../models/books";
 import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
-import { Author } from "../../../models/authors";
+import { AuthorListItem } from "../../../models/authors";
 import { Genre } from "../../../models/genres";
 import { Lector } from "../../../models/lectors";
 
@@ -42,7 +42,7 @@ export class BooksListPageComponent implements OnInit {
   sortIndex: keyof typeof this.sortObject = "Title ^";
 
   // Filter options
-  authors: Author[] = [];
+  authors: AuthorListItem[] = [];
   genres: Genre[] = [];
   lectors: Lector[] = [];
 
@@ -63,14 +63,14 @@ export class BooksListPageComponent implements OnInit {
 
   async fetchFilterOptions(): Promise<void> {
     try {
-      const [authors, genres, lectors] = await Promise.all([
-        invoke<Author[]>("get_authors_list_command", { params: {} }),
-        invoke<Genre[]>("get_genres_list_command"),
-        invoke<Lector[]>("get_lectors_list_command"),
+      const [authorsRes, genresRes, lectorsRes] = await Promise.all([
+        invoke<ListResponse<AuthorListItem>>("get_authors_list_command", { params: {} }),
+        invoke<ListResponse<Genre>>("get_genres_list_command", { params: {} }),
+        invoke<ListResponse<Lector>>("get_lectors_list_command", { params: {} }),
       ]);
-      this.authors = authors;
-      this.genres = genres;
-      this.lectors = lectors;
+      this.authors = authorsRes.items;
+      this.genres = genresRes.items;
+      this.lectors = lectorsRes.items;
     } catch (error) {
       console.error("Failed to fetch filter options:", error);
     }

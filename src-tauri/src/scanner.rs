@@ -397,7 +397,11 @@ where
                 relative_img_path: candidate.author_img_path,
             };
             println!("Adding author: {:?}", author);
-            add_author(&author);
+            if let Err(e) = add_author(&author) {
+                errors.push(format!("Failed to insert author '{}': {}", author.name, e));
+                skipped += 1;
+                continue;
+            }
         }
 
         let book = Book {
