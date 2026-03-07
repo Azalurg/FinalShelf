@@ -5,4 +5,5 @@ pub(crate) mod genre;
 pub(crate) mod lector;
 pub(crate) mod path;
 pub(crate) mod query;
+pub(crate) mod series;
 pub(crate) mod tag;

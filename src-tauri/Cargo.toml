@@ -1,6 +1,6 @@
 [package]
 name = "finalshelf"
-version = "0.4.8"
+version = "0.5.2"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -24,6 +24,7 @@ tauri-plugin-shell = "2"
 tauri-plugin-dialog = "2"
 chrono = { version = "0.4.39", features = ["serde"] }
 uuid = { version = "1", features = ["v4"] }
+regex-lite = "0.1"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

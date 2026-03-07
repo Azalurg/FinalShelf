@@ -37,6 +37,11 @@ export class SidebarComponent {
       label: "Authors",
     },
     {
+      path: ["/series"],
+      icon: "assets/icons/layers-svgrepo-com.svg",
+      label: "Series",
+    },
+    {
       path: ["/lectors"],
       icon: "assets/icons/user-voice-svgrepo-com.svg",
       label: "Lectors",

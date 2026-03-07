@@ -18,4 +18,6 @@ pub struct Book {
     pub score: Option<i32>,
     pub relative_file_path: String,
     pub duration_seconds: Option<i32>,
+    pub series_id: Option<i32>,
+    pub series_order: Option<i32>,
 }

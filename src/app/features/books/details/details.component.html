@@ -58,35 +58,51 @@
           </td>
         </tr>
         <tr>
-          <td class="details-info-label">Score</td>
+          <td class="details-info-label">Series</td>
           <td class="details-info-value">
-            <div class="star-rating">
-              <button
-                *ngFor="let star of stars"
-                type="button"
-                class="star-btn"
-                [attr.aria-label]="'Rate ' + star + ' out of 5'"
-                (click)="setScore(star)"
-                (mouseenter)="hoverScore = star"
-                (mouseleave)="hoverScore = 0"
-              >
-                <img
-                  src="assets/icons/star-svgrepo-com.svg"
-                  alt="Star"
-                  [class.active]="hoverScore >= star || (hoverScore === 0 && bookDetails.score >= star)"
-                />
-              </button>
-              <button
-                type="button"
-                class="clear-score-btn"
-                *ngIf="bookDetails.score > 0"
-                (click)="setScore(0)"
-                aria-label="Clear rating"
-                title="Clear rating"
-              >
-                <img src="assets/icons/close-circle-svgrepo-com.svg" alt="Clear" />
+            <div class="series-info">
+              <span *ngIf="currentSeries">
+                <a class="details-link" [routerLink]="['/series', currentSeries.id]">
+                  {{ currentSeries.name }}
+                </a>
+                <span *ngIf="bookDetails.series_order !== null"> (#{{ bookDetails.series_order }})</span>
+              </span>
+              <span *ngIf="!currentSeries" class="no-series">Not in series</span>
+              <button type="button" class="edit-series-btn" (click)="toggleSeriesEditor()" aria-label="Edit series">
+                <img src="assets/icons/settings-svgrepo-com.svg" alt="Edit" />
               </button>
             </div>
+            <div *ngIf="showSeriesEditor" class="series-editor">
+              <select [(ngModel)]="selectedSeriesId" aria-label="Select series">
+                <option [ngValue]="null">-- No series --</option>
+                <option *ngFor="let series of availableSeries" [ngValue]="series.id">
+                  {{ series.name }}
+                </option>
+              </select>
+              <input
+                type="number"
+                [(ngModel)]="newSeriesOrder"
+                placeholder="Order #"
+                min="1"
+                class="series-order-input"
+                aria-label="Series order"
+              />
+              <div class="series-editor-actions">
+                <button type="button" (click)="assignToSeries()">Save</button>
+                <button type="button" *ngIf="currentSeries" (click)="removeFromSeries()">Remove</button>
+                <button type="button" (click)="toggleSeriesEditor()">Cancel</button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="details-info-label">Score</td>
+          <td class="details-info-value">
+            <app-score-input
+              [value]="bookDetails.score ?? 0"
+              [max]="10"
+              (valueChange)="onScoreChange($event)"
+            ></app-score-input>
           </td>
         </tr>
       </tbody>

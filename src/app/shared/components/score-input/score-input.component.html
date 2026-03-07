@@ -1,0 +1,31 @@
+<div class="score-input">
+  <div class="score-stars">
+    <button
+      *ngFor="let star of stars"
+      type="button"
+      class="star-btn"
+      [class.active]="hover >= star || (hover === 0 && value >= star)"
+      [attr.aria-label]="'Rate ' + star + ' out of ' + max"
+      [disabled]="!editable"
+      [attr.aria-disabled]="!editable || null"
+      (click)="setScore(star)"
+      (mouseenter)="setHover(star)"
+      (mouseleave)="resetHover()"
+    >
+      <img src="assets/icons/star-svgrepo-com.svg" alt="" aria-hidden="true" />
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="clear-score-btn"
+    *ngIf="value > 0"
+    (click)="clearScore()"
+    aria-label="Clear rating"
+    title="Clear rating"
+  >
+    <img src="assets/icons/close-circle-svgrepo-com.svg" alt="Clear" />
+  </button>
+
+  <span class="score-text">{{ value > 0 ? value + ' / ' + max : 'Not rated' }}</span>
+</div>
