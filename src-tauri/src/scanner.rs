@@ -63,11 +63,7 @@ where
     let directory = absolute_path_obj.absolute_path;
     let base_path = Path::new(&directory);
 
-    println!(
-        "Starting {} scan in {}",
-        if full { "full" } else { "quick" },
-        directory
-    );
+    println!("Starting {} scan in {}", if full { "full" } else { "quick" }, directory);
     let start = Instant::now();
 
     // -- Phase 1: Discovery ---------------------------------------------------
@@ -98,14 +94,17 @@ where
             phase: "extraction".to_string(),
             current: idx as i64 + 1,
             total: total_dirs,
-            message: format!("Extracting metadata from: {}", dir.file_name().unwrap_or_default().to_string_lossy()),
+            message: format!(
+                "Extracting metadata from: {}",
+                dir.file_name().unwrap_or_default().to_string_lossy()
+            ),
         });
 
         match extract_metadata(dir, base_path) {
             Ok(candidate) => candidates.push(candidate),
             Err(e) => {
                 eprintln!("Skipping {:?}: {}", dir, e);
-            }
+            },
         }
     }
     println!("Extracted metadata for {} books", candidates.len());
@@ -126,7 +125,9 @@ where
         total: result.added + result.skipped,
         message: format!(
             "Scan complete: {} added, {} skipped, {} errors",
-            result.added, result.skipped, result.errors.len()
+            result.added,
+            result.skipped,
+            result.errors.len()
         ),
     });
 
@@ -190,7 +191,7 @@ fn build_skip_set(full: bool, base_path: &Path) -> HashSet<String> {
         Err(e) => {
             eprintln!("Could not load known dirs from DB: {}. Starting fresh.", e);
             HashSet::new()
-        }
+        },
     }
 }
 
@@ -199,11 +200,7 @@ fn build_skip_set(full: bool, base_path: &Path) -> HashSet<String> {
 fn discover_book_dirs(root: &Path, skip: &HashSet<String>) -> Vec<PathBuf> {
     let mut book_dirs: HashSet<PathBuf> = HashSet::new();
 
-    for entry in WalkDir::new(root)
-        .min_depth(1)
-        .into_iter()
-        .filter_map(Result::ok)
-    {
+    for entry in WalkDir::new(root).min_depth(1).into_iter().filter_map(Result::ok) {
         let path = entry.path();
         if is_audio_file(path) {
             if let Some(parent) = path.parent() {
@@ -372,7 +369,7 @@ fn get_file_date(path: &Path) -> Option<NaiveDateTime> {
             } else {
                 m
             }
-        }
+        },
         (Some(c), None) => c,
         (None, Some(m)) => m,
         (None, None) => return None,
@@ -394,14 +391,15 @@ fn get_file_date(path: &Path) -> Option<NaiveDateTime> {
 fn detect_series_from_title(title: &str) -> Option<SeriesDetection> {
     // Pattern 1: "Series - 01 - Title" or "Series - Part 1 - Title"
     let pattern1 = regex_lite::Regex::new(
-        r"^(.+?)\s*[-–—]\s*(?:(?:Part|Book|Vol\.?|Volume|Episode|Ep\.?|#)?\s*)?(\d+)\s*[-–—]\s*(.+)$"
-    ).ok()?;
-    
+        r"^(.+?)\s*[-–—]\s*(?:(?:Part|Book|Vol\.?|Volume|Episode|Ep\.?|#)?\s*)?(\d+)\s*[-–—]\s*(.+)$",
+    )
+    .ok()?;
+
     if let Some(caps) = pattern1.captures(title) {
         let series_name = caps.get(1)?.as_str().trim().to_string();
         let order: i32 = caps.get(2)?.as_str().parse().ok()?;
         let book_title = caps.get(3)?.as_str().trim().to_string();
-        
+
         // Validate series name is reasonable (not just numbers or too short)
         if series_name.len() >= 2 && !series_name.chars().all(|c| c.is_numeric() || c.is_whitespace()) {
             return Some(SeriesDetection {
@@ -411,17 +409,15 @@ fn detect_series_from_title(title: &str) -> Option<SeriesDetection> {
             });
         }
     }
-    
+
     // Pattern 2: "Series 01 - Title" (number directly after series name)
-    let pattern2 = regex_lite::Regex::new(
-        r"^(.+?)\s+(\d+)\s*[-–—]\s*(.+)$"
-    ).ok()?;
-    
+    let pattern2 = regex_lite::Regex::new(r"^(.+?)\s+(\d+)\s*[-–—]\s*(.+)$").ok()?;
+
     if let Some(caps) = pattern2.captures(title) {
         let series_name = caps.get(1)?.as_str().trim().to_string();
         let order: i32 = caps.get(2)?.as_str().parse().ok()?;
         let book_title = caps.get(3)?.as_str().trim().to_string();
-        
+
         if series_name.len() >= 2 && !series_name.chars().all(|c| c.is_numeric() || c.is_whitespace()) {
             return Some(SeriesDetection {
                 series_name,
@@ -430,42 +426,49 @@ fn detect_series_from_title(title: &str) -> Option<SeriesDetection> {
             });
         }
     }
-    
+
     None
 }
 
 /// Try to detect series from directory structure.
 /// Looks for pattern: .../Author/Series/Book or .../Author/Series/NN - Book
-fn detect_series_from_directory(book_dir: &Path, author_name: &str, base_path: &Path) -> Option<String> {
+fn detect_series_from_directory(book_dir: &Path, author_name: &str, base_path: &Path) -> Option<(String, Option<i32>)> {
     // Get the relative path from base
     let rel_path = book_dir.strip_prefix(base_path).ok()?;
-    let components: Vec<&str> = rel_path
-        .components()
-        .filter_map(|c| c.as_os_str().to_str())
-        .collect();
-    
+    let components: Vec<&str> = rel_path.components().filter_map(|c| c.as_os_str().to_str()).collect();
+
     // We need at least 3 levels: Author/Series/Book
     if components.len() < 3 {
         return None;
     }
-    
+
     // Find the author directory in the path
-    let author_index = components.iter()
+    let author_index = components
+        .iter()
         .position(|&c| c.to_lowercase() == author_name.to_lowercase())?;
-    
+
     // The next component after author should be the series
     // (if there's still a book directory after that)
     if author_index + 2 < components.len() {
         let series_name = components[author_index + 1].to_string();
-        
+        let book_dir_name = components[author_index + 2];
+
         // Validate series name: not just numbers, reasonable length
-        if series_name.len() >= 2 
-            && !series_name.chars().all(|c| c.is_numeric() || c.is_whitespace() || c == '-') 
+        if series_name.len() >= 2
+            && !series_name
+                .chars()
+                .all(|c| c.is_numeric() || c.is_whitespace() || c == '-')
         {
-            return Some(series_name);
+            let order_regex = regex_lite::Regex::new(r"^(\d+)\s*[-–—]\s*(.+)$").ok()?;
+            let series_order = order_regex
+                .captures(book_dir_name)
+                .and_then(|caps| caps.get(1))
+                .and_then(|m| m.as_str().parse::<i32>().ok());
+
+            return Some((series_name, series_order));
         }
     }
-    
+
     None
 }
 
@@ -476,12 +479,12 @@ fn detect_series(title: &str, book_dir: &Path, author_name: &str, base_path: &Pa
     if let Some(detection) = detect_series_from_title(title) {
         return (Some(detection.series_name), detection.series_order);
     }
-    
+
     // Fall back to directory-based detection (no order info)
-    if let Some(series_name) = detect_series_from_directory(book_dir, author_name, base_path) {
-        return (Some(series_name), None);
+    if let Some((series_name, series_order)) = detect_series_from_directory(book_dir, author_name, base_path) {
+        return (Some(series_name), series_order);
     }
-    
+
     (None, None)
 }
 
@@ -494,12 +497,12 @@ where
     F: FnMut(ScanProgress),
 {
     use std::collections::HashMap;
-    
+
     let mut added: i64 = 0;
     let mut skipped: i64 = 0;
     let mut errors: Vec<String> = Vec::new();
     let total = candidates.len() as i64;
-    
+
     // Cache for series IDs: (author_name, series_name) -> series_id
     let mut series_cache: HashMap<(String, String), i32> = HashMap::new();
 
@@ -534,7 +537,7 @@ where
         // Handle series detection
         let series_id = if let Some(ref series_name) = candidate.detected_series_name {
             let cache_key = (candidate.author_name.clone(), series_name.clone());
-            
+
             if let Some(&cached_id) = series_cache.get(&cache_key) {
                 Some(cached_id)
             } else {
@@ -542,11 +545,12 @@ where
                 let existing_series_id = get_series_by_author(&candidate.author_name)
                     .ok()
                     .and_then(|series_list| {
-                        series_list.iter()
+                        series_list
+                            .iter()
                             .find(|s| s.name.to_lowercase() == series_name.to_lowercase())
                             .map(|s| s.id)
                     });
-                
+
                 let id = if let Some(existing_id) = existing_series_id {
                     existing_id
                 } else {
@@ -559,15 +563,15 @@ where
                         Ok(new_series) => {
                             println!("Created series: {} (id: {})", series_name, new_series.id);
                             new_series.id
-                        }
+                        },
                         Err(e) => {
                             eprintln!("Failed to create series '{}': {}", series_name, e);
                             // Continue without series assignment
                             -1
-                        }
+                        },
                     }
                 };
-                
+
                 if id > 0 {
                     series_cache.insert(cache_key, id);
                     Some(id)
@@ -601,9 +605,5 @@ where
         }
     }
 
-    ScanResult {
-        added,
-        skipped,
-        errors,
-    }
+    ScanResult { added, skipped, errors }
 }
