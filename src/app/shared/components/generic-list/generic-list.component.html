@@ -40,8 +40,8 @@
       <img
         [src]="
           listType === 'books'
-            ? getSrc(item.relative_cover_path)
-            : getSrc(item.relative_img_path)
+              ? getSrc(item.relative_cover_path ?? '')
+              : getSrc(item.relative_img_path ?? '')
         "
         [alt]="listType === 'books' ? 'Book cover' : 'Author photo'"
       />
