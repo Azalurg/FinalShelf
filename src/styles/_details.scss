@@ -136,8 +136,11 @@
     opacity: 0.5;
     transition: opacity 0.15s ease;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       opacity: 1;
+      outline: 2px solid var(--color-accent);
+      border-radius: 0.25rem;
     }
 
     img {

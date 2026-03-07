@@ -73,7 +73,7 @@
               </button>
             </div>
             <div *ngIf="showSeriesEditor" class="series-editor">
-              <select [(ngModel)]="selectedSeriesId">
+              <select [(ngModel)]="selectedSeriesId" aria-label="Select series">
                 <option [ngValue]="null">-- No series --</option>
                 <option *ngFor="let series of availableSeries" [ngValue]="series.id">
                   {{ series.name }}
@@ -85,6 +85,7 @@
                 placeholder="Order #"
                 min="1"
                 class="series-order-input"
+                aria-label="Series order"
               />
               <div class="series-editor-actions">
                 <button type="button" (click)="assignToSeries()">Save</button>
@@ -99,7 +100,7 @@
           <td class="details-info-value">
             <app-score-input
               [value]="bookDetails.score ?? 0"
-              [max]="6"
+              [max]="10"
               (valueChange)="onScoreChange($event)"
             ></app-score-input>
           </td>
