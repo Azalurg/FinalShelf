@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterModule } from "@angular/router";
 import { invoke } from "@tauri-apps/api/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { ScoreInputComponent } from "../../../shared/components/score-input/score-input.component";
 import { convertImgPathBook } from "../../../shared/utils/convertImgPath";
 import { getCurrentAbsolutePath } from "../../../shared/utils/getCurrentAbsolutePath";
 import { Book } from "../../../models/books";
@@ -11,14 +12,12 @@ import { Series } from "../../../models/series";
 @Component({
   selector: "app-book-details",
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ScoreInputComponent],
   templateUrl: "./details.component.html",
 })
 export class BookDetailsPageComponent implements OnInit {
   bookDetails: Book | null = null;
   absolutePath = "";
-  hoverScore = 0;
-  stars = [1, 2, 3, 4, 5];
   
   // Series-related properties
   currentSeries: Series | null = null;
@@ -100,16 +99,16 @@ export class BookDetailsPageComponent implements OnInit {
     }
   }
 
-  async setScore(score: number): Promise<void> {
-    if (this.bookDetails) {
-      const previousScore = this.bookDetails.score;
-      this.bookDetails.score = score;
-      try {
-        await invoke("update_book_command", { book: this.bookDetails });
-      } catch (error) {
-        console.error("Failed to update book score:", error);
-        this.bookDetails.score = previousScore;
-      }
+  async onScoreChange(score: number): Promise<void> {
+    if (!this.bookDetails) return;
+
+    const previousScore = this.bookDetails.score;
+    this.bookDetails.score = score;
+    try {
+      await invoke("update_book_command", { book: this.bookDetails });
+    } catch (error) {
+      console.error("Failed to update book score:", error);
+      this.bookDetails.score = previousScore;
     }
   }
 
