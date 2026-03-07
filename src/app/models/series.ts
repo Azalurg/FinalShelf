@@ -1,4 +1,4 @@
-import { Book, ListResponse } from './books';
+import { Book, ListResponse } from "./books";
 
 interface Series {
   id: number;

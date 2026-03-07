@@ -31,6 +31,7 @@ export class ScoreInputComponent {
   }
 
   setHover(star: number): void {
+    if (!this.editable) return;
     this.hover = star;
   }
 

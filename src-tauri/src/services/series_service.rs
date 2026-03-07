@@ -11,13 +11,19 @@ use diesel::{dsl::count, prelude::*};
 
 /// List all series with pagination, sorting, filtering, and search.
 ///
+/// Filters (search, author) are applied at the SQL level to avoid loading
+/// the full table. Sort and pagination are applied in Rust because `books_count`
+/// is a computed aggregate column.
+///
 /// ## Sort fields
 /// `"name"`, `"author_name"`, `"books_count"` (default: `"name"`)
 pub fn list_series(params: &ListParams) -> Result<ListResponse<SeriesListItem>, String> {
     let conn = &mut establish_connection();
 
-    // Load all series with book counts via LEFT JOIN + GROUP BY.
-    let mut items: Vec<SeriesListItem> = series::table
+    let search_pattern = params.search_pattern();
+
+    // Build the joined query with optional SQL-level filters.
+    let mut query = series::table
         .left_join(books::table.on(series::id.nullable().eq(books::series_id)))
         .group_by(series::id)
         .select((
@@ -27,8 +33,27 @@ pub fn list_series(params: &ListParams) -> Result<ListResponse<SeriesListItem>, 
             series::description,
             count(books::title.nullable()),
         ))
+        .into_boxed();
+
+    if let Some(ref pattern) = search_pattern {
+        query = query.filter(
+            series::name
+                .like(pattern)
+                .or(series::author_name.like(pattern)),
+        );
+    }
+
+    if let Some(ref author) = params.author_name {
+        query = query.filter(series::author_name.eq(author.clone()));
+    }
+
+    let all_items: Vec<(i32, String, String, Option<String>, i64)> = query
         .load::<(i32, String, String, Option<String>, i64)>(conn)
-        .map_err(|e| format!("Failed to load series: {}", e))?
+        .map_err(|e| format!("Failed to load series: {}", e))?;
+
+    let total_count = all_items.len() as i64;
+
+    let mut items: Vec<SeriesListItem> = all_items
         .into_iter()
         .map(|(id, name, author_name, description, cnt)| SeriesListItem {
             id,
@@ -39,21 +64,7 @@ pub fn list_series(params: &ListParams) -> Result<ListResponse<SeriesListItem>, 
         })
         .collect();
 
-    // Search filter (case-insensitive substring match on name or author_name)
-    if let Some(ref search) = params.search {
-        let lower = search.to_lowercase();
-        items.retain(|s| {
-            s.name.to_lowercase().contains(&lower)
-                || s.author_name.to_lowercase().contains(&lower)
-        });
-    }
-
-    // Author filter
-    if let Some(ref author) = params.author_name {
-        items.retain(|s| s.author_name == *author);
-    }
-
-    // Sort
+    // Sort in Rust (needed for case-insensitive string sort and books_count)
     let sort_by = params.sort_field(&["name", "author_name", "books_count"], "name");
     let desc = params.is_desc();
     match sort_by.as_str() {
@@ -71,8 +82,7 @@ pub fn list_series(params: &ListParams) -> Result<ListResponse<SeriesListItem>, 
         }),
     }
 
-    // Paginate
-    let total_count = items.len() as i64;
+    // Paginate in Rust
     let limit = params.limit();
     let offset = params.offset() as usize;
     let page_items: Vec<SeriesListItem> = items
@@ -100,7 +110,11 @@ pub fn get_series(id: i32) -> Result<SeriesWithBooks, String> {
 
     let series_books = books::table
         .filter(books::series_id.eq(id))
-        .order(books::series_order.asc())
+        .order((
+            books::series_order.is_null().asc(),
+            books::series_order.asc(),
+            books::title.asc(),
+        ))
         .load::<Book>(conn)
         .map_err(|e| format!("Failed to load series books: {}", e))?;
 
@@ -169,13 +183,17 @@ pub fn assign_book_to_series(book_title: &str, series_id: Option<i32>, series_or
     // Ensure series_order is None when series_id is None to prevent inconsistent state
     let effective_series_order = if series_id.is_some() { series_order } else { None };
 
-    diesel::update(books::table.find(book_title))
+    let affected = diesel::update(books::table.find(book_title))
         .set((
             books::series_id.eq(series_id),
             books::series_order.eq(effective_series_order),
         ))
         .execute(conn)
         .map_err(|e| format!("Failed to assign book to series: {}", e))?;
+
+    if affected == 0 {
+        return Err(format!("Book '{}' not found or no changes applied", book_title));
+    }
 
     Ok(())
 }

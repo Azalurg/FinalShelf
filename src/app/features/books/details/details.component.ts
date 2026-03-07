@@ -53,28 +53,19 @@ export class BookDetailsPageComponent implements OnInit {
         title: bookTitle,
       });
       
-      // Fetch series info if book has a series
-      if (this.bookDetails.series_id) {
-        await this.fetchCurrentSeries(this.bookDetails.series_id);
-      }
-      
-      // Fetch available series for this author
+      // Fetch available series for this author first
       if (this.bookDetails.author_name) {
         await this.fetchAvailableSeries(this.bookDetails.author_name);
       }
+      
+      // Derive current series from available series (avoids extra get_series_command call)
+      if (this.bookDetails.series_id) {
+        this.currentSeries = this.availableSeries.find(
+          (s) => s.id === this.bookDetails!.series_id
+        ) ?? null;
+      }
     } catch (error) {
       console.error("Failed to fetch book details:", error);
-    }
-  }
-
-  async fetchCurrentSeries(seriesId: number): Promise<void> {
-    try {
-      const seriesDetails = await invoke<{ series: Series; books: Book[] }>("get_series_command", {
-        id: seriesId,
-      });
-      this.currentSeries = seriesDetails.series;
-    } catch (error) {
-      console.error("Failed to fetch series:", error);
     }
   }
 
@@ -138,12 +129,10 @@ export class BookDetailsPageComponent implements OnInit {
       this.bookDetails.series_id = seriesId;
       this.bookDetails.series_order = seriesOrder;
       
-      // Refresh series info
-      if (seriesId) {
-        await this.fetchCurrentSeries(seriesId);
-      } else {
-        this.currentSeries = null;
-      }
+      // Derive current series from already-loaded availableSeries
+      this.currentSeries = seriesId
+        ? (this.availableSeries.find((s) => s.id === seriesId) ?? null)
+        : null;
       
       this.showSeriesEditor = false;
     } catch (error) {

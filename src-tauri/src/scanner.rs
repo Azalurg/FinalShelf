@@ -1,8 +1,9 @@
 use std::{
-    collections::HashSet,
-    fs,
+    collections::{HashMap, HashSet},
     path::{Path, PathBuf},
+    sync::LazyLock,
     time::Instant,
+    fs,
 };
 
 use chrono::{DateTime, NaiveDateTime, Utc};
@@ -28,6 +29,23 @@ use crate::{
 const AUDIO_EXTENSIONS: &[&str] = &["mp3", "m4b", "m4a", "ogg", "flac", "aac"];
 const COVER_NAMES: &[&str] = &["cover", "folder", "album", "poster", "default", "art"];
 const COVER_EXTENSIONS: &[&str] = &[".jpg", ".jpeg", ".png", ".gif", ".webp"];
+
+// Compiled once at first use — avoids repeated regex construction on hot scan paths.
+static SERIES_TITLE_PATTERN1: LazyLock<regex_lite::Regex> = LazyLock::new(|| {
+    regex_lite::Regex::new(
+        r"^(.+?)\s*[-–—]\s*(?:(?:Part|Book|Vol\.?|Volume|Episode|Ep\.?|#)?\s*)?(\d+)\s*[-–—]\s*(.+)$",
+    )
+    .expect("Valid SERIES_TITLE_PATTERN1 regex")
+});
+
+static SERIES_TITLE_PATTERN2: LazyLock<regex_lite::Regex> = LazyLock::new(|| {
+    regex_lite::Regex::new(r"^(.+?)\s+(\d+)\s*[-–—]\s*(.+)$")
+        .expect("Valid SERIES_TITLE_PATTERN2 regex")
+});
+
+static SERIES_DIR_ORDER: LazyLock<regex_lite::Regex> = LazyLock::new(|| {
+    regex_lite::Regex::new(r"^(\d+)\s*[-–—]\s*(.+)$").expect("Valid SERIES_DIR_ORDER regex")
+});
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -162,11 +180,10 @@ struct BookCandidate {
 }
 
 /// Detected series information from title or directory structure.
-#[allow(dead_code)]
 struct SeriesDetection {
     series_name: String,
     series_order: Option<i32>,
-    /// The cleaned title with series prefix removed. Reserved for future use.
+    /// The cleaned title with series prefix removed.
     cleaned_title: String,
 }
 
@@ -296,11 +313,15 @@ fn extract_metadata(book_dir: &Path, base_path: &Path) -> Result<BookCandidate, 
     // Author photo
     let author_img_path = find_author_photo(book_dir, &author_name, base_path);
 
-    // Series detection
-    let (detected_series_name, detected_series_order) = detect_series(&title, book_dir, &author_name, base_path);
+    // Series detection: may also clean the title by removing series prefix
+    let detection = detect_series(&title, book_dir, &author_name, base_path);
+    let (clean_title, detected_series_name, detected_series_order) = match detection {
+        Some(d) => (d.cleaned_title, Some(d.series_name), d.series_order),
+        None => (title, None, None),
+    };
 
     Ok(BookCandidate {
-        title,
+        title: clean_title,
         author_name,
         genre,
         lector,
@@ -390,12 +411,7 @@ fn get_file_date(path: &Path) -> Option<NaiveDateTime> {
 /// - "Series Name Book 1 - Book Title"
 fn detect_series_from_title(title: &str) -> Option<SeriesDetection> {
     // Pattern 1: "Series - 01 - Title" or "Series - Part 1 - Title"
-    let pattern1 = regex_lite::Regex::new(
-        r"^(.+?)\s*[-–—]\s*(?:(?:Part|Book|Vol\.?|Volume|Episode|Ep\.?|#)?\s*)?(\d+)\s*[-–—]\s*(.+)$",
-    )
-    .ok()?;
-
-    if let Some(caps) = pattern1.captures(title) {
+    if let Some(caps) = SERIES_TITLE_PATTERN1.captures(title) {
         let series_name = caps.get(1)?.as_str().trim().to_string();
         let order: i32 = caps.get(2)?.as_str().parse().ok()?;
         let book_title = caps.get(3)?.as_str().trim().to_string();
@@ -411,9 +427,7 @@ fn detect_series_from_title(title: &str) -> Option<SeriesDetection> {
     }
 
     // Pattern 2: "Series 01 - Title" (number directly after series name)
-    let pattern2 = regex_lite::Regex::new(r"^(.+?)\s+(\d+)\s*[-–—]\s*(.+)$").ok()?;
-
-    if let Some(caps) = pattern2.captures(title) {
+    if let Some(caps) = SERIES_TITLE_PATTERN2.captures(title) {
         let series_name = caps.get(1)?.as_str().trim().to_string();
         let order: i32 = caps.get(2)?.as_str().parse().ok()?;
         let book_title = caps.get(3)?.as_str().trim().to_string();
@@ -459,8 +473,7 @@ fn detect_series_from_directory(book_dir: &Path, author_name: &str, base_path: &
                 .chars()
                 .all(|c| c.is_numeric() || c.is_whitespace() || c == '-')
         {
-            let order_regex = regex_lite::Regex::new(r"^(\d+)\s*[-–—]\s*(.+)$").ok()?;
-            let series_order = order_regex
+            let series_order = SERIES_DIR_ORDER
                 .captures(book_dir_name)
                 .and_then(|caps| caps.get(1))
                 .and_then(|m| m.as_str().parse::<i32>().ok());
@@ -474,18 +487,25 @@ fn detect_series_from_directory(book_dir: &Path, author_name: &str, base_path: &
 
 /// Combine series detection from title and directory structure.
 /// Title detection takes priority as it often includes order information.
-fn detect_series(title: &str, book_dir: &Path, author_name: &str, base_path: &Path) -> (Option<String>, Option<i32>) {
-    // First try title-based detection (includes order)
+/// Returns `Some(SeriesDetection)` when a series is detected, with `cleaned_title`
+/// holding the book title with any series prefix stripped. Returns `None` when
+/// no series is detected and the original title should be used.
+fn detect_series(title: &str, book_dir: &Path, author_name: &str, base_path: &Path) -> Option<SeriesDetection> {
+    // First try title-based detection (includes order and cleaned title)
     if let Some(detection) = detect_series_from_title(title) {
-        return (Some(detection.series_name), detection.series_order);
+        return Some(detection);
     }
 
-    // Fall back to directory-based detection (no order info)
+    // Fall back to directory-based detection (no order info, title unchanged)
     if let Some((series_name, series_order)) = detect_series_from_directory(book_dir, author_name, base_path) {
-        return (Some(series_name), series_order);
+        return Some(SeriesDetection {
+            series_name,
+            series_order,
+            cleaned_title: title.to_string(),
+        });
     }
 
-    (None, None)
+    None
 }
 
 // ---------------------------------------------------------------------------
@@ -496,15 +516,16 @@ fn persist_batch_with_progress<F>(candidates: Vec<BookCandidate>, on_progress: &
 where
     F: FnMut(ScanProgress),
 {
-    use std::collections::HashMap;
-
     let mut added: i64 = 0;
     let mut skipped: i64 = 0;
     let mut errors: Vec<String> = Vec::new();
     let total = candidates.len() as i64;
 
-    // Cache for series IDs: (author_name, series_name) -> series_id
+    // Cache for series IDs: (author_name, series_name_lowercase) -> series_id
+    // A value of -1 means series creation previously failed (skip retry).
     let mut series_cache: HashMap<(String, String), i32> = HashMap::new();
+    // Tracks authors whose full series list has been loaded into the cache.
+    let mut authors_loaded: HashSet<String> = HashSet::new();
 
     for (idx, candidate) in candidates.into_iter().enumerate() {
         on_progress(ScanProgress {
@@ -536,20 +557,34 @@ where
 
         // Handle series detection
         let series_id = if let Some(ref series_name) = candidate.detected_series_name {
-            let cache_key = (candidate.author_name.clone(), series_name.clone());
+            let series_key = series_name.to_lowercase();
+            let cache_key = (candidate.author_name.clone(), series_key.clone());
 
             if let Some(&cached_id) = series_cache.get(&cache_key) {
-                Some(cached_id)
+                // Positive: known series id; negative: known failure, skip
+                if cached_id > 0 { Some(cached_id) } else { None }
             } else {
-                // Check if series already exists for this author
-                let existing_series_id = get_series_by_author(&candidate.author_name)
-                    .ok()
-                    .and_then(|series_list| {
-                        series_list
-                            .iter()
-                            .find(|s| s.name.to_lowercase() == series_name.to_lowercase())
-                            .map(|s| s.id)
-                    });
+                // Determine if series already exists for this author.
+                // Load all of the author's series on first encounter to populate
+                // the cache and avoid per-book DB queries.
+                let existing_series_id = if authors_loaded.contains(&candidate.author_name) {
+                    // Already loaded this author's series — not in cache means doesn't exist yet
+                    None
+                } else {
+                    authors_loaded.insert(candidate.author_name.clone());
+                    get_series_by_author(&candidate.author_name)
+                        .ok()
+                        .and_then(|series_list| {
+                            for s in &series_list {
+                                let key = (candidate.author_name.clone(), s.name.to_lowercase());
+                                series_cache.entry(key).or_insert(s.id);
+                            }
+                            series_list
+                                .iter()
+                                .find(|s| s.name.to_lowercase() == series_key)
+                                .map(|s| s.id)
+                        })
+                };
 
                 let id = if let Some(existing_id) = existing_series_id {
                     existing_id
@@ -566,18 +601,14 @@ where
                         },
                         Err(e) => {
                             eprintln!("Failed to create series '{}': {}", series_name, e);
-                            // Continue without series assignment
-                            -1
+                            -1  // failure sentinel
                         },
                     }
                 };
 
-                if id > 0 {
-                    series_cache.insert(cache_key, id);
-                    Some(id)
-                } else {
-                    None
-                }
+                // Always cache the result so we never retry the same DB operation
+                series_cache.insert(cache_key, id);
+                if id > 0 { Some(id) } else { None }
             }
         } else {
             None

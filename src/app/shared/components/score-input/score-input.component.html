@@ -6,11 +6,13 @@
       class="star-btn"
       [class.active]="hover >= star || (hover === 0 && value >= star)"
       [attr.aria-label]="'Rate ' + star + ' out of ' + max"
+      [disabled]="!editable"
+      [attr.aria-disabled]="!editable || null"
       (click)="setScore(star)"
       (mouseenter)="setHover(star)"
       (mouseleave)="resetHover()"
     >
-      <img src="assets/icons/star-svgrepo-com.svg" alt="Star" />
+      <img src="assets/icons/star-svgrepo-com.svg" alt="" aria-hidden="true" />
     </button>
   </div>
 
