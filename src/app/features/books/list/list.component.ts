@@ -1,13 +1,24 @@
 import { Component, OnInit } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { CommonModule } from "@angular/common";
-import { Book, BookListResponse } from "../../../models/books";
+import { FormsModule } from "@angular/forms";
+import { Book, BookListResponse, ListResponse } from "../../../models/books";
 import { GenericListComponent } from "../../../shared/components/generic-list/generic-list.component";
+import { AuthorListItem } from "../../../models/authors";
+import { Genre } from "../../../models/genres";
+import { Lector } from "../../../models/lectors";
+
+interface BookFilters {
+  author_name: string | null;
+  genre: string | null;
+  lector: string | null;
+  read_status: boolean | null;
+}
 
 @Component({
   selector: "app-books",
   standalone: true,
-  imports: [CommonModule, GenericListComponent],
+  imports: [CommonModule, GenericListComponent, FormsModule],
   templateUrl: "./list.component.html",
   styleUrl: "./list.component.scss",
 })
@@ -22,12 +33,47 @@ export class BooksListPageComponent implements OnInit {
     "Author v": ["author", "desc"],
     "Title ^": ["title", "asc"],
     "Title v": ["title", "desc"],
+    "Score ^": ["score", "asc"],
+    "Score v": ["score", "desc"],
+    "Date ^": ["create_date", "asc"],
+    "Date v": ["create_date", "desc"],
   } as const;
   sortOptions = Object.keys(this.sortObject);
   sortIndex: keyof typeof this.sortObject = "Title ^";
 
+  // Filter options
+  authors: AuthorListItem[] = [];
+  genres: Genre[] = [];
+  lectors: Lector[] = [];
+
+  // Active filters
+  filters: BookFilters = {
+    author_name: null,
+    genre: null,
+    lector: null,
+    read_status: null,
+  };
+
+  showFilters = false;
+
   ngOnInit(): void {
+    this.fetchFilterOptions();
     this.fetchBooks();
+  }
+
+  async fetchFilterOptions(): Promise<void> {
+    try {
+      const [authorsRes, genresRes, lectorsRes] = await Promise.all([
+        invoke<ListResponse<AuthorListItem>>("get_authors_list_command", { params: {} }),
+        invoke<ListResponse<Genre>>("get_genres_list_command", { params: {} }),
+        invoke<ListResponse<Lector>>("get_lectors_list_command", { params: {} }),
+      ]);
+      this.authors = authorsRes.items;
+      this.genres = genresRes.items;
+      this.lectors = lectorsRes.items;
+    } catch (error) {
+      console.error("Failed to fetch filter options:", error);
+    }
   }
 
   async fetchBooks(): Promise<void> {
@@ -40,6 +86,10 @@ export class BooksListPageComponent implements OnInit {
             limit: this.pageSize,
             sort_by: this.getSortField(),
             sort_order: this.getSortOrder(),
+            author_name: this.filters.author_name,
+            genre: this.filters.genre,
+            lector: this.filters.lector,
+            read_status: this.filters.read_status,
           },
         }
       );
@@ -65,6 +115,35 @@ export class BooksListPageComponent implements OnInit {
   onSortChange(sortIndex: string): void {
     this.sortIndex = sortIndex as keyof typeof this.sortObject;
     this.fetchBooks();
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 1;
+    this.fetchBooks();
+  }
+
+  clearFilters(): void {
+    this.filters = {
+      author_name: null,
+      genre: null,
+      lector: null,
+      read_status: null,
+    };
+    this.currentPage = 1;
+    this.fetchBooks();
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!(
+      this.filters.author_name ||
+      this.filters.genre ||
+      this.filters.lector ||
+      this.filters.read_status !== null
+    );
   }
 
   private getSortField(): string {

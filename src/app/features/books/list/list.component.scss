@@ -13,6 +13,101 @@
   padding: 0 21%;
 }
 
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+  }
+
+  .page-header-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.filter-toggle-btn {
+  position: relative;
+  background-color: var(--shadow-3);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.34rem;
+  cursor: pointer;
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background-color: var(--shadow-2);
+  }
+
+  &.active {
+    background-color: var(--accent);
+  }
+
+  .filter-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--accent);
+    border-radius: 50%;
+  }
+}
+
+.filters-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--shadow-3);
+  border-radius: 0.5rem;
+  align-items: flex-end;
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 150px;
+
+    label {
+      font-size: 0.85rem;
+      color: var(--foreground-muted);
+    }
+
+    select {
+      height: 32px;
+      padding: 0 0.75rem;
+    }
+  }
+
+  .clear-filters-btn {
+    height: 32px;
+    padding: 0 1rem;
+    background-color: var(--shadow-2);
+    color: var(--foreground);
+    border: none;
+    border-radius: 0.34rem;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: var(--shadow-1);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
 button {
   background-color: var(--shadow-3);
   border: none;

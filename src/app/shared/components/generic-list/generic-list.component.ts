@@ -15,6 +15,14 @@ interface ListConfig {
   sortOptions: string[];
 }
 
+interface GenericListItem {
+  title?: string;
+  name?: string;
+  relative_cover_path?: string;
+  relative_img_path?: string;
+  author_name?: string;
+}
+
 @Component({
   selector: "app-generic-list",
   standalone: true,
@@ -23,7 +31,7 @@ interface ListConfig {
   styleUrls: ["./generic-list.component.scss"],
 })
 export class GenericListComponent implements OnInit {
-  @Input() items: any[] = [];
+  @Input() items: GenericListItem[] = [];
   @Input() listType: "books" | "authors" = "books";
   @Input() config: ListConfig = {
     page: 1,

@@ -16,13 +16,16 @@ pub fn get_current_absolute_path() -> Option<AbsolutePath> {
     query.first::<AbsolutePath>(conn).ok()
 }
 
-pub fn get_all_absolute_path() -> Vec<AbsolutePath> {
+pub fn get_all_absolute_path() -> Result<Vec<AbsolutePath>, String> {
     let conn = &mut establish_connection();
 
     let query = crate::schema::absolute_paths::dsl::absolute_paths
         .order_by(crate::schema::absolute_paths::dsl::last_use_date.desc());
 
-    query.load::<AbsolutePath>(conn).expect("Error loading absolute paths")
+    query.load::<AbsolutePath>(conn).map_err(|e| {
+        eprintln!("Error loading absolute paths: {}", e);
+        format!("Failed to load library paths: {}", e)
+    })
 }
 
 fn check_if_absolute_path_in_db_by_name(absolute_path: &str) -> bool {
@@ -79,7 +82,7 @@ pub fn add_absolute_path(absolute_path: String) -> Result<(), String> {
 
     let new_absolute_path = NewAbsolutePath {
         absolute_path,
-        add_date: now.clone(),
+        add_date: now,
         last_use_date: Some(now),
     };
 

@@ -1,7 +1,13 @@
 {
   "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
     "tauri-apps.tauri-vscode",
     "rust-lang.rust-analyzer",
-    "angular.ng-template"
+    "angular.ng-template",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "tamasfe.even-better-toml",
+    "vadimcn.vscode-lldb"
   ]
 }

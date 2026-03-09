@@ -9,6 +9,8 @@ import { LectorsListPageComponent } from "./features/lectors/list/lectors.compon
 import { LectorsDetailsPageComponent } from "./features/lectors/details/lectors-details.component";
 import { GenresListPageComponent } from "./features/genres/list/genres.component";
 import { GenresDetailsPageComponent } from "./features/genres/details/genres-details.component";
+import { SeriesListPageComponent } from "./features/series/list/series.component";
+import { SeriesDetailsPageComponent } from "./features/series/details/series-details.component";
 import { SettingsPageComponent } from "./features/settings/settings.component";
 import { SearchPageComponent } from "./features/search/search.component";
 import { DashboardPageComponent } from "./features/dashboard/dashboard.component";
@@ -57,6 +59,14 @@ export const routes: Routes = [
   {
     path: "genres/:name",
     component: GenresDetailsPageComponent,
+  },
+  {
+    path: "series",
+    component: SeriesListPageComponent,
+  },
+  {
+    path: "series/:id",
+    component: SeriesDetailsPageComponent,
   },
   {
     path: "settings",

@@ -6,8 +6,10 @@ interface Book {
   lector: string;
   create_date: string;
   read: boolean;
-  score: number;
+  score: number | null;
   duration_seconds: number | null;
+  series_id: number | null;
+  series_order: number | null;
 }
 
 interface ListResponse<T> {

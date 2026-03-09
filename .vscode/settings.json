@@ -3,5 +3,36 @@
         "tauri",
         "Topbar"
     ],
-    "svg.preview.background": "dark-transparent"
+    "svg.preview.background": "dark-transparent",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[scss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    },
+    "rust-analyzer.check.command": "clippy",
+    "search.exclude": {
+        "src-tauri/target": true,
+        "dist": true
+    },
+    "files.watcherExclude": {
+        "**/src-tauri/target/**": true,
+        "**/dist/**": true
+    },
+    "chat.tools.terminal.autoApprove": {
+        "/^cargo clippy --manifest-path src-tauri/Cargo\\.toml$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }
