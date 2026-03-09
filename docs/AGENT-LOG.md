@@ -22,6 +22,12 @@ Each entry follows this structure:
 
 ## Recent Actions
 
+### [2026-03-09 09:45] | refactor | Implement suggested improvements
+
+- **Files affected**: `.nvmrc` (new), `src-tauri/Cargo.toml`, `docs/DOCUMENTATION.md`, `CHANGELOG.md` (new)
+- **Changes**: Added `.nvmrc` pinning Node.js to v22. Removed unused `uuid` crate from Cargo.toml. Updated implementation status table in DOCUMENTATION.md to reflect completed features (series, filters, score editing, theme persistence). Created conventional CHANGELOG.md with full release history.
+- **Validation**: `cargo check` ✅ (1 pre-existing warning: unused `get_series_count`)
+
 ### [2026-03-09 09:30] | docs | Release prep - relocate agent log and improve documentation
 
 - **Files affected**: `.agent-log.md` → `docs/AGENT-LOG.md`, `.github/copilot-instructions.md`, `docs/DEVELOPMENT PLAN.md`
@@ -171,10 +177,10 @@ When making changes to this codebase:
 | setup | 1 |
 | fix | 3 |
 | feature | 0 |
-| refactor | 0 |
+| refactor | 1 |
 | docs | 1 |
 | perf | 0 |
 | test | 0 |
 
-**Total entries**: 5  
-**Last update**: 2026-03-09 09:30
+**Total entries**: 6  
+**Last update**: 2026-03-09 09:45

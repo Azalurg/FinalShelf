@@ -191,6 +191,7 @@ Before submitting or merging:
 - [ ] Code compiles without errors (`cargo check`, `npm run lint`)
 - [ ] No new warnings introduced
 - [ ] Version bumped appropriately
+- [ ] CHANGELOG.md updated (for releases)
 - [ ] Agent log updated (see §8)
 - [ ] Related documentation updated if behavior changed
 - [ ] Commit messages follow conventional format
@@ -266,12 +267,14 @@ After completing any meaningful development task:
 | File | Purpose |
 |------|---------|
 | `README.md` | Project overview, quick start, features |
+| `CHANGELOG.md` | Release history in Keep a Changelog format |
 | `docs/DOCUMENTATION.md` | Technical architecture, module details |
 | `docs/DEVELOPMENT PLAN.md` | Roadmap with milestones, stories, tasks |
 | `docs/AGENT-LOG.md` | Chronological AI agent action history |
 
 ### 9.2 Keeping Docs Updated
 
+- Update `CHANGELOG.md` when releasing new versions (Added/Changed/Fixed/Removed).
 - Update `DEVELOPMENT PLAN.md` progress markers when completing tasks.
 - Update `DOCUMENTATION.md` when architecture changes.
 - Update `README.md` when user-facing features change.
