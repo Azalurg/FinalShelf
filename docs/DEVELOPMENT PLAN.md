@@ -1,24 +1,34 @@
 # FinalShelf — Development Plan
 
-> **Version:** 0.4.2
-> **Generated:** 2026-03-05
+> **Version:** 0.5.2  
+> **Last updated:** 2026-03-09  
 > **Stack:** Tauri 2.0 · Angular 17 · Diesel (SQLite) · Rust
+
+---
+
+## Progress Legend
+
+| Symbol | Meaning |
+|--------|---------|  
+| `- [ ]` | Not started |
+| `- [~]` | In progress / Partially done |
+| `- [x]` | Completed |
 
 ---
 
 ## Overview
 
-| Milestone | Stories | Tasks | Estimated Time |
-|---|---|---|---|
-| [M1: Stability & Error Handling](#milestone-1-stability--error-handling) | 3 | 10 | 1–2 weeks |
-| [M2: UI/UX Polish](#milestone-2-uiux-polish) | 4 | 13 | 2–3 weeks |
-| [M3: Book Management](#milestone-3-book-management) | 3 | 9 | 1–2 weeks |
-| [M4: Series & Cycles](#milestone-4-series--cycles) | 3 | 11 | 3–4 weeks |
-| [M5: Tags & Custom Labels](#milestone-5-tags--custom-labels) | 2 | 7 | 1–2 weeks |
-| [M6: Advanced Statistics & Data Export](#milestone-6-advanced-statistics--data-export) | 3 | 9 | 2–3 weeks |
-| [M7: Infrastructure & Quality](#milestone-7-infrastructure--quality) | 3 | 9 | 2–3 weeks |
-| [M8: Testing & PR Quality Gate](#milestone-8-testing--pr-quality-gate) | 3 | 9 | 1–2 weeks |
-| **Total** | **24** | **77** | **13–21 weeks** |
+| Milestone | Stories | Tasks | Status | Estimated Time |
+|---|---|---|---|---|
+| [M1: Stability & Error Handling](#milestone-1-stability--error-handling) | 3 | 10 | ✅ Done | 1–2 weeks |
+| [M2: UI/UX Polish](#milestone-2-uiux-polish) | 4 | 13 | ✅ Done | 2–3 weeks |
+| [M3: Book Management](#milestone-3-book-management) | 3 | 9 | 🔲 Pending | 1–2 weeks |
+| [M4: Series & Cycles](#milestone-4-series--cycles) | 3 | 11 | ✅ Done | 3–4 weeks |
+| [M5: Tags & Custom Labels](#milestone-5-tags--custom-labels) | 2 | 7 | 🔲 Pending | 1–2 weeks |
+| [M6: Advanced Statistics & Data Export](#milestone-6-advanced-statistics--data-export) | 3 | 9 | 🔲 Pending | 2–3 weeks |
+| [M7: Infrastructure & Quality](#milestone-7-infrastructure--quality) | 3 | 9 | 🔲 Pending | 2–3 weeks |
+| [M8: Testing & PR Quality Gate](#milestone-8-testing--pr-quality-gate) | 3 | 9 | 🔲 Pending | 1–2 weeks |
+| **Total** | **24** | **77** | — | **13–21 weeks** |
 
 ---
 
@@ -26,11 +36,12 @@
 
 Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling across the full stack so the app never crashes unexpectedly.
 
-> **Estimated time:** 1–2 weeks
+> **Estimated time:** 1–2 weeks  
+> **Status:** ✅ Completed (v0.4.7)
 
 ---
 
-### Story 1.1: Replace panic-based app exit with graceful shutdown — S {#story-1-1}
+### - [x] Story 1.1: Replace panic-based app exit with graceful shutdown — S {#story-1-1}
 
 **As a** user **I want** the app to shut down cleanly when I press Exit **so that** no data is lost and no error dialogs appear.
 
@@ -39,7 +50,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 - In-flight DB writes complete before process exit
 - No `panic!()` used for intentional control flow anywhere in the codebase
 
-#### Task 1.1.1: Replace `kill_command` panic with graceful exit {#task-1-1-1}
+#### - [x] Task 1.1.1: Replace `kill_command` panic with graceful exit {#task-1-1-1}
 
 **Type:** Bug
 
@@ -53,7 +64,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 **DoD:** Exit button closes the app cleanly with exit code 0; no panic output in stderr.
 
-#### Task 1.1.2: Replace `expect()`/`unwrap()` in services with `Result` returns {#task-1-1-2}
+#### - [x] Task 1.1.2: Replace `expect()`/`unwrap()` in services with `Result` returns {#task-1-1-2}
 
 **Type:** Bug
 
@@ -70,7 +81,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 ---
 
-### Story 1.2: Replace frontend `alert()` calls with proper UI notifications — S {#story-1-2}
+### - [x] Story 1.2: Replace frontend `alert()` calls with proper UI notifications — S {#story-1-2}
 
 **As a** user **I want** feedback on operations (scan results, errors) displayed as in-app notifications **so that** I get a consistent, non-intrusive UX instead of browser-style alert dialogs.
 
@@ -79,7 +90,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 - Notifications appear as styled toast/banner components
 - Error messages are human-readable
 
-#### Task 1.2.1: Create a shared toast notification component {#task-1-2-1}
+#### - [x] Task 1.2.1: Create a shared toast notification component {#task-1-2-1}
 
 **Type:** Feature
 
@@ -95,7 +106,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 **DoD:** Toast component renders in the app shell; service exposes `show(message, type, duration)` API; unit test or manual verification.
 
-#### Task 1.2.2: Replace all `alert()` calls in settings with toast notifications {#task-1-2-2}
+#### - [x] Task 1.2.2: Replace all `alert()` calls in settings with toast notifications {#task-1-2-2}
 
 **Type:** Bug
 
@@ -108,7 +119,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 **DoD:** No `alert()` calls remain in `settings.component.ts`; scan results and errors display as toast notifications.
 
-#### Task 1.2.3: Replace `alert()` in sidebar exit handler {#task-1-2-3}
+#### - [x] Task 1.2.3: Replace `alert()` in sidebar exit handler {#task-1-2-3}
 
 **Type:** Bug
 
@@ -121,7 +132,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 **DoD:** No `alert()` calls remain in `sidebar.component.ts`.
 
-#### Task 1.2.4: Replace `prompt()` with native dialog for adding paths {#task-1-2-4}
+#### - [x] Task 1.2.4: Replace `prompt()` with native dialog for adding paths {#task-1-2-4}
 
 **Type:** Feature
 
@@ -136,7 +147,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 ---
 
-### Story 1.3: Database connection robustness — S {#story-1-3}
+### - [ ] Story 1.3: Database connection robustness — S {#story-1-3}
 
 **As a** system **I want** database connections to be managed via a connection pool **so that** concurrent commands don't cause "database is locked" errors.
 
@@ -145,7 +156,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 - All services receive a pooled connection instead of calling `establish_connection()` directly
 - No raw `SqliteConnection::establish()` calls remain in service code
 
-#### Task 1.3.1: Introduce `r2d2` connection pool as Tauri managed state {#task-1-3-1}
+#### - [ ] Task 1.3.1: Introduce `r2d2` connection pool as Tauri managed state {#task-1-3-1}
 
 **Type:** Refactor
 
@@ -160,7 +171,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 **DoD:** Pool is created at startup and available as `State<DbPool>` in commands.
 
-#### Task 1.3.2: Update all services and commands to use pooled connections {#task-1-3-2}
+#### - [ ] Task 1.3.2: Update all services and commands to use pooled connections {#task-1-3-2}
 
 **Type:** Refactor
 
@@ -185,11 +196,12 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 
 Persist user preferences, improve the book details page, and enhance the overall user experience.
 
-> **Estimated time:** 2–3 weeks
+> **Estimated time:** 2–3 weeks  
+> **Status:** ✅ Completed (v0.5.2)
 
 ---
 
-### Story 2.1: Persist theme selection — S {#story-2-1}
+### - [x] Story 2.1: Persist theme selection — S {#story-2-1}
 
 **As a** user **I want** my chosen theme to persist across app restarts **so that** I don't have to re-select it every time.
 
@@ -198,7 +210,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 - On app startup, theme is restored before first render
 - Settings page reflects the current persisted theme
 
-#### Task 2.1.1: Save and restore theme from `localStorage` {#task-2-1-1}
+#### - [x] Task 2.1.1: Save and restore theme from `localStorage` {#task-2-1-1}
 
 **Type:** Feature
 
@@ -214,7 +226,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 ---
 
-### Story 2.2: Book score editing — M {#story-2-2}
+### - [x] Story 2.2: Book score editing — M {#story-2-2}
 
 **As a** user **I want** to rate books on the details page **so that** I can track my personal scoring and see rankings.
 
@@ -226,7 +238,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 **CONFLICT:** Documentation (§1 row 7) states "Score field exists in the model but is **not displayed or editable** in the UI." However, the current `details.component.html` already **displays** score as `{{ bookDetails.score || '—' }}`. The display is implemented, but editing is not. Resolution: only implement score editing UI.
 
-#### Task 2.2.1: Create a reusable score input component {#task-2-2-1}
+#### - [x] Task 2.2.1: Create a reusable score input component {#task-2-2-1}
 
 **Type:** Feature
 
@@ -241,7 +253,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 **DoD:** Component renders with a numeric score; clicking updates the displayed value and emits the event.
 
-#### Task 2.2.2: Integrate score editing into book details page {#task-2-2-2}
+#### - [x] Task 2.2.2: Integrate score editing into book details page {#task-2-2-2}
 
 **Type:** Feature
 
@@ -257,7 +269,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 ---
 
-### Story 2.3: Wire frontend filters to book list — M {#story-2-3}
+### - [x] Story 2.3: Wire frontend filters to book list — M {#story-2-3}
 
 **As a** user **I want** to filter books by author, genre, lector, and read status directly from the books list page **so that** I can narrow down large collections.
 
@@ -268,7 +280,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 - Clearing a filter restores the unfiltered view
 - Current page resets to 1 when filters change
 
-#### Task 2.3.1: Add filter UI controls to books list page {#task-2-3-1}
+#### - [x] Task 2.3.1: Add filter UI controls to books list page {#task-2-3-1}
 
 **Type:** Feature
 
@@ -283,7 +295,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 **DoD:** Filter controls render with populated options; selecting one triggers `fetchBooks()` with the appropriate filter param.
 
-#### Task 2.3.2: Pass filter params from frontend to `get_books_list_command` {#task-2-3-2}
+#### - [x] Task 2.3.2: Pass filter params from frontend to `get_books_list_command` {#task-2-3-2}
 
 **Type:** Feature
 
@@ -298,7 +310,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 ---
 
-### Story 2.4: Scan progress feedback — M {#story-2-4}
+### - [x] Story 2.4: Scan progress feedback — M {#story-2-4}
 
 **As a** user **I want** to see progress during library scanning **so that** I know the operation is running and how far along it is.
 
@@ -308,7 +320,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 - Scan button is disabled while scanning
 - Completion result is shown as a toast notification
 
-#### Task 2.4.1: Add Tauri event emission to scanner for progress updates {#task-2-4-1}
+#### - [x] Task 2.4.1: Add Tauri event emission to scanner for progress updates {#task-2-4-1}
 
 **Type:** Feature
 
@@ -323,7 +335,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 **DoD:** Tauri events are emitted during scan with phase/count data; can be verified via Tauri devtools.
 
-#### Task 2.4.2: Add progress listener and UI indicator to settings page {#task-2-4-2}
+#### - [x] Task 2.4.2: Add progress listener and UI indicator to settings page {#task-2-4-2}
 
 **Type:** Feature
 
@@ -344,11 +356,12 @@ Persist user preferences, improve the book details page, and enhance the overall
 
 Improve book-level features: notes, deletion, and image management.
 
-> **Estimated time:** 1–2 weeks
+> **Estimated time:** 1–2 weeks  
+> **Status:** 🔲 Pending
 
 ---
 
-### Story 3.1: Delete books and orphaned authors — S {#story-3-1}
+### - [ ] Story 3.1: Delete books and orphaned authors — S {#story-3-1}
 
 **As a** user **I want** to remove incorrectly imported books from the library **so that** my collection only contains relevant entries.
 
@@ -358,7 +371,7 @@ Improve book-level features: notes, deletion, and image management.
 - If the author has no remaining books, the author record is also removed
 - A confirmation dialog appears before deletion
 
-#### Task 3.1.1: Add `delete_book` service and command {#task-3-1-1}
+#### - [ ] Task 3.1.1: Add `delete_book` service and command {#task-3-1-1}
 
 **Type:** Feature
 
@@ -373,7 +386,7 @@ Improve book-level features: notes, deletion, and image management.
 
 **DoD:** Calling `delete_book_command` with a title removes the book and orphaned author; returns `Ok(())`.
 
-#### Task 3.1.2: Add delete button with confirmation to book details UI {#task-3-1-2}
+#### - [ ] Task 3.1.2: Add delete button with confirmation to book details UI {#task-3-1-2}
 
 **Type:** Feature
 
@@ -389,7 +402,7 @@ Improve book-level features: notes, deletion, and image management.
 
 ---
 
-### Story 3.2: Book notes / reviews — S {#story-3-2}
+### - [ ] Story 3.2: Book notes / reviews — S {#story-3-2}
 
 **As a** user **I want** to add personal notes to books **so that** I can record my thoughts and summaries.
 
@@ -398,7 +411,7 @@ Improve book-level features: notes, deletion, and image management.
 - Notes are saved to the database on blur or with a save button
 - Notes persist across sessions
 
-#### Task 3.2.1: Add `notes` column to books table {#task-3-2-1}
+#### - [ ] Task 3.2.1: Add `notes` column to books table {#task-3-2-1}
 
 **Type:** Feature
 
@@ -415,7 +428,7 @@ Improve book-level features: notes, deletion, and image management.
 
 **DoD:** Migration applies cleanly; `Book` struct includes `notes: Option<String>`.
 
-#### Task 3.2.2: Add notes editor to book details page {#task-3-2-2}
+#### - [ ] Task 3.2.2: Add notes editor to book details page {#task-3-2-2}
 
 **Type:** Feature
 
@@ -431,7 +444,7 @@ Improve book-level features: notes, deletion, and image management.
 
 ---
 
-### Story 3.3: Manual cover image management — S {#story-3-3}
+### - [ ] Story 3.3: Manual cover image management — S {#story-3-3}
 
 **As a** user **I want** to set or replace a book's cover image **so that** books with missing or incorrect covers display properly.
 
@@ -440,7 +453,7 @@ Improve book-level features: notes, deletion, and image management.
 - Clicking opens a native file picker (image formats only)
 - Selected image is copied to the book's directory and the database path is updated
 
-#### Task 3.3.1: Add `update_cover` backend command {#task-3-3-1}
+#### - [ ] Task 3.3.1: Add `update_cover` backend command {#task-3-3-1}
 
 **Type:** Feature
 
@@ -455,7 +468,7 @@ Improve book-level features: notes, deletion, and image management.
 
 **DoD:** Command copies image and updates DB; returns updated `Book` with new cover path.
 
-#### Task 3.3.2: Add cover change button to book details UI {#task-3-3-2}
+#### - [ ] Task 3.3.2: Add cover change button to book details UI {#task-3-3-2}
 
 **Type:** Feature
 
@@ -475,11 +488,12 @@ Improve book-level features: notes, deletion, and image management.
 
 Introduce series/cycles as a core organizational concept, with auto-detection from metadata and a dedicated UI.
 
-> **Estimated time:** 3–4 weeks
+> **Estimated time:** 3–4 weeks  
+> **Status:** ✅ Completed (v0.5.0)
 
 ---
 
-### Story 4.1: Series data model — M {#story-4-1}
+### - [x] Story 4.1: Series data model — M {#story-4-1}
 
 **As a** system **I want** a `series` table and relationships to books **so that** books can be organized into ordered series.
 
@@ -488,7 +502,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 - `books` table has `series_id` (FK, nullable) and `series_order` (INT, nullable) columns
 - Migration applies and reverts cleanly
 
-#### Task 4.1.1: Create `series` table migration {#task-4-1-1}
+#### - [x] Task 4.1.1: Create `series` table migration {#task-4-1-1}
 
 **Type:** Feature
 
@@ -502,7 +516,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 **DoD:** `diesel migration run` and `diesel migration revert` both succeed.
 
-#### Task 4.1.2: Create Series model and update Book model {#task-4-1-2}
+#### - [x] Task 4.1.2: Create Series model and update Book model {#task-4-1-2}
 
 **Type:** Feature
 
@@ -518,7 +532,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 **DoD:** `cargo build` succeeds; new model is available for use in services.
 
-#### Task 4.1.3: Create series service with CRUD operations {#task-4-1-3}
+#### - [x] Task 4.1.3: Create series service with CRUD operations {#task-4-1-3}
 
 **Type:** Feature
 
@@ -535,7 +549,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 **DoD:** All CRUD operations work via Tauri `invoke()`; returns proper `ListResponse<Series>` for list.
 
-#### Task 4.1.4: Update frontend models for series {#task-4-1-4}
+#### - [x] Task 4.1.4: Update frontend models for series {#task-4-1-4}
 
 **Type:** Feature
 
@@ -552,7 +566,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 ---
 
-### Story 4.2: Series auto-detection in scanner — L {#story-4-2}
+### - [x] Story 4.2: Series auto-detection in scanner — L {#story-4-2}
 
 **As a** system **I want** the scanner to automatically detect series from title patterns and directory structure **so that** books are grouped into series without manual effort.
 
@@ -562,7 +576,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 - Detected series are created automatically with correct ordering
 - Existing series are reused (no duplicates)
 
-#### Task 4.2.1: Implement title-pattern series detection {#task-4-2-1}
+#### - [x] Task 4.2.1: Implement title-pattern series detection {#task-4-2-1}
 
 **Type:** Feature
 
@@ -575,7 +589,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 **DoD:** Scanner correctly parses at least 3 common title patterns and extracts series name + order.
 
-#### Task 4.2.2: Implement directory-based series inference {#task-4-2-2}
+#### - [x] Task 4.2.2: Implement directory-based series inference {#task-4-2-2}
 
 **Type:** Feature
 
@@ -588,7 +602,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 **DoD:** Books in `author/series_name/book_title/` structure are assigned to the detected series.
 
-#### Task 4.2.3: Persist detected series during scan {#task-4-2-3}
+#### - [x] Task 4.2.3: Persist detected series during scan {#task-4-2-3}
 
 **Type:** Feature
 
@@ -604,7 +618,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 ---
 
-### Story 4.3: Series UI — M {#story-4-3}
+### - [x] Story 4.3: Series UI — M {#story-4-3}
 
 **As a** user **I want** to browse series, see ordered book lists, and manually assign/reorder books **so that** I can manage my series collections.
 
@@ -614,7 +628,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 - Book details page shows series name + link
 - Manual series assignment UI on book details
 
-#### Task 4.3.1: Create series list page {#task-4-3-1}
+#### - [x] Task 4.3.1: Create series list page {#task-4-3-1}
 
 **Type:** Feature
 
@@ -631,7 +645,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 **DoD:** Series list renders with pagination at `/series`; sidebar shows the link.
 
-#### Task 4.3.2: Create series detail page {#task-4-3-2}
+#### - [x] Task 4.3.2: Create series detail page {#task-4-3-2}
 
 **Type:** Feature
 
@@ -647,7 +661,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 **DoD:** Series detail page shows ordered books; clicking a book navigates to its details.
 
-#### Task 4.3.3: Add series info and assignment UI to book details {#task-4-3-3}
+#### - [x] Task 4.3.3: Add series info and assignment UI to book details {#task-4-3-3}
 
 **Type:** Feature
 
@@ -667,11 +681,12 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 
 Activate the existing but unused `tags`/`tags_books` schema and build tagging functionality.
 
-> **Estimated time:** 1–2 weeks
+> **Estimated time:** 1–2 weeks  
+> **Status:** 🔲 Pending
 
 ---
 
-### Story 5.1: Tags backend — M {#story-5-1}
+### - [ ] Story 5.1: Tags backend — M {#story-5-1}
 
 **As a** system **I want** CRUD operations for tags and tag-book associations **so that** the tagging feature is fully functional at the API level.
 
@@ -683,7 +698,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 
 **CONFLICT:** Documentation (§2.3) says `tags`/`tags_books` tables exist but are "completely unused — no service reads or writes this table." The model files (`tag.rs`) exist with struct definitions but no service, no commands, and no UI. The tables exist in the schema. Resolution: implement the full service/command layer for the existing schema.
 
-#### Task 5.1.1: Create tags service {#task-5-1-1}
+#### - [ ] Task 5.1.1: Create tags service {#task-5-1-1}
 
 **Type:** Feature
 
@@ -697,7 +712,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 
 **DoD:** All tag CRUD and assignment operations work correctly.
 
-#### Task 5.1.2: Create tags commands and register them {#task-5-1-2}
+#### - [ ] Task 5.1.2: Create tags commands and register them {#task-5-1-2}
 
 **Type:** Feature
 
@@ -712,7 +727,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 
 **DoD:** All tag commands are callable via `invoke()`.
 
-#### Task 5.1.3: Add tag filter to `list_books` {#task-5-1-3}
+#### - [ ] Task 5.1.3: Add tag filter to `list_books` {#task-5-1-3}
 
 **Type:** Feature
 
@@ -728,7 +743,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 
 ---
 
-### Story 5.2: Tags UI — M {#story-5-2}
+### - [ ] Story 5.2: Tags UI — M {#story-5-2}
 
 **As a** user **I want** to create tags and assign them to books **so that** I can organize my library with custom labels.
 
@@ -737,7 +752,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 - User can add/remove tags from a book
 - A tag management section exists in settings (create/delete tags)
 
-#### Task 5.2.1: Add tag management UI to settings {#task-5-2-1}
+#### - [ ] Task 5.2.1: Add tag management UI to settings {#task-5-2-1}
 
 **Type:** Feature
 
@@ -752,7 +767,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 
 **DoD:** Tags can be created and deleted from the settings page.
 
-#### Task 5.2.2: Add tag chips to book details page {#task-5-2-2}
+#### - [ ] Task 5.2.2: Add tag chips to book details page {#task-5-2-2}
 
 **Type:** Feature
 
@@ -767,7 +782,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 
 **DoD:** Tags are visible, assignable, and removable on the book details page.
 
-#### Task 5.2.3: Add tag filter to books list page {#task-5-2-3}
+#### - [ ] Task 5.2.3: Add tag filter to books list page {#task-5-2-3}
 
 **Type:** Feature
 
@@ -787,11 +802,12 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 
 Build a dedicated statistics page and database export/import capabilities.
 
-> **Estimated time:** 2–3 weeks
+> **Estimated time:** 2–3 weeks  
+> **Status:** 🔲 Pending
 
 ---
 
-### Story 6.1: Advanced statistics page — L {#story-6-1}
+### - [ ] Story 6.1: Advanced statistics page — L {#story-6-1}
 
 **As a** user **I want** a dedicated statistics page with charts and insights **so that** I can understand my reading/listening patterns.
 
@@ -800,7 +816,7 @@ Build a dedicated statistics page and database export/import capabilities.
 - Shows: total books, read books, total duration, avg score, genre distribution, author distribution, books-read-over-time timeline
 - At least genre distribution and author top-N use visual charts (bar/pie)
 
-#### Task 6.1.1: Create statistics backend aggregation command {#task-6-1-1}
+#### - [ ] Task 6.1.1: Create statistics backend aggregation command {#task-6-1-1}
 
 **Type:** Feature
 
@@ -815,7 +831,7 @@ Build a dedicated statistics page and database export/import capabilities.
 
 **DoD:** Command returns all aggregation data in a typed struct.
 
-#### Task 6.1.2: Create statistics page component {#task-6-1-2}
+#### - [ ] Task 6.1.2: Create statistics page component {#task-6-1-2}
 
 **Type:** Feature
 
@@ -834,7 +850,7 @@ Build a dedicated statistics page and database export/import capabilities.
 
 ---
 
-### Story 6.2: Database export / import — M {#story-6-2}
+### - [ ] Story 6.2: Database export / import — M {#story-6-2}
 
 **As a** user **I want** to export my library database to JSON and import it back **so that** I can backup and restore my data.
 
@@ -844,7 +860,7 @@ Build a dedicated statistics page and database export/import capabilities.
 - Import does not duplicate existing records
 - Native save/open dialogs are used for file selection
 
-#### Task 6.2.1: Create export backend command {#task-6-2-1}
+#### - [ ] Task 6.2.1: Create export backend command {#task-6-2-1}
 
 **Type:** Feature
 
@@ -858,7 +874,7 @@ Build a dedicated statistics page and database export/import capabilities.
 
 **DoD:** Export produces valid JSON containing all data.
 
-#### Task 6.2.2: Create import backend command {#task-6-2-2}
+#### - [ ] Task 6.2.2: Create import backend command {#task-6-2-2}
 
 **Type:** Feature
 
@@ -872,7 +888,7 @@ Build a dedicated statistics page and database export/import capabilities.
 
 **DoD:** Importing an exported file restores all data correctly.
 
-#### Task 6.2.3: Add export/import buttons to settings UI {#task-6-2-3}
+#### - [ ] Task 6.2.3: Add export/import buttons to settings UI {#task-6-2-3}
 
 **Type:** Feature
 
@@ -888,7 +904,7 @@ Build a dedicated statistics page and database export/import capabilities.
 
 ---
 
-### Story 6.3: Dashboard duration statistic — S {#story-6-3}
+### - [ ] Story 6.3: Dashboard duration statistic — S {#story-6-3}
 
 **As a** user **I want** the dashboard to show total listening duration **so that** I can see an overview of my library size in time.
 
@@ -896,7 +912,7 @@ Build a dedicated statistics page and database export/import capabilities.
 - Dashboard displays total duration (formatted as `Xh Ym`) alongside other stats
 - Only books with `duration_seconds` are counted
 
-#### Task 6.3.1: Add total duration to dashboard backend {#task-6-3-1}
+#### - [ ] Task 6.3.1: Add total duration to dashboard backend {#task-6-3-1}
 
 **Type:** Feature
 
@@ -910,7 +926,7 @@ Build a dedicated statistics page and database export/import capabilities.
 
 **DoD:** Dashboard API response includes `total_duration_seconds`.
 
-#### Task 6.3.2: Display total duration on dashboard UI {#task-6-3-2}
+#### - [ ] Task 6.3.2: Display total duration on dashboard UI {#task-6-3-2}
 
 **Type:** Feature
 
@@ -930,11 +946,12 @@ Build a dedicated statistics page and database export/import capabilities.
 
 Fix broken migrations, improve database design, and prepare for multi-platform deployment.
 
-> **Estimated time:** 2–3 weeks
+> **Estimated time:** 2–3 weeks  
+> **Status:** 🔲 Pending
 
 ---
 
-### Story 7.1: Fix broken init migration down.sql — S {#story-7-1}
+### - [ ] Story 7.1: Fix broken init migration down.sql — S {#story-7-1}
 
 **As a** developer **I want** all migration rollbacks to work correctly **so that** the database can be safely reverted during development.
 
@@ -942,7 +959,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 - `diesel migration revert` succeeds for all migrations
 - `down.sql` for init migration uses correct SQLite syntax
 
-#### Task 7.1.1: Rewrite init migration `down.sql` {#task-7-1-1}
+#### - [ ] Task 7.1.1: Rewrite init migration `down.sql` {#task-7-1-1}
 
 **Type:** Bug
 
@@ -957,7 +974,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 ---
 
-### Story 7.2: Replace book title PK with composite key — L {#story-7-2}
+### - [ ] Story 7.2: Replace book title PK with composite key — L {#story-7-2}
 
 **As a** system **I want** books to be uniquely identified by `(title, author_name)` **so that** two books with the same title from different authors don't collide.
 
@@ -967,7 +984,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 - All foreign key references are updated
 - Existing data is migrated without loss
 
-#### Task 7.2.1: Design and create the PK migration {#task-7-2-1}
+#### - [ ] Task 7.2.1: Design and create the PK migration {#task-7-2-1}
 
 **Type:** Refactor
 
@@ -981,7 +998,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 **DoD:** Migration applies cleanly on existing databases; data is preserved; rollback works.
 
-#### Task 7.2.2: Update all models and services for new PK {#task-7-2-2}
+#### - [ ] Task 7.2.2: Update all models and services for new PK {#task-7-2-2}
 
 **Type:** Refactor
 
@@ -999,7 +1016,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 **DoD:** All services compile and work with the new PK; scanner handles title collisions correctly.
 
-#### Task 7.2.3: Update frontend to use new book identifier {#task-7-2-3}
+#### - [ ] Task 7.2.3: Update frontend to use new book identifier {#task-7-2-3}
 
 **Type:** Refactor
 
@@ -1017,7 +1034,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 ---
 
-### Story 7.3: Responsive window sizing — M {#story-7-3}
+### - [ ] Story 7.3: Responsive window sizing — M {#story-7-3}
 
 **As a** user **I want** the app to adapt to different window sizes **so that** I can resize the window and still use the app comfortably.
 
@@ -1027,7 +1044,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 - Book details page stacks vertically on narrow windows
 - Minimum window size is enforced (e.g., 800×600)
 
-#### Task 7.3.1: Add responsive breakpoints to global styles {#task-7-3-1}
+#### - [ ] Task 7.3.1: Add responsive breakpoints to global styles {#task-7-3-1}
 
 **Type:** Feature
 
@@ -1043,7 +1060,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 **DoD:** App is usable at 800×600 and looks good at 1920×1080.
 
-#### Task 7.3.2: Update Tauri window configuration {#task-7-3-2}
+#### - [ ] Task 7.3.2: Update Tauri window configuration {#task-7-3-2}
 
 **Type:** Feature
 
@@ -1056,7 +1073,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 **DoD:** Window is resizable with enforced minimum dimensions.
 
-#### Task 7.3.3: Add keyboard navigation shortcuts {#task-7-3-3}
+#### - [ ] Task 7.3.3: Add keyboard navigation shortcuts {#task-7-3-3}
 
 **Type:** Feature
 
@@ -1076,11 +1093,12 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 
 Create a baseline automated test set and enforce PR checks via GitHub Actions before merge.
 
-> **Estimated time:** 1–2 weeks
+> **Estimated time:** 1–2 weeks  
+> **Status:** 🔲 Pending
 
 ---
 
-### Story 8.1: Establish baseline automated test set — M {#story-8-1}
+### - [ ] Story 8.1: Establish baseline automated test set — M {#story-8-1}
 
 **As a** developer **I want** a reliable baseline set of frontend and backend tests **so that** regressions are caught early.
 
@@ -1089,7 +1107,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 - Rust test suite includes unit tests for at least 3 service/model behaviors
 - Test commands are documented and run locally with consistent results
 
-#### Task 8.1.1: Add frontend unit tests for critical flows {#task-8-1-1}
+#### - [ ] Task 8.1.1: Add frontend unit tests for critical flows {#task-8-1-1}
 
 **Type:** Test
 
@@ -1104,7 +1122,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 
 **DoD:** `npm test -- --watch=false --browsers=ChromeHeadless` passes with added coverage for key user flows.
 
-#### Task 8.1.2: Add Rust unit tests for service logic {#task-8-1-2}
+#### - [ ] Task 8.1.2: Add Rust unit tests for service logic {#task-8-1-2}
 
 **Type:** Test
 
@@ -1121,7 +1139,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 
 ---
 
-### Story 8.2: Add GitHub Actions workflow for required PR checks — M {#story-8-2}
+### - [ ] Story 8.2: Add GitHub Actions workflow for required PR checks — M {#story-8-2}
 
 **As a** maintainer **I want** CI checks to run automatically on pull requests **so that** only validated changes can be merged.
 
@@ -1130,7 +1148,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 - Workflow runs frontend lint/tests and Rust check/tests
 - Workflow fails the PR when any check fails
 
-#### Task 8.2.1: Create CI workflow for lint + test + build checks {#task-8-2-1}
+#### - [ ] Task 8.2.1: Create CI workflow for lint + test + build checks {#task-8-2-1}
 
 **Type:** DevOps
 
@@ -1143,7 +1161,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 
 **DoD:** CI workflow completes successfully on PR with all required jobs green.
 
-#### Task 8.2.2: Configure PR trigger scope and branch protection guidance {#task-8-2-2}
+#### - [ ] Task 8.2.2: Configure PR trigger scope and branch protection guidance {#task-8-2-2}
 
 **Type:** DevOps
 
@@ -1159,7 +1177,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 
 ---
 
-### Story 8.3: Enforce version bump policy for every PR — S {#story-8-3}
+### - [x] Story 8.3: Enforce version bump policy for every PR — S {#story-8-3}
 
 **As a** maintainer **I want** each PR to include explicit version management **so that** releases and change tracking remain consistent.
 
@@ -1168,7 +1186,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 - CI validates that version files are updated when required by PR scope
 - Team guidelines document when to use each bump type
 
-#### Task 8.3.1: Document version bump policy in contributor guidance {#task-8-3-1}
+#### - [x] Task 8.3.1: Document version bump policy in contributor guidance {#task-8-3-1}
 
 **Type:** Docs
 
@@ -1182,7 +1200,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 
 **DoD:** Policy is clear and visible to contributors and AI agents.
 
-#### Task 8.3.2: Add CI guard for version bump consistency {#task-8-3-2}
+#### - [ ] Task 8.3.2: Add CI guard for version bump consistency {#task-8-3-2}
 
 **Type:** DevOps
 

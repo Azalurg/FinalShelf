@@ -1,7 +1,7 @@
 # FinalShelf — Technical Documentation & Development Roadmap
 
-> **Version:** 0.3.1  
-> **Generated:** 2026-02-28  
+> **Version:** 0.5.2  
+> **Last updated:** 2026-03-09  
 > **Stack:** Tauri 2.0 · Angular 17 · Diesel (SQLite) · Rust
 
 ---

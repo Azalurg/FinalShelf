@@ -22,6 +22,12 @@ Each entry follows this structure:
 
 ## Recent Actions
 
+### [2026-03-09 09:30] | docs | Release prep - relocate agent log and improve documentation
+
+- **Files affected**: `.agent-log.md` → `docs/AGENT-LOG.md`, `.github/copilot-instructions.md`, `docs/DEVELOPMENT PLAN.md`
+- **Changes**: Moved agent log to docs folder with uppercase naming. Rewrote Copilot instructions with comprehensive sections (architecture, coding standards, database, workflow, versioning, PRs, reviews, environment). Added progress checkboxes to all stories/tasks in development plan. Updated milestone statuses and version to 0.5.2.
+- **Validation**: Documentation-only change ✅
+
 ### [2026-03-07 20:22] | docs | Version bump to 0.5.2
 
 - **Files affected**: `package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`
@@ -166,9 +172,9 @@ When making changes to this codebase:
 | fix | 3 |
 | feature | 0 |
 | refactor | 0 |
-| docs | 0 |
+| docs | 1 |
 | perf | 0 |
 | test | 0 |
 
-**Total entries**: 4  
-**Last update**: 2026-03-07 20:10
+**Total entries**: 5  
+**Last update**: 2026-03-09 09:30
