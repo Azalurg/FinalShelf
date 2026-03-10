@@ -22,6 +22,24 @@ Each entry follows this structure:
 
 ## Recent Actions
 
+### [2026-03-10 11:25] | test | Revert frontend test relocation (keep backend layout)
+
+- **Files affected**: `src/app/features/**/**.spec.ts` (restored), `src/app/tests/*` (removed)
+- **Changes**: Moved Angular specs back next to their feature components per request while leaving backend integration tests/library setup intact.
+- **Validation**: Not run (file moves only)
+
+### [2026-03-10 11:05] | test | Relocate tests to dedicated folders and add Rust integration harness
+
+- **Files affected**: `src/app/tests/*`, `src-tauri/src/lib.rs` (new), `src-tauri/src/main.rs`, `src-tauri/src/models/mod.rs`, `src-tauri/src/services/mod.rs`, `src-tauri/src/commands/mod.rs`, `src-tauri/tests/*`, `src-tauri/src/models/query.rs`, `src-tauri/src/services/books_service.rs`, `src-tauri/src/services/absolute_paths_service.rs`
+- **Changes**: Moved all Angular specs under `src/app/tests/` and removed colocated test files. Introduced a library crate so integration tests under `src-tauri/tests/` can import app modules, exposing command/model/service modules publicly. Converted inline Rust tests into integration tests for list params, books service, and absolute path service using temp SQLite databases.
+- **Validation**: `cargo check --manifest-path src-tauri/Cargo.toml` ✅
+
+### [2026-03-10 10:30] | test | Add baseline frontend and Rust unit tests (M8 Story 8.1)
+
+- **Files affected**: `src/app/features/books/list/list.component.spec.ts`, `src/app/features/books/details/details.component.spec.ts`, `src/app/features/settings/settings.component.spec.ts`, `src-tauri/src/models/query.rs`, `src-tauri/src/services/books_service.rs`, `src-tauri/src/services/absolute_paths_service.rs`
+- **Changes**: Added Angular specs covering book list filtering, score persistence, and theme storage. Added Rust unit tests for list parameter validation plus book and absolute path service behaviors using temporary SQLite databases.
+- **Validation**: Not run (not requested)
+
 ### [2026-03-09 09:45] | refactor | Implement suggested improvements
 
 - **Files affected**: `.nvmrc` (new), `src-tauri/Cargo.toml`, `docs/DOCUMENTATION.md`, `CHANGELOG.md` (new)
@@ -175,12 +193,12 @@ When making changes to this codebase:
 | Type | Count |
 |------|-------|
 | setup | 1 |
-| fix | 3 |
-| feature | 0 |
+| fix | 7 |
+| feature | 5 |
 | refactor | 1 |
-| docs | 1 |
+| docs | 3 |
 | perf | 0 |
-| test | 0 |
+| test | 3 |
 
-**Total entries**: 6  
-**Last update**: 2026-03-09 09:45
+**Total entries**: 20  
+**Last update**: 2026-03-10 11:25

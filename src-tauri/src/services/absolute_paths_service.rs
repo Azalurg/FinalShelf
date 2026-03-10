@@ -95,3 +95,4 @@ pub fn add_absolute_path(absolute_path: String) -> Result<(), String> {
 
     Ok(())
 }
+

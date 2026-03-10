@@ -178,3 +178,4 @@ pub fn get_all_book_paths() -> Result<Vec<String>, diesel::result::Error> {
         .select(dsl::relative_file_path)
         .load::<String>(conn)
 }
+
