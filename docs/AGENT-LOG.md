@@ -28,6 +28,12 @@ Each entry follows this structure:
 - **Changes**: Moved Angular specs back next to their feature components per request while leaving backend integration tests/library setup intact.
 - **Validation**: Not run (file moves only)
 
+### [2026-03-10 12:05] | test | Add CI workflow and branch protection guidance (M8 Story 8.2)
+
+- **Files affected**: `.github/workflows/ci.yml` (new), `docs/DEVELOPMENT PLAN.md`, `README.md`
+- **Changes**: Added CI pipeline running frontend lint plus Rust check/test/clippy on push/PR to main and develop. Documented triggers and required check name for branch protection; marked M8 Story 8.2 as complete.
+- **Validation**: Not run (CI config only)
+
 ### [2026-03-10 11:05] | test | Relocate tests to dedicated folders and add Rust integration harness
 
 - **Files affected**: `src/app/tests/*`, `src-tauri/src/lib.rs` (new), `src-tauri/src/main.rs`, `src-tauri/src/models/mod.rs`, `src-tauri/src/services/mod.rs`, `src-tauri/src/commands/mod.rs`, `src-tauri/tests/*`, `src-tauri/src/models/query.rs`, `src-tauri/src/services/books_service.rs`, `src-tauri/src/services/absolute_paths_service.rs`
@@ -122,7 +128,7 @@ Each entry follows this structure:
 ### [2026-03-05 21:30] | feature | Implemented M1 (MVP) Phase - 6 Stories
 
 - **Files affected**: `src/app/features/books/list/*`, `src/app/features/books/details/*`, `src/app/features/settings/*`, `src/app/app.component.*`, `src/app/shared/services/notification.service.ts`, `src/app/shared/components/notification-container/*`, `src/styles/_details.scss`, `src-tauri/src/scanner.rs`, `src-tauri/src/commands/settings_commands.rs`, `src-tauri/src/services/absolute_paths_service.rs`, `src-tauri/src/services/authors_service.rs`
-- **Changes**: 
+- **Changes**:
   - **1.1**: Added filter controls (author, genre, lector, read status) to book list with toggle panel
   - **1.2**: Already implemented (routes exist)
   - **1.3**: Persist theme selection in localStorage, load on app startup
@@ -190,15 +196,15 @@ When making changes to this codebase:
 
 ## Summary Stats
 
-| Type | Count |
-|------|-------|
-| setup | 1 |
-| fix | 7 |
-| feature | 5 |
-| refactor | 1 |
-| docs | 3 |
-| perf | 0 |
-| test | 3 |
+| Type     | Count |
+| -------- | ----- |
+| setup    | 1     |
+| fix      | 7     |
+| feature  | 5     |
+| refactor | 1     |
+| docs     | 3     |
+| perf     | 0     |
+| test     | 4     |
 
-**Total entries**: 20  
-**Last update**: 2026-03-10 11:25
+**Total entries**: 21  
+**Last update**: 2026-03-10 12:05

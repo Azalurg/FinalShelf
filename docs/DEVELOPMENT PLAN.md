@@ -8,27 +8,27 @@
 
 ## Progress Legend
 
-| Symbol | Meaning |
-|--------|---------|  
-| `- [ ]` | Not started |
+| Symbol  | Meaning                      |
+| ------- | ---------------------------- |
+| `- [ ]` | Not started                  |
 | `- [~]` | In progress / Partially done |
-| `- [x]` | Completed |
+| `- [x]` | Completed                    |
 
 ---
 
 ## Overview
 
-| Milestone | Stories | Tasks | Status | Estimated Time |
-|---|---|---|---|---|
-| [M1: Stability & Error Handling](#milestone-1-stability--error-handling) | 3 | 10 | ✅ Done | 1–2 weeks |
-| [M2: UI/UX Polish](#milestone-2-uiux-polish) | 4 | 13 | ✅ Done | 2–3 weeks |
-| [M3: Book Management](#milestone-3-book-management) | 3 | 9 | 🔲 Pending | 1–2 weeks |
-| [M4: Series & Cycles](#milestone-4-series--cycles) | 3 | 11 | ✅ Done | 3–4 weeks |
-| [M5: Tags & Custom Labels](#milestone-5-tags--custom-labels) | 2 | 7 | 🔲 Pending | 1–2 weeks |
-| [M6: Advanced Statistics & Data Export](#milestone-6-advanced-statistics--data-export) | 3 | 9 | 🔲 Pending | 2–3 weeks |
-| [M7: Infrastructure & Quality](#milestone-7-infrastructure--quality) | 3 | 9 | 🔲 Pending | 2–3 weeks |
-| [M8: Testing & PR Quality Gate](#milestone-8-testing--pr-quality-gate) | 3 | 9 | 🔲 Pending | 1–2 weeks |
-| **Total** | **24** | **77** | — | **13–21 weeks** |
+| Milestone                                                                              | Stories | Tasks  | Status     | Estimated Time  |
+| -------------------------------------------------------------------------------------- | ------- | ------ | ---------- | --------------- |
+| [M1: Stability & Error Handling](#milestone-1-stability--error-handling)               | 3       | 10     | ✅ Done    | 1–2 weeks       |
+| [M2: UI/UX Polish](#milestone-2-uiux-polish)                                           | 4       | 13     | ✅ Done    | 2–3 weeks       |
+| [M3: Book Management](#milestone-3-book-management)                                    | 3       | 9      | 🔲 Pending | 1–2 weeks       |
+| [M4: Series & Cycles](#milestone-4-series--cycles)                                     | 3       | 11     | ✅ Done    | 3–4 weeks       |
+| [M5: Tags & Custom Labels](#milestone-5-tags--custom-labels)                           | 2       | 7      | 🔲 Pending | 1–2 weeks       |
+| [M6: Advanced Statistics & Data Export](#milestone-6-advanced-statistics--data-export) | 3       | 9      | 🔲 Pending | 2–3 weeks       |
+| [M7: Infrastructure & Quality](#milestone-7-infrastructure--quality)                   | 3       | 9      | 🔲 Pending | 2–3 weeks       |
+| [M8: Testing & PR Quality Gate](#milestone-8-testing--pr-quality-gate)                 | 3       | 9      | 🔲 Pending | 1–2 weeks       |
+| **Total**                                                                              | **24**  | **77** | —          | **13–21 weeks** |
 
 ---
 
@@ -46,6 +46,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **As a** user **I want** the app to shut down cleanly when I press Exit **so that** no data is lost and no error dialogs appear.
 
 **Acceptance criteria:**
+
 - Exit button terminates the app without a panic stack trace
 - In-flight DB writes complete before process exit
 - No `panic!()` used for intentional control flow anywhere in the codebase
@@ -57,6 +58,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** `kill_command` in `settings_commands.rs` uses `panic!()` to terminate the app. Replace with `app_handle.exit(0)` via Tauri's managed state or `std::process::exit(0)`.
 
 **Files/components:**
+
 - `src-tauri/src/commands/settings_commands.rs`
 - `src-tauri/src/main.rs` (pass `AppHandle` if needed)
 
@@ -71,6 +73,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** `add_author()` uses `.expect()`, `get_all_absolute_path()` uses `.expect()`, `run_migrations()` uses `.unwrap()`. Replace these with proper `Result<_, String>` returns and propagate errors to the command layer.
 
 **Files/components:**
+
 - `src-tauri/src/services/authors_service.rs` (line 110)
 - `src-tauri/src/services/absolute_paths_service.rs` (line 25)
 - `src-tauri/src/db.rs` (lines 15, 26)
@@ -86,6 +89,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **As a** user **I want** feedback on operations (scan results, errors) displayed as in-app notifications **so that** I get a consistent, non-intrusive UX instead of browser-style alert dialogs.
 
 **Acceptance criteria:**
+
 - No `alert()` or `prompt()` calls remain in the codebase
 - Notifications appear as styled toast/banner components
 - Error messages are human-readable
@@ -97,6 +101,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** Build a reusable `ToastComponent` that displays success/error/info messages with auto-dismiss (configurable duration) and a close button.
 
 **Files/components:**
+
 - `src/app/shared/components/toast/toast.component.ts` (new)
 - `src/app/shared/components/toast/toast.component.html` (new)
 - `src/app/shared/components/toast/toast.component.scss` (new)
@@ -113,6 +118,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** The settings component has 8 `alert()` calls for scan results, path operations, and errors. Replace with `ToastService.show()`.
 
 **Files/components:**
+
 - `src/app/features/settings/settings.component.ts`
 
 **Dependencies:** [Task 1.2.1](#task-1-2-1)
@@ -126,6 +132,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** The sidebar component has an `alert("Error")` call in the exit handler. Replace with toast.
 
 **Files/components:**
+
 - `src/app/shared/components/sidebar/sidebar.component.ts`
 
 **Dependencies:** [Task 1.2.1](#task-1-2-1)
@@ -139,6 +146,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** `settings.component.ts` uses `prompt()` for entering library paths. Replace with Tauri's native dialog (`@tauri-apps/plugin-dialog`) for directory selection.
 
 **Files/components:**
+
 - `src/app/features/settings/settings.component.ts`
 
 **Dependencies:** [Task 1.2.2](#task-1-2-2)
@@ -152,6 +160,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **As a** system **I want** database connections to be managed via a connection pool **so that** concurrent commands don't cause "database is locked" errors.
 
 **Acceptance criteria:**
+
 - A connection pool (e.g., `r2d2`) is initialized at app startup and shared as Tauri state
 - All services receive a pooled connection instead of calling `establish_connection()` directly
 - No raw `SqliteConnection::establish()` calls remain in service code
@@ -163,6 +172,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** Add `r2d2` + `diesel::r2d2::ConnectionManager<SqliteConnection>` to `Cargo.toml` and initialize the pool in `main.rs` as Tauri managed state. Update `db.rs` to expose the pool type.
 
 **Files/components:**
+
 - `src-tauri/Cargo.toml`
 - `src-tauri/src/db.rs`
 - `src-tauri/src/main.rs`
@@ -178,6 +188,7 @@ Eliminate panics, unwraps, and `alert()` calls. Establish robust error handling 
 **Description:** Replace all `establish_connection()` calls in services with a `&mut SqliteConnection` parameter. Update commands to extract a connection from the pool and pass it to services.
 
 **Files/components:**
+
 - `src-tauri/src/services/books_service.rs`
 - `src-tauri/src/services/authors_service.rs`
 - `src-tauri/src/services/genres_service.rs`
@@ -206,6 +217,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **As a** user **I want** my chosen theme to persist across app restarts **so that** I don't have to re-select it every time.
 
 **Acceptance criteria:**
+
 - Selected theme is saved to `localStorage`
 - On app startup, theme is restored before first render
 - Settings page reflects the current persisted theme
@@ -217,6 +229,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **Description:** In `AppComponent.ngOnInit()`, read the saved theme from `localStorage` and apply the CSS class to `<body>`. In `SettingsPageComponent.updateTheme()`, persist the selection to `localStorage`.
 
 **Files/components:**
+
 - `src/app/app.component.ts`
 - `src/app/features/settings/settings.component.ts`
 
@@ -231,6 +244,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **As a** user **I want** to rate books on the details page **so that** I can track my personal scoring and see rankings.
 
 **Acceptance criteria:**
+
 - Book details page shows the current score (0–10)
 - User can change the score via a clickable star/number widget
 - Updated score is persisted to the database immediately
@@ -245,6 +259,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **Description:** Build a `ScoreInputComponent` that renders clickable stars or number buttons (0–10). Emits a `scoreChange` event with the new value.
 
 **Files/components:**
+
 - `src/app/shared/components/score-input/score-input.component.ts` (new)
 - `src/app/shared/components/score-input/score-input.component.html` (new)
 - `src/app/shared/components/score-input/score-input.component.scss` (new)
@@ -260,6 +275,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **Description:** Replace the static score display in `details.component.html` with `<app-score-input>`. On score change, call `update_book_command` to persist.
 
 **Files/components:**
+
 - `src/app/features/books/details/details.component.html`
 - `src/app/features/books/details/details.component.ts`
 
@@ -274,6 +290,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **As a** user **I want** to filter books by author, genre, lector, and read status directly from the books list page **so that** I can narrow down large collections.
 
 **Acceptance criteria:**
+
 - Filter controls (dropdowns, toggles) are visible on the books list page
 - Selecting a filter re-fetches the list with the corresponding backend params
 - Filters can be combined (e.g., genre + read status)
@@ -287,6 +304,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **Description:** Add filter dropdowns (author, genre, lector) and a read-status toggle to the books list template. Populate dropdowns from backend list endpoints.
 
 **Files/components:**
+
 - `src/app/features/books/list/list.component.html`
 - `src/app/features/books/list/list.component.ts`
 - `src/app/features/books/list/list.component.scss`
@@ -302,6 +320,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **Description:** Update `fetchBooks()` to include `author_name`, `genre`, `lector`, and `read_status` params in the `invoke()` call based on the selected filter values.
 
 **Files/components:**
+
 - `src/app/features/books/list/list.component.ts`
 
 **Dependencies:** [Task 2.3.1](#task-2-3-1)
@@ -315,6 +334,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **As a** user **I want** to see progress during library scanning **so that** I know the operation is running and how far along it is.
 
 **Acceptance criteria:**
+
 - During scan, a progress indicator shows on the settings page
 - Progress updates include: current phase, items processed, elapsed time
 - Scan button is disabled while scanning
@@ -327,6 +347,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **Description:** Modify `scanner.rs` to accept an `AppHandle` and emit progress events (`scan-progress`) with phase name, current count, and total (when known). Make `quick_scan_command` and `full_scan_command` `async` and pass the app handle.
 
 **Files/components:**
+
 - `src-tauri/src/scanner.rs`
 - `src-tauri/src/commands/settings_commands.rs`
 - `src-tauri/src/main.rs`
@@ -342,6 +363,7 @@ Persist user preferences, improve the book details page, and enhance the overall
 **Description:** Listen for `scan-progress` events in the settings component. Show a progress bar or status text. Disable scan buttons during operation. Show toast on completion.
 
 **Files/components:**
+
 - `src/app/features/settings/settings.component.ts`
 - `src/app/features/settings/settings.component.html`
 - `src/app/features/settings/settings.component.scss`
@@ -366,6 +388,7 @@ Improve book-level features: notes, deletion, and image management.
 **As a** user **I want** to remove incorrectly imported books from the library **so that** my collection only contains relevant entries.
 
 **Acceptance criteria:**
+
 - Book details page has a "Delete" button
 - Deleting a book removes it from the database (cascade removes `tags_books` entries)
 - If the author has no remaining books, the author record is also removed
@@ -378,6 +401,7 @@ Improve book-level features: notes, deletion, and image management.
 **Description:** Create `books_service::delete_book(title)` that deletes the book record and, if the author has no remaining books, deletes the author. Register `delete_book_command` in Tauri.
 
 **Files/components:**
+
 - `src-tauri/src/services/books_service.rs`
 - `src-tauri/src/commands/books_commands.rs`
 - `src-tauri/src/main.rs`
@@ -393,6 +417,7 @@ Improve book-level features: notes, deletion, and image management.
 **Description:** Add a "Delete" button to the book details page. On click, show a Tauri native confirmation dialog. On confirm, call `delete_book_command` and navigate back to the books list.
 
 **Files/components:**
+
 - `src/app/features/books/details/details.component.html`
 - `src/app/features/books/details/details.component.ts`
 
@@ -407,6 +432,7 @@ Improve book-level features: notes, deletion, and image management.
 **As a** user **I want** to add personal notes to books **so that** I can record my thoughts and summaries.
 
 **Acceptance criteria:**
+
 - Book details page shows a text area for notes
 - Notes are saved to the database on blur or with a save button
 - Notes persist across sessions
@@ -418,6 +444,7 @@ Improve book-level features: notes, deletion, and image management.
 **Description:** Create a Diesel migration adding `notes TEXT DEFAULT NULL` to the `books` table. Update the `Book` model.
 
 **Files/components:**
+
 - `src-tauri/migrations/{timestamp}_add_book_notes/up.sql` (new)
 - `src-tauri/migrations/{timestamp}_add_book_notes/down.sql` (new)
 - `src-tauri/src/models/book.rs`
@@ -435,6 +462,7 @@ Improve book-level features: notes, deletion, and image management.
 **Description:** Add a `<textarea>` to the book details template bound to `bookDetails.notes`. On blur, call `update_book_command` to persist.
 
 **Files/components:**
+
 - `src/app/features/books/details/details.component.html`
 - `src/app/features/books/details/details.component.ts`
 
@@ -449,6 +477,7 @@ Improve book-level features: notes, deletion, and image management.
 **As a** user **I want** to set or replace a book's cover image **so that** books with missing or incorrect covers display properly.
 
 **Acceptance criteria:**
+
 - Book details page has a "Change cover" button
 - Clicking opens a native file picker (image formats only)
 - Selected image is copied to the book's directory and the database path is updated
@@ -460,6 +489,7 @@ Improve book-level features: notes, deletion, and image management.
 **Description:** Create a command that accepts a book title and an absolute image path, copies the image to the book's directory, updates `relative_cover_path`, and returns the updated book.
 
 **Files/components:**
+
 - `src-tauri/src/services/books_service.rs`
 - `src-tauri/src/commands/books_commands.rs`
 - `src-tauri/src/main.rs`
@@ -475,6 +505,7 @@ Improve book-level features: notes, deletion, and image management.
 **Description:** Add a "Change cover" button. On click, open Tauri's file dialog (image filter), then call `update_cover_command`. Refresh the displayed image.
 
 **Files/components:**
+
 - `src/app/features/books/details/details.component.html`
 - `src/app/features/books/details/details.component.ts`
 
@@ -498,6 +529,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **As a** system **I want** a `series` table and relationships to books **so that** books can be organized into ordered series.
 
 **Acceptance criteria:**
+
 - `series` table exists with `id`, `name`, `author_name` (FK), `description`
 - `books` table has `series_id` (FK, nullable) and `series_order` (INT, nullable) columns
 - Migration applies and reverts cleanly
@@ -509,6 +541,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** Write a Diesel migration that creates the `series` table and adds `series_id` + `series_order` columns to `books`. Include `down.sql` that reverses the changes.
 
 **Files/components:**
+
 - `src-tauri/migrations/{timestamp}_add_series/up.sql` (new)
 - `src-tauri/migrations/{timestamp}_add_series/down.sql` (new)
 
@@ -523,6 +556,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** Add `Series` struct (Queryable/Insertable) to `src-tauri/src/models/series.rs`. Add `series_id` and `series_order` fields to the `Book` model. Update `schema.rs`. Register in `mod.rs`.
 
 **Files/components:**
+
 - `src-tauri/src/models/series.rs` (new)
 - `src-tauri/src/models/book.rs`
 - `src-tauri/src/models/mod.rs`
@@ -539,6 +573,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** Create `series_service.rs` with: `list_series(ListParams)`, `get_series(id)`, `create_series(name, author)`, `assign_book_to_series(title, series_id, order)`. Add corresponding commands and register them.
 
 **Files/components:**
+
 - `src-tauri/src/services/series_service.rs` (new)
 - `src-tauri/src/services/mod.rs`
 - `src-tauri/src/commands/series_commands.rs` (new)
@@ -556,6 +591,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** Add `Series` interface to frontend models. Update `Book` interface to include `series_id` and `series_order`. Add route for series list and detail.
 
 **Files/components:**
+
 - `src/app/models/series.ts` (new)
 - `src/app/models/books.ts`
 - `src/app/app.routes.ts`
@@ -571,6 +607,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **As a** system **I want** the scanner to automatically detect series from title patterns and directory structure **so that** books are grouped into series without manual effort.
 
 **Acceptance criteria:**
+
 - Title patterns like `<Series> - <Part> - <Title>` are detected and parsed
 - Directory structure `author/series/book` is used as a fallback
 - Detected series are created automatically with correct ordering
@@ -583,6 +620,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** In the scanner's extraction phase, parse the album/title tag for common patterns: `Series - Part N - Title`, `Series #N: Title`, `Series (N) Title`. Extract series name and order number.
 
 **Files/components:**
+
 - `src-tauri/src/scanner.rs`
 
 **Dependencies:** [Task 4.1.3](#task-4-1-3)
@@ -596,6 +634,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** When title-pattern detection fails, check if the book's directory is inside a parent directory (between the author dir and the book dir) that represents a series. Use alphabetical or natural sort order.
 
 **Files/components:**
+
 - `src-tauri/src/scanner.rs`
 
 **Dependencies:** [Task 4.2.1](#task-4-2-1)
@@ -609,6 +648,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** In the persist phase, create series records if they don't exist, then assign books to the series with the detected order.
 
 **Files/components:**
+
 - `src-tauri/src/scanner.rs`
 - `src-tauri/src/services/series_service.rs`
 
@@ -623,6 +663,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **As a** user **I want** to browse series, see ordered book lists, and manually assign/reorder books **so that** I can manage my series collections.
 
 **Acceptance criteria:**
+
 - Series list page at `/series` with pagination
 - Series detail page showing ordered books
 - Book details page shows series name + link
@@ -635,6 +676,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** Create `SeriesListPageComponent` with pagination and sorting (by name, book count). Register at `/series` route. Add sidebar entry.
 
 **Files/components:**
+
 - `src/app/features/series/list/series-list.component.ts` (new)
 - `src/app/features/series/list/series-list.component.html` (new)
 - `src/app/features/series/list/series-list.component.scss` (new)
@@ -652,6 +694,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** Create `SeriesDetailPageComponent` that shows series name, author link, and ordered book list (using `GenericListComponent` or numbered list).
 
 **Files/components:**
+
 - `src/app/features/series/details/series-details.component.ts` (new)
 - `src/app/features/series/details/series-details.component.html` (new)
 - `src/app/features/series/details/series-details.component.scss` (new)
@@ -668,6 +711,7 @@ Introduce series/cycles as a core organizational concept, with auto-detection fr
 **Description:** On the book details page, show the series name (linked to series detail) and order number. Add a dropdown to assign or change series and a number input for order.
 
 **Files/components:**
+
 - `src/app/features/books/details/details.component.html`
 - `src/app/features/books/details/details.component.ts`
 
@@ -691,6 +735,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **As a** system **I want** CRUD operations for tags and tag-book associations **so that** the tagging feature is fully functional at the API level.
 
 **Acceptance criteria:**
+
 - Tags can be created, listed, and deleted
 - Books can have multiple tags assigned and unassigned
 - Tags are included in book detail responses
@@ -705,6 +750,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **Description:** Create `tags_service.rs` with: `list_tags()`, `create_tag(name)`, `delete_tag(id)`, `assign_tag(tag_id, book_title)`, `unassign_tag(tag_id, book_title)`, `get_tags_for_book(title)`.
 
 **Files/components:**
+
 - `src-tauri/src/services/tags_service.rs` (new)
 - `src-tauri/src/services/mod.rs`
 
@@ -719,6 +765,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **Description:** Create `tags_commands.rs` with Tauri commands wrapping the service. Register in `main.rs`.
 
 **Files/components:**
+
 - `src-tauri/src/commands/tags_commands.rs` (new)
 - `src-tauri/src/commands/mod.rs`
 - `src-tauri/src/main.rs`
@@ -734,6 +781,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **Description:** Add a `tag` filter to `ListParams` and implement the JOIN-based filtering in `books_service::list_books()`.
 
 **Files/components:**
+
 - `src-tauri/src/models/query.rs`
 - `src-tauri/src/services/books_service.rs`
 
@@ -748,6 +796,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **As a** user **I want** to create tags and assign them to books **so that** I can organize my library with custom labels.
 
 **Acceptance criteria:**
+
 - Book details page shows assigned tags as chips
 - User can add/remove tags from a book
 - A tag management section exists in settings (create/delete tags)
@@ -759,6 +808,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **Description:** Add a "Tags" section to settings page that lists existing tags and allows creating new ones (text input + button) and deleting.
 
 **Files/components:**
+
 - `src/app/features/settings/settings.component.html`
 - `src/app/features/settings/settings.component.ts`
 - `src/app/models/tags.ts` (new)
@@ -774,6 +824,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **Description:** On book details, display assigned tags as styled chips. Include a "+" button that opens a dropdown of available tags, and an "×" on each chip to remove.
 
 **Files/components:**
+
 - `src/app/features/books/details/details.component.html`
 - `src/app/features/books/details/details.component.ts`
 - `src/app/features/books/details/details.component.scss`
@@ -789,6 +840,7 @@ Activate the existing but unused `tags`/`tags_books` schema and build tagging fu
 **Description:** Add a tag filter dropdown to the books list page filter controls, wired to the `tag` filter param.
 
 **Files/components:**
+
 - `src/app/features/books/list/list.component.html`
 - `src/app/features/books/list/list.component.ts`
 
@@ -812,6 +864,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **As a** user **I want** a dedicated statistics page with charts and insights **so that** I can understand my reading/listening patterns.
 
 **Acceptance criteria:**
+
 - Statistics page accessible from the sidebar
 - Shows: total books, read books, total duration, avg score, genre distribution, author distribution, books-read-over-time timeline
 - At least genre distribution and author top-N use visual charts (bar/pie)
@@ -823,6 +876,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **Description:** Create `get_statistics_command` that returns aggregated data: genre distribution (name + count), top 10 authors by book count, score distribution (0–10), books by creation month, total duration sum.
 
 **Files/components:**
+
 - `src-tauri/src/services/books_service.rs` (add aggregation functions)
 - `src-tauri/src/commands/dashboard_commands.rs` (or new `statistics_commands.rs`)
 - `src-tauri/src/main.rs`
@@ -838,6 +892,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **Description:** Build a `StatisticsPageComponent` that displays key metrics as cards and distributions as simple bar charts (pure CSS or lightweight library). Register at `/statistics` route.
 
 **Files/components:**
+
 - `src/app/features/statistics/statistics.component.ts` (new)
 - `src/app/features/statistics/statistics.component.html` (new)
 - `src/app/features/statistics/statistics.component.scss` (new)
@@ -855,6 +910,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **As a** user **I want** to export my library database to JSON and import it back **so that** I can backup and restore my data.
 
 **Acceptance criteria:**
+
 - Export produces a JSON file containing all books, authors, tags, and paths
 - Import reads a JSON file and upserts records into the database
 - Import does not duplicate existing records
@@ -867,6 +923,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **Description:** Create `export_database_command(path)` that serializes all books, authors, `tags`/`tags_books`, and `absolute_paths` to a JSON file at the given path.
 
 **Files/components:**
+
 - `src-tauri/src/commands/settings_commands.rs`
 - `src-tauri/src/main.rs`
 
@@ -881,6 +938,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **Description:** Create `import_database_command(path)` that reads a JSON file and upserts records. Use `INSERT OR REPLACE` semantics.
 
 **Files/components:**
+
 - `src-tauri/src/commands/settings_commands.rs`
 - `src-tauri/src/main.rs`
 
@@ -895,6 +953,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **Description:** Add "Export Database" and "Import Database" buttons to settings. Use native file picker for save/open. Show progress and result via toast.
 
 **Files/components:**
+
 - `src/app/features/settings/settings.component.html`
 - `src/app/features/settings/settings.component.ts`
 
@@ -909,6 +968,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **As a** user **I want** the dashboard to show total listening duration **so that** I can see an overview of my library size in time.
 
 **Acceptance criteria:**
+
 - Dashboard displays total duration (formatted as `Xh Ym`) alongside other stats
 - Only books with `duration_seconds` are counted
 
@@ -919,6 +979,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **Description:** Add `total_duration_seconds: i64` to `Dashboard` struct. Compute via `SELECT SUM(duration_seconds) FROM books`.
 
 **Files/components:**
+
 - `src-tauri/src/models/dashboard.rs`
 - `src-tauri/src/commands/dashboard_commands.rs`
 
@@ -933,6 +994,7 @@ Build a dedicated statistics page and database export/import capabilities.
 **Description:** Add a "Total Duration" row to the dashboard stats table. Format using `formatDuration(seconds)`.
 
 **Files/components:**
+
 - `src/app/features/dashboard/dashboard.component.html`
 - `src/app/features/dashboard/dashboard.component.ts`
 
@@ -956,6 +1018,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **As a** developer **I want** all migration rollbacks to work correctly **so that** the database can be safely reverted during development.
 
 **Acceptance criteria:**
+
 - `diesel migration revert` succeeds for all migrations
 - `down.sql` for init migration uses correct SQLite syntax
 
@@ -966,6 +1029,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **Description:** The current init `down.sql` references non-existent tables (`genres`, `lectors`, `tags_authors`, `absolute_paths`), uses MySQL-incompatible `DROP FOREIGN KEY` syntax, and names constraints that were never defined. Rewrite to correctly drop only the tables created by the init `up.sql`.
 
 **Files/components:**
+
 - `src-tauri/migrations/2024-12-18-153058_init/down.sql`
 
 **Dependencies:** None
@@ -979,6 +1043,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **As a** system **I want** books to be uniquely identified by `(title, author_name)` **so that** two books with the same title from different authors don't collide.
 
 **Acceptance criteria:**
+
 - Books PK is a composite of `(title, author_name)` or a surrogate integer PK with a unique constraint on `(title, author_name)`
 - Scanner correctly inserts books with duplicate titles from different authors
 - All foreign key references are updated
@@ -991,6 +1056,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **Description:** Create a migration that: (1) creates a new `books_new` table with integer PK + unique `(title, author_name)`, (2) copies data from `books`, (3) drops old `books` and renames. Update all FK references (`tags_books`). Write reversible `down.sql`.
 
 **Files/components:**
+
 - `src-tauri/migrations/{timestamp}_book_composite_pk/up.sql` (new)
 - `src-tauri/migrations/{timestamp}_book_composite_pk/down.sql` (new)
 
@@ -1005,6 +1071,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **Description:** Update `Book` struct to include integer `id` as PK. Update `schema.rs`. Update all services that query by title to use the new PK or the unique constraint. Update `tags_books` FK.
 
 **Files/components:**
+
 - `src-tauri/src/models/book.rs`
 - `src-tauri/src/models/tag.rs`
 - `src-tauri/src/schema.rs`
@@ -1023,6 +1090,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **Description:** Update frontend `Book` interface, routing (use `id` instead of `title`), and all `invoke()` calls that reference books by title.
 
 **Files/components:**
+
 - `src/app/models/books.ts`
 - `src/app/app.routes.ts`
 - `src/app/features/books/details/details.component.ts`
@@ -1039,6 +1107,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **As a** user **I want** the app to adapt to different window sizes **so that** I can resize the window and still use the app comfortably.
 
 **Acceptance criteria:**
+
 - Sidebar collapses to icon-only on narrow windows (< 900px)
 - Gallery grid adjusts number of columns based on available width
 - Book details page stacks vertically on narrow windows
@@ -1051,6 +1120,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **Description:** Add `@media` queries to `_gallery.scss`, `_details.scss`, and sidebar/topbar component styles for narrow (< 900px) and wide (> 1600px) viewports.
 
 **Files/components:**
+
 - `src/styles/_gallery.scss`
 - `src/styles/_details.scss`
 - `src/app/shared/components/sidebar/sidebar.component.scss`
@@ -1067,6 +1137,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **Description:** Update `tauri.conf.json` to allow window resizing, set `minWidth` / `minHeight`, and remove fixed dimensions. Allow fullscreen.
 
 **Files/components:**
+
 - `src-tauri/tauri.conf.json`
 
 **Dependencies:** None
@@ -1080,6 +1151,7 @@ Fix broken migrations, improve database design, and prepare for multi-platform d
 **Description:** Add global keyboard listener: `Ctrl+F` focuses the search input, `Escape` navigates back, arrow keys for gallery navigation.
 
 **Files/components:**
+
 - `src/app/app.component.ts`
 - `src/app/shared/components/topbar/topbar.component.ts`
 
@@ -1103,6 +1175,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 **As a** developer **I want** a reliable baseline set of frontend and backend tests **so that** regressions are caught early.
 
 **Acceptance criteria:**
+
 - Frontend test suite includes meaningful tests for at least 3 key components/services
 - Rust test suite includes unit tests for at least 3 service/model behaviors
 - Test commands are documented and run locally with consistent results
@@ -1114,6 +1187,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 **Description:** Add Angular unit tests for critical areas (e.g., books list filtering behavior, settings theme persistence, score editing interaction). Use existing Karma/Jasmine setup.
 
 **Files/components:**
+
 - `src/app/features/books/list/list.component.spec.ts` (new or extended)
 - `src/app/features/settings/settings.component.spec.ts` (new or extended)
 - `src/app/features/books/details/details.component.spec.ts` (new or extended)
@@ -1129,6 +1203,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 **Description:** Add focused unit tests for list/query sanitization and service-level logic where pure functions are available. Prefer deterministic tests without filesystem side effects.
 
 **Files/components:**
+
 - `src-tauri/src/models/query.rs` (test module)
 - `src-tauri/src/services/books_service.rs` (test module)
 - `src-tauri/src/services/absolute_paths_service.rs` (test module)
@@ -1139,35 +1214,38 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 
 ---
 
-### - [ ] Story 8.2: Add GitHub Actions workflow for required PR checks — M {#story-8-2}
+### - [x] Story 8.2: Add GitHub Actions workflow for required PR checks — M {#story-8-2}
 
 **As a** maintainer **I want** CI checks to run automatically on pull requests **so that** only validated changes can be merged.
 
 **Acceptance criteria:**
+
 - GitHub Actions runs on pull requests and pushes to main development branches
 - Workflow runs frontend lint/tests and Rust check/tests
 - Workflow fails the PR when any check fails
 
-#### - [ ] Task 8.2.1: Create CI workflow for lint + test + build checks {#task-8-2-1}
+#### - [x] Task 8.2.1: Create CI workflow for lint + test + build checks {#task-8-2-1}
 
 **Type:** DevOps
 
 **Description:** Add a workflow that sets up Node and Rust toolchains, installs dependencies, and runs: frontend lint, frontend tests, Rust check, Rust tests, Rust clippy.
 
 **Files/components:**
+
 - `.github/workflows/ci.yml` (new)
 
 **Dependencies:** [Task 8.1.1](#task-8-1-1), [Task 8.1.2](#task-8-1-2)
 
 **DoD:** CI workflow completes successfully on PR with all required jobs green.
 
-#### - [ ] Task 8.2.2: Configure PR trigger scope and branch protection guidance {#task-8-2-2}
+#### - [x] Task 8.2.2: Configure PR trigger scope and branch protection guidance {#task-8-2-2}
 
 **Type:** DevOps
 
 **Description:** Configure workflow triggers for `pull_request` and key branches. Document required status checks and recommended branch protection settings.
 
 **Files/components:**
+
 - `.github/workflows/ci.yml`
 - `README.md` or `docs/DOCUMENTATION.md`
 
@@ -1182,6 +1260,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 **As a** maintainer **I want** each PR to include explicit version management **so that** releases and change tracking remain consistent.
 
 **Acceptance criteria:**
+
 - Every PR includes a version bump decision (`small`, `mid`, `big`, or `custom`) using `bump.sh`
 - CI validates that version files are updated when required by PR scope
 - Team guidelines document when to use each bump type
@@ -1193,6 +1272,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 **Description:** Add contribution guidance that each PR must run `./bump.sh <type>` and include updated version files (`package.json`, `src-tauri/Cargo.toml`, `src-tauri/tauri.conf.json`) unless explicitly exempted.
 
 **Files/components:**
+
 - `.github/copilot-instructions.md`
 - `README.md` (optional contributor section)
 
@@ -1207,6 +1287,7 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 **Description:** Add a CI step/script that validates version consistency between app manifests and fails the workflow when versions diverge or are not bumped according to policy.
 
 **Files/components:**
+
 - `.github/workflows/ci.yml`
 - `bump.sh` (if additional validation helper is needed)
 
@@ -1218,19 +1299,19 @@ Create a baseline automated test set and enforce PR checks via GitHub Actions be
 
 ## Risks and External Dependencies
 
-| # | Risk | Severity | Mitigation |
-|---|------|----------|------------|
-| R1 | **Book title as PK** — Two books with the same title from different authors collide silently. The second is skipped by the scanner. | High | [Story 7.2](#story-7-2) introduces a composite/surrogate PK. Schedule early if the user's library has collisions. |
-| R2 | **No connection pooling** — Concurrent Tauri async commands each open a fresh `SqliteConnection`, risking "database is locked" errors and performance overhead. | High | [Story 1.3](#story-1-3) introduces `r2d2` connection pooling. |
-| R3 | **Scanner blocks main thread** — `quick_scan_command` and `full_scan_command` are synchronous. Large libraries (1000+ books) will freeze the UI. | High | [Story 2.4](#story-2-4) moves scanning to a background thread with progress events. |
-| R4 | **Broken init rollback** — The `down.sql` for the init migration uses MySQL syntax and references non-existent tables. `diesel migration revert` will fail. | Medium | [Task 7.1.1](#task-7-1-1) rewrites the init `down.sql`. |
-| R5 | **`panic!()` as exit** — `kill_command` uses `panic!()` which may corrupt in-flight DB writes and produces error output. | Medium | [Task 1.1.1](#task-1-1-1) replaces with graceful exit. |
-| R6 | **Theme not persisted** — Theme resets on every app restart, degrading UX. | Low | [Task 2.1.1](#task-2-1-1) saves to `localStorage`. |
-| R7 | **`author_name` VARCHAR(36)** — Sized for UUIDs; PostgreSQL/MySQL strict mode would truncate long names. SQLite ignores length limits but this is a portability concern. | Low | Address during [Story 7.2](#story-7-2) PK migration by widening to `TEXT`. |
-| R8 | **No test coverage** — Karma/Jasmine are configured but no meaningful tests exist for either frontend or backend. | Medium | Implement [Milestone 8](#milestone-8-testing--pr-quality-gate) to establish baseline tests and PR quality gates. |
-| R9 | **Angular 17 + Node.js compatibility** — Build warnings about odd-numbered Node.js versions (v25.x). Production should target an LTS version (v22.x). | Low | Pin Node.js version in `.nvmrc` or `package.json` `engines`. |
-| R10 | **Unused `uuid` crate** — `uuid` is declared as a dependency but never used. Minor bloat. | Low | Remove from `Cargo.toml` during any cleanup pass. |
+| #   | Risk                                                                                                                                                                     | Severity | Mitigation                                                                                                        |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| R1  | **Book title as PK** — Two books with the same title from different authors collide silently. The second is skipped by the scanner.                                      | High     | [Story 7.2](#story-7-2) introduces a composite/surrogate PK. Schedule early if the user's library has collisions. |
+| R2  | **No connection pooling** — Concurrent Tauri async commands each open a fresh `SqliteConnection`, risking "database is locked" errors and performance overhead.          | High     | [Story 1.3](#story-1-3) introduces `r2d2` connection pooling.                                                     |
+| R3  | **Scanner blocks main thread** — `quick_scan_command` and `full_scan_command` are synchronous. Large libraries (1000+ books) will freeze the UI.                         | High     | [Story 2.4](#story-2-4) moves scanning to a background thread with progress events.                               |
+| R4  | **Broken init rollback** — The `down.sql` for the init migration uses MySQL syntax and references non-existent tables. `diesel migration revert` will fail.              | Medium   | [Task 7.1.1](#task-7-1-1) rewrites the init `down.sql`.                                                           |
+| R5  | **`panic!()` as exit** — `kill_command` uses `panic!()` which may corrupt in-flight DB writes and produces error output.                                                 | Medium   | [Task 1.1.1](#task-1-1-1) replaces with graceful exit.                                                            |
+| R6  | **Theme not persisted** — Theme resets on every app restart, degrading UX.                                                                                               | Low      | [Task 2.1.1](#task-2-1-1) saves to `localStorage`.                                                                |
+| R7  | **`author_name` VARCHAR(36)** — Sized for UUIDs; PostgreSQL/MySQL strict mode would truncate long names. SQLite ignores length limits but this is a portability concern. | Low      | Address during [Story 7.2](#story-7-2) PK migration by widening to `TEXT`.                                        |
+| R8  | **No test coverage** — Karma/Jasmine are configured but no meaningful tests exist for either frontend or backend.                                                        | Medium   | Implement [Milestone 8](#milestone-8-testing--pr-quality-gate) to establish baseline tests and PR quality gates.  |
+| R9  | **Angular 17 + Node.js compatibility** — Build warnings about odd-numbered Node.js versions (v25.x). Production should target an LTS version (v22.x).                    | Low      | Pin Node.js version in `.nvmrc` or `package.json` `engines`.                                                      |
+| R10 | **Unused `uuid` crate** — `uuid` is declared as a dependency but never used. Minor bloat.                                                                                | Low      | Remove from `Cargo.toml` during any cleanup pass.                                                                 |
 
 ---
 
-*End of plan.*
+_End of plan._

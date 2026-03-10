@@ -1,6 +1,6 @@
 # FinalShelf
 
-<img src="./img/image1.jpg" alt="FinalShelf UI" align="right" width="300px"> 
+<img src="./img/image1.jpg" alt="FinalShelf UI" align="right" width="300px">
 
 **FinalShelf** is a modern desktop audiobook manager for Linux. It's the next generation of [LibraAlchemy](https://github.com/Azalurg/LibraAlchemy), rebuilt from the ground up with Rust, SQLite, and Angular for a fast, responsive, single-application experience.
 
@@ -45,23 +45,23 @@
 
 ## Current Status
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Book browser | ✅ Complete | Paginated gallery with sorting & filtering |
-| Authors view | ✅ Complete | Gallery + pagination + sorting |
-| Genres view | ✅ Complete | List with pagination + sorting |
-| Lectors view | ✅ Complete | List with pagination + sorting |
-| Dashboard | ✅ Complete | Stats, new books, top-rated |
-| Search | ✅ Complete | Multi-field with toggles & pagination |
+| Feature          | Status      | Notes                                       |
+| ---------------- | ----------- | ------------------------------------------- |
+| Book browser     | ✅ Complete | Paginated gallery with sorting & filtering  |
+| Authors view     | ✅ Complete | Gallery + pagination + sorting              |
+| Genres view      | ✅ Complete | List with pagination + sorting              |
+| Lectors view     | ✅ Complete | List with pagination + sorting              |
+| Dashboard        | ✅ Complete | Stats, new books, top-rated                 |
+| Search           | ✅ Complete | Multi-field with toggles & pagination       |
 | Metadata scanner | ✅ Complete | Supports 6 audio formats; quick + full scan |
-| Read tracking | ✅ Complete | Mark/unmark books as read |
-| Rating system | ✅ Complete | Score books 0–10 |
-| Themes | ✅ Complete | 5 themes with persistence |
-| Book notes | ⏳ Planned | Story 3.2 in roadmap |
-| Series/Cycles | ⏳ Planned | Story 4.1-4.3 in roadmap |
-| Tags | ⏳ Planned | Story 5.1-5.2 in roadmap |
-| Statistics page | ⏳ Planned | Story 6.1 in roadmap |
-| Export/Import | ⏳ Planned | Story 6.2 in roadmap |
+| Read tracking    | ✅ Complete | Mark/unmark books as read                   |
+| Rating system    | ✅ Complete | Score books 0–10                            |
+| Themes           | ✅ Complete | 5 themes with persistence                   |
+| Book notes       | ⏳ Planned  | Story 3.2 in roadmap                        |
+| Series/Cycles    | ⏳ Planned  | Story 4.1-4.3 in roadmap                    |
+| Tags             | ⏳ Planned  | Story 5.1-5.2 in roadmap                    |
+| Statistics page  | ⏳ Planned  | Story 6.1 in roadmap                        |
+| Export/Import    | ⏳ Planned  | Story 6.2 in roadmap                        |
 
 See [docs/plan.md](docs/plan.md) for the complete development roadmap with timeline and task breakdown.
 
@@ -134,14 +134,20 @@ npm run tauri dev
 
 ### Key Commands
 
-| Command | Purpose |
-|---------|---------|
-| `npm start` | Start Angular dev server |
-| `npm run tauri dev` | Run app in dev mode with live reload |
-| `npm run build` | Build frontend (production) |
-| `npm run tauri build` | Build executable |
-| `npm run lint` | Run ESLint on frontend |
-| `cargo build -p finalshelf` | Build backend only |
+| Command                     | Purpose                              |
+| --------------------------- | ------------------------------------ |
+| `npm start`                 | Start Angular dev server             |
+| `npm run tauri dev`         | Run app in dev mode with live reload |
+| `npm run build`             | Build frontend (production)          |
+| `npm run tauri build`       | Build executable                     |
+| `npm run lint`              | Run ESLint on frontend               |
+| `cargo build -p finalshelf` | Build backend only                   |
+
+### CI & Branch Protection
+
+- Workflow: `CI` runs on pushes and pull requests targeting `main` and `develop`.
+- Jobs: frontend lint (`npm run lint`), Rust `cargo check`, `cargo test`, `cargo clippy` with warnings as errors.
+- Recommended branch protection: require the `CI / checks (ubuntu-latest)` job to pass before merging.
 
 ### Database
 
@@ -156,30 +162,36 @@ The app uses SQLite with Diesel ORM and embedded migrations. The database file i
 FinalShelf follows a **7-milestone development plan** targeting version 1.0:
 
 1. **[M1] Stability & Error Handling** (1–2 weeks)
+
    - Replace `panic!()`/`alert()` with graceful error handling
    - Introduce connection pooling for concurrent DB access
 
 2. **[M2] UI/UX Polish** (2–3 weeks)
+
    - Scan progress feedback with real-time updates
    - Book score editing via star rating widget
    - Theme persistence across sessions
 
 3. **[M3] Book Management** (1–2 weeks)
+
    - Delete books with orphaned author cleanup
    - Add personal notes/reviews to books
    - Manual cover image management
 
 4. **[M4] Series & Cycles** (3–4 weeks)
+
    - Auto-detect series from title patterns & directory structure
    - UI for series browsing and manual assignment
    - Ordered book display within series
 
 5. **[M5] Tags & Custom Labels** (1–2 weeks)
+
    - Activate existing tag system with CRUD operations
    - Tag assignment UI on book details
    - Filter books by tags
 
 6. **[M6] Advanced Statistics & Export** (2–3 weeks)
+
    - Statistics dashboard with charts (genre/author distribution, timeline)
    - Database export/import (JSON format)
    - Total listening duration metrics
