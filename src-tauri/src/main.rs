@@ -1,17 +1,11 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod commands;
-mod db;
-mod models;
-mod scanner;
-mod schema;
-mod services;
-
 use commands::{
     authors_commands::*, books_commands::*, dashboard_commands::*, genres_commands::*, lectors_commands::*,
     search_commands::*, series_commands::*, settings_commands::*,
 };
+use finalshelf::{commands, db};
 
 fn main() {
     println!("Starting Tauri application...");

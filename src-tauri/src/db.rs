@@ -1,7 +1,7 @@
 use std::env;
 
-use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
+use diesel::{connection::SimpleConnection, prelude::*};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use dotenv::dotenv;
 
@@ -12,7 +12,13 @@ pub fn establish_connection() -> SqliteConnection {
 
     let database_url: String = env::var("DATABASE_URL").unwrap_or("finalshelf.sql".to_string());
 
-    SqliteConnection::establish(&database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+    let mut connection =
+        SqliteConnection::establish(&database_url).unwrap_or_else(|_| panic!("Error connecting to {}", database_url));
+
+    // Reduce transient lock failures when multiple short-lived connections are created.
+    let _ = connection.batch_execute("PRAGMA busy_timeout = 5000;");
+
+    connection
 }
 
 pub fn init() {
