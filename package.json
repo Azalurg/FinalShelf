@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "tauri": "tauri",
     "lint": "ng lint",
-    "test": "ng test --watch=false --browsers=ChromeHeadless"
+    "test": "ng test --watch=false"
   },
   "private": true,
   "dependencies": {

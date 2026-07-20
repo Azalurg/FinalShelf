@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ActivatedRoute, convertToParamMap } from "@angular/router";
-import * as tauriCore from "@tauri-apps/api/core";
+import { clearMocks, mockIPC } from "@tauri-apps/api/mocks";
 import { of } from "rxjs";
 import { BookDetailsPageComponent } from "./details.component";
 import { Book } from "../../../models/books";
@@ -8,7 +8,7 @@ import { Book } from "../../../models/books";
 describe("BookDetailsPageComponent", () => {
   let fixture: ComponentFixture<BookDetailsPageComponent>;
   let component: BookDetailsPageComponent;
-  let invokeSpy: jasmine.Spy;
+  let ipcSpy: jasmine.Spy;
 
   const baseBook: Book = {
     title: "Sample Book",
@@ -25,7 +25,11 @@ describe("BookDetailsPageComponent", () => {
   };
 
   beforeEach(async () => {
-    invokeSpy = spyOn(tauriCore, "invoke").and.returnValue(Promise.resolve());
+    // Tauri's `invoke`/`listen` are read-only ES-module exports and cannot be
+    // spied on directly; mockIPC installs a fake IPC layer on the window that
+    // the real `invoke` delegates to.
+    ipcSpy = jasmine.createSpy("ipc").and.resolveTo(undefined);
+    mockIPC((cmd, args) => ipcSpy(cmd, args));
 
     await TestBed.configureTestingModule({
       imports: [BookDetailsPageComponent],
@@ -41,19 +45,26 @@ describe("BookDetailsPageComponent", () => {
     component = fixture.componentInstance;
   });
 
+  afterEach(() => {
+    clearMocks();
+  });
+
   it("updates score and persists changes", async () => {
     component.bookDetails = { ...baseBook };
 
     await component.onScoreChange(8);
 
-    expect(invokeSpy).toHaveBeenCalledWith("update_book_command", {
-      book: jasmine.objectContaining({ score: 8 }),
-    });
+    expect(ipcSpy).toHaveBeenCalledWith(
+      "update_book_command",
+      jasmine.objectContaining({
+        book: jasmine.objectContaining({ score: 8 }),
+      }),
+    );
     expect(component.bookDetails?.score).toBe(8);
   });
 
   it("reverts score when update fails", async () => {
-    invokeSpy.and.returnValue(Promise.reject(new Error("failure")));
+    ipcSpy.and.rejectWith(new Error("failure"));
     component.bookDetails = { ...baseBook, score: 7 };
 
     await component.onScoreChange(3);

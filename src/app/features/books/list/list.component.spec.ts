@@ -1,15 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import * as tauriCore from "@tauri-apps/api/core";
+import { clearMocks, mockIPC } from "@tauri-apps/api/mocks";
 import { BooksListPageComponent } from "./list.component";
 import { BookListResponse } from "../../../models/books";
-import { AuthorListItem } from "../../../models/authors";
-import { Genre } from "../../../models/genres";
-import { Lector } from "../../../models/lectors";
 
 describe("BooksListPageComponent", () => {
   let fixture: ComponentFixture<BooksListPageComponent>;
   let component: BooksListPageComponent;
-  let invokeSpy: jasmine.Spy;
+  let ipcSpy: jasmine.Spy;
 
   const mockBookResponse: BookListResponse = {
     items: [
@@ -34,7 +31,7 @@ describe("BooksListPageComponent", () => {
   };
 
   const emptyListResponse = {
-    items: [] as AuthorListItem[] | Genre[] | Lector[],
+    items: [],
     total_count: 0,
     page: 1,
     limit: 0,
@@ -42,19 +39,22 @@ describe("BooksListPageComponent", () => {
   };
 
   beforeEach(async () => {
-    invokeSpy = spyOn(tauriCore, "invoke").and.callFake((command: string) => {
-      if (command === "get_books_list_command") {
+    // Route each command through a jasmine spy via Tauri's mock IPC layer so we
+    // can both stub responses and assert on the calls the component makes.
+    ipcSpy = jasmine.createSpy("ipc").and.callFake((cmd: string) => {
+      if (cmd === "get_books_list_command") {
         return Promise.resolve(mockBookResponse);
       }
       if (
-        command === "get_authors_list_command" ||
-        command === "get_genres_list_command" ||
-        command === "get_lectors_list_command"
+        cmd === "get_authors_list_command" ||
+        cmd === "get_genres_list_command" ||
+        cmd === "get_lectors_list_command"
       ) {
         return Promise.resolve(emptyListResponse);
       }
       return Promise.resolve(null);
     });
+    mockIPC((cmd, args) => ipcSpy(cmd, args));
 
     await TestBed.configureTestingModule({
       imports: [BooksListPageComponent],
@@ -66,6 +66,10 @@ describe("BooksListPageComponent", () => {
     await fixture.whenStable();
   });
 
+  afterEach(() => {
+    clearMocks();
+  });
+
   it("fetches books with filters and resets the page", async () => {
     component.currentPage = 3;
     component.filters.author_name = "Author A";
@@ -73,7 +77,7 @@ describe("BooksListPageComponent", () => {
     component.onFilterChange();
     await fixture.whenStable();
 
-    const bookCalls = invokeSpy.calls
+    const bookCalls = ipcSpy.calls
       .all()
       .filter((call) => call.args[0] === "get_books_list_command");
     const lastCall = bookCalls[bookCalls.length - 1];

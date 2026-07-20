@@ -1,5 +1,9 @@
-const { chromium } = require("playwright");
 const path = require("path");
+
+// Allow overriding the browser (e.g. in CI or locally) via CHROME_BIN;
+// otherwise fall back to the Chromium that puppeteer downloads on install.
+process.env.CHROME_BIN =
+  process.env.CHROME_BIN || require("puppeteer").executablePath();
 
 module.exports = function (config) {
   config.set({
@@ -26,14 +30,13 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    browsers: ["ChromiumHeadlessPlaywright"],
+    browsers: ["ChromeHeadlessNoSandbox"],
     singleRun: true,
     restartOnFileChange: false,
     customLaunchers: {
-      ChromiumHeadlessPlaywright: {
-        base: "ChromiumHeadless",
+      ChromeHeadlessNoSandbox: {
+        base: "ChromeHeadless",
         flags: ["--no-sandbox", "--disable-gpu"],
-        executablePath: chromium.executablePath(),
       },
     },
   });

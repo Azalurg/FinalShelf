@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import * as tauriCore from "@tauri-apps/api/core";
-import * as tauriEvent from "@tauri-apps/api/event";
+import { clearMocks, mockIPC } from "@tauri-apps/api/mocks";
 import { SettingsPageComponent } from "./settings.component";
 import { NotificationService } from "../../shared/services/notification.service";
 import { THEME_STORAGE_KEY } from "../../shared/constants/theme.constants";
@@ -8,7 +7,7 @@ import { THEME_STORAGE_KEY } from "../../shared/constants/theme.constants";
 describe("SettingsPageComponent", () => {
   let component: SettingsPageComponent;
   let fixture: ComponentFixture<SettingsPageComponent>;
-  let invokeSpy: jasmine.Spy;
+  let ipcSpy: jasmine.Spy;
 
   const notificationMock = {
     success: jasmine.createSpy("success"),
@@ -21,17 +20,21 @@ describe("SettingsPageComponent", () => {
     localStorage.clear();
     document.body.className = "";
 
-    invokeSpy = spyOn(tauriCore, "invoke").and.callFake((command: string) => {
-      if (command === "get_all_absolute_path_command") {
+    // Route Tauri IPC through a spy. `listen("scan-progress", ...)` in ngOnInit
+    // resolves through the "plugin:event|listen" command, so it needs a reply.
+    ipcSpy = jasmine.createSpy("ipc").and.callFake((cmd: string) => {
+      if (cmd === "get_all_absolute_path_command") {
         return Promise.resolve([]);
       }
-      if (command === "get_version_command") {
+      if (cmd === "get_version_command") {
         return Promise.resolve("0.0.0");
+      }
+      if (cmd === "plugin:event|listen") {
+        return Promise.resolve(1);
       }
       return Promise.resolve(null);
     });
-
-    spyOn(tauriEvent, "listen").and.returnValue(Promise.resolve(() => {}));
+    mockIPC((cmd, args) => ipcSpy(cmd, args));
 
     await TestBed.configureTestingModule({
       imports: [SettingsPageComponent],
@@ -43,6 +46,7 @@ describe("SettingsPageComponent", () => {
   });
 
   afterEach(() => {
+    clearMocks();
     document.body.className = "";
     localStorage.clear();
   });
@@ -55,7 +59,7 @@ describe("SettingsPageComponent", () => {
 
     expect(component.selectedTheme).toBe("default");
     expect(document.body.classList.contains("default")).toBeTrue();
-    expect(invokeSpy).toHaveBeenCalled();
+    expect(ipcSpy).toHaveBeenCalled();
   });
 
   it("updates theme selection and persists to storage", () => {
